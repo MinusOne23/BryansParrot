@@ -9,9 +9,9 @@ using namespace std;
 class Item
 {
 public:
-	string getName() const;
+	virtual string getDisplay() const = 0;
 
-private:
+protected:
 	string name;
 };
 

@@ -12,12 +12,15 @@ using namespace std;
 class Room
 {
 public:
-	void DisplayContents() const;
-	void AddItem(Item* newItem);
-	void AddDoor(Door* newDoor);
+	void displayContents() const;
+	void addItem(Item* newItem);
+	void addDoor(Door* newDoor);
 private:
 	vector<Item*> items;
 	vector<Door*> doors;
+
+	void displayItems() const;
+	void displayDoors() const;
 };
 
 #endif // ROOM_H

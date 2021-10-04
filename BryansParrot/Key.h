@@ -5,10 +5,12 @@
 #include "Item.h"
 #include "Door.h"
 
-class Key : Item
+class Key : public Item
 {
 public:
 	Key(Door* _door);
+	Key(string _name, Door* _door);
+	string getDisplay() const;
 private:
 	Door* door;
 };
