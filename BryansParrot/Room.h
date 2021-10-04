@@ -9,6 +9,12 @@
 
 using namespace std;
 
+/*
+* Room class that stores all the contents of a room
+* 
+* items -- list of all the items within the room
+* doors -- list of all the doors within the room
+*/
 class Room
 {
 public:
