@@ -3,7 +3,10 @@
 #define INVENTORY_H
 
 #include <vector>
+
 #include "Item.h"
+
+using namespace std;
 
 /*
 *Inventory class to hold items of a player 
@@ -12,11 +15,10 @@
 */
 class Inventory {
 public:
-
 	void addItem(Item* item);
-private:
-	vector <Item*>  item;
 	void display() const;
+private:
+	vector<Item*> items;
 };
 #endif // !INVENTORY_H
 
