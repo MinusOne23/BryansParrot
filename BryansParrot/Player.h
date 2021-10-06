@@ -4,11 +4,13 @@
 
 #include "Inventory.h"
 #include "Item.h"
+#include "Door.h"
 
 class Player {
 public:
 	void takeItem(Item* item);
 	void displayInventory() const;
+	//void roomInteract(Item* item,Door door);
 private:
 	Inventory inventory;
 };

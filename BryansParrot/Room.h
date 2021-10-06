@@ -6,6 +6,8 @@
 
 #include "Item.h"
 #include "Door.h"
+#include "Player.h"
+#include "Enemy.h"
 
 using namespace std;
 
@@ -21,12 +23,16 @@ public:
 	void displayContents() const;
 	void addItem(Item* newItem);
 	void addDoor(Door* newDoor);
+	void addEnemy(Enemy* newEnemy);
+	void roomInteract(Player* player, Door door);
 private:
 	vector<Item*> items;
 	vector<Door*> doors;
+	vector<Enemy*> enemies;
 
 	void displayItems() const;
 	void displayDoors() const;
+	void displayEnemies() const;
 };
 
 #endif // ROOM_H
