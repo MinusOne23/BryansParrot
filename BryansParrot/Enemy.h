@@ -3,6 +3,7 @@
 #define ENEMY_H
 
 #include <string>
+#include "Player.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ public:
 	
 	inline string getEnemyName() const { return name; }
 	Enemy(string _name);
+	void killEnemy(Player* player);
 
 protected:
 	string name ;

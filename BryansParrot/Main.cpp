@@ -34,7 +34,10 @@ int main()
 
 	//Enter Room 2
 	secondRoom.displayContents();
-	secondRoom.roomInteract(&player1, door);
+	secondRoom.roomInteract(&player1, door2);
+	secondRoom.addItem(&key);
+	secondRoom.displayContents();
+	secondRoom.roomInteract(&player1, door2);
 
 	system("pause");
 	return 0;

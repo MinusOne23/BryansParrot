@@ -53,6 +53,7 @@ void Room::displayDoors() const
 	}
 }
 
+
 void Room::displayEnemies() const
 {
 	for (int i = 0; i < enemies.size(); i++)
@@ -61,6 +62,11 @@ void Room::displayEnemies() const
 	}
 }
 
+void Room::killEnemy()
+{
+	cout << "Oh my! You've killed the Goblin!" << endl << "It appears that they have dropped a key.";
+}
+ //add input validation after
 
 
 void Room::roomInteract(Player* player1,Door door)
@@ -103,15 +109,29 @@ void Room::roomInteract(Player* player1,Door door)
 				if (door != nullptr)
 				{
 					cout << "Your opened the door and went to the next room" << endl;
-					
+					break;
 				}
 			}
 			break;
 		}
-		
+		else if (inputStr == "kill goblin")
+		{
+			for (int i = 0; i < enemies.size(); i++)
+			{
+				Enemy* enemy = dynamic_cast<Enemy*>(enemies[i]);
+				if (enemy != nullptr)
+				{
+					cout << "Oh my! You've killed the Goblin!" << endl << "It appears that they have dropped a key.\n";
+					enemies.erase(enemies.begin() + i);
+					break;
+				}
+			}
+			break;
+		}
 		else
 		{
 			cout << "Sorry, that input is not recognized." << endl;
 		}
+
 	}
 }
