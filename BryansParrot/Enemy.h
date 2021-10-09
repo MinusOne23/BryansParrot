@@ -22,10 +22,9 @@ public:
 	
 	inline string getEnemyName() const { return name; }
 	Enemy(string _name);
-	void killEnemy(Player* player);
 
 protected:
-	string name ;
+	string name;
 };
 
 #endif // Enemy_H

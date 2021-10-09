@@ -8,5 +8,4 @@ using namespace std;
 Enemy::Enemy(string _name)
 {
 	name = _name;
-
 }

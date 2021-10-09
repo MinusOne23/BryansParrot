@@ -17,6 +17,7 @@ public:
 	Key(Door* _door);
 	Key(string _name, Door* _door);
 	string getDisplay() const;
+	inline Door* getDoor() { return door; }
 private:
 	Door* door;
 };

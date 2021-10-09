@@ -24,7 +24,7 @@ public:
 	void addItem(Item* newItem);
 	void addDoor(Door* newDoor);
 	void addEnemy(Enemy* newEnemy);
-	void roomInteract(Player* player, Door door);
+	void roomInteract(Player* player);
 	void killEnemy();
 private:
 	vector<Item*> items;

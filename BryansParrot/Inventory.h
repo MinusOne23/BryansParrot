@@ -16,8 +16,8 @@ using namespace std;
 class Inventory {
 public:
 	void addItem(Item* item);
+	void removeItem(Item* item);
 	void display() const;
-private:
 	vector<Item*> items;
 };
 #endif // !INVENTORY_H

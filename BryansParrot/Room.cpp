@@ -62,17 +62,13 @@ void Room::displayEnemies() const
 	}
 }
 
-void Room::killEnemy()
-{
-	cout << "Oh my! You've killed the Goblin!" << endl << "It appears that they have dropped a key.";
-}
  //add input validation after
-
-
-void Room::roomInteract(Player* player1,Door door)
+void Room::roomInteract(Player* player)
 {
 	char input[256];
-	while (true)
+	bool stayInRoom = true;
+
+	while (stayInRoom)
 	{
 		cin.getline(input, 256);
 
@@ -84,49 +80,97 @@ void Room::roomInteract(Player* player1,Door door)
 		}
 		else if (inputStr == "i")
 		{
-			player1->displayInventory();
+			player->displayInventory();
 		}
 		else if (inputStr == "take key")
 		{
+			bool foundKey = false;
+
 			for (int i = 0; i < items.size(); i++)
 			{
 				Key* key = dynamic_cast<Key*>(items[i]);
 				if (key != nullptr)
 				{
-					cout << "Key Added to inventory" << endl;
-					player1->takeItem(items[i]);
+					foundKey = true;
+					player->takeItem(items[i]);
 					items.erase(items.begin() + i);
 					break;
-
 				}
+			}
+
+			if (!foundKey)
+			{
+				cout << "There is no key in the room." << endl;
 			}
 		}
 		else if (inputStr == "open door")
 		{
+			bool foundDoor = false;
 			for (int i = 0; i < doors.size(); i++)
 			{
-				Door* door = dynamic_cast<Door*>(doors[i]);
-				if (door != nullptr)
+				foundDoor = true;
+				if (doors[i]->isLocked())
+				{
+					cout << "This door is locked and can not be opened yet." << endl;
+					break;
+				}
+				else
 				{
 					cout << "Your opened the door and went to the next room" << endl;
+					stayInRoom = false;
 					break;
 				}
 			}
-			break;
+
+			if (!foundDoor)
+			{
+				cout << "There is no door to be opened." << endl;
+			}
 		}
 		else if (inputStr == "kill goblin")
 		{
 			for (int i = 0; i < enemies.size(); i++)
 			{
-				Enemy* enemy = dynamic_cast<Enemy*>(enemies[i]);
-				if (enemy != nullptr)
+				cout << "Oh my! You've killed the Goblin!" << endl << "It appears that they have dropped a key.\n";
+				enemies.erase(enemies.begin() + i);
+				break;
+			}
+			stayInRoom = false;
+		}
+		else if (inputStr == "unlock door")
+		{
+			bool foundDoor = false;
+
+			for (int i = 0; i < doors.size(); i++)
+			{
+				Door* door = doors[i];
+
+				if (door->isLocked())
 				{
-					cout << "Oh my! You've killed the Goblin!" << endl << "It appears that they have dropped a key.\n";
-					enemies.erase(enemies.begin() + i);
-					break;
+					foundDoor = true;
+					vector<Key*> keys = player->findKeys(door);
+
+					for (int j = 0; j < keys.size() && door->isLocked(); j++)
+					{
+						door->unlock();
+						player->removeItem(keys[j]);
+					}
+
+					if (door->isLocked())
+					{
+						cout << "Door still has " << door->getLocksLeft() << " lock" << (door->getLocksLeft() > 1 ? "s " : " ") << "left" << endl;
+					}
+					else
+					{
+						cout << "Door is unlocked!" << endl;
+					}
 				}
 			}
-			break;
+
+			if (!foundDoor)
+			{
+				cout << "There is no door to unlock." << endl;
+			}
 		}
 		else
 		{

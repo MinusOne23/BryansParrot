@@ -15,7 +15,8 @@ int main()
 	Room firstRoom;
 	Room secondRoom;
 	Door door, door2(2);
-	Key key(&door);
+	Key key(&door2);
+	Key key2(&door2);
 	Room goblin;
 	Player player1;
 	Enemy enemy("goblin");
@@ -30,14 +31,16 @@ int main()
 
 	//Enter Room 1
 	firstRoom.displayContents();
-	firstRoom.roomInteract(&player1, door);
+	firstRoom.roomInteract(&player1);
 
 	//Enter Room 2
 	secondRoom.displayContents();
-	secondRoom.roomInteract(&player1, door2);
-	secondRoom.addItem(&key);
+	secondRoom.roomInteract(&player1);
+	secondRoom.addItem(&key2);
 	secondRoom.displayContents();
-	secondRoom.roomInteract(&player1, door2);
+	secondRoom.roomInteract(&player1);
+
+	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
 
 	system("pause");
 	return 0;
