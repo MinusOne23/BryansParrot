@@ -12,11 +12,9 @@ using namespace std;
 int main()
 {
 	//Obj 
-	Room firstRoom;
-	Room secondRoom;
+	Room firstRoom, secondRoom;
 	Door door, door2(2);
-	Key key(&door2);
-	Key key2(&door2);
+	Key key(&door2), key2(&door2);
 	Room goblin;
 	Player player1;
 	Enemy enemy("goblin");
