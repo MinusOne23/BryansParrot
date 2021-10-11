@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Inventory.h" 
 #include "Enemy.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ int main()
 	Room goblin;
 	Player player1;
 	Enemy enemy("goblin");
+	Game game;
 
 	//Room 1: Initialization
 	firstRoom.addItem(&key);
@@ -29,14 +31,17 @@ int main()
 
 	//Enter Room 1
 	firstRoom.displayContents();
+	//game.gameInteract(&player1, &firstRoom);
 	firstRoom.roomInteract(&player1);
 
 	//Enter Room 2
 	secondRoom.displayContents();
+	//game.gameInteract(&player1, &secondRoom);
 	secondRoom.roomInteract(&player1);
 	secondRoom.addItem(&key2);
 	secondRoom.displayContents();
 	secondRoom.roomInteract(&player1);
+	//game.gameInteract(&player1, &secondRoom);
 
 	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
 

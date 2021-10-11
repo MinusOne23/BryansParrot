@@ -8,11 +8,13 @@ using namespace std;
 
 void Room::displayContents() const
 {
-	cout << "---------Inside the room you see: ---------\n";
+	cout << "\t===========================================\n";
+	cout << "\t         Inside the room you see:          \n";
+	cout << "\t-------------------------------------------\n";
 	displayItems();
 	displayDoors();
 	displayEnemies();
-	cout << "===========================================\n";
+	cout << "\t===========================================\n";
 }
 
 void Room::addItem(Item* newItem)
@@ -34,7 +36,7 @@ void Room::displayItems() const
 {
 	for (int i = 0; i < items.size(); i++) 
 	{
-		cout << "A " << items[i]->getDisplay() << "." << endl;
+		cout << "\t - A " << items[i]->getDisplay() << "." << endl;
 	}
 }
 
@@ -45,11 +47,11 @@ void Room::displayDoors() const
 	{
 		if (doors[i]->isLocked())
 		{
-			cout << "A door with " << doors[i]->getLocksLeft() << " locks." << endl;
+			cout << "\t - A door with " << doors[i]->getLocksLeft() << " locks." << endl;
 		}
 		else
 		{
-			cout << "A door." << endl;
+			cout << "\t - A door." << endl;
 		}
 	}
 }
@@ -59,7 +61,7 @@ void Room::displayEnemies() const
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		cout << "A " << enemies[i]->getEnemyName() << " is in the room." << endl;
+		cout << "\t - A " << enemies[i]->getEnemyName() << " is in the room." << endl;
 	}
 }
 
@@ -76,6 +78,7 @@ enum interact
 };
 
  //add input validation after
+
 void Room::roomInteract(Player* player)
 {
 	interact input;

@@ -35,9 +35,9 @@ vector<Key*> Player::findKeys(Door* door)
 
 void Player::displayInventory() const
 {
-	cout << "---------- Player Inventory ----------" << endl;
+	cout << "\t---------- Player Inventory ----------" << endl;
 	inventory.display();
-	cout << "--------------------------------------" << endl;
+	cout << "\t--------------------------------------" << endl;
 }
 /*
 void Player::roomInteract(Item* key, Door door)
