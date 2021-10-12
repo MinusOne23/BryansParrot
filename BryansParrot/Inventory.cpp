@@ -1,10 +1,11 @@
 #include <iostream>
 
 #include "Inventory.h"
+#include "Key.h"
 
 using namespace std;
 
-void Inventory::addItem(Item* item) 
+void Inventory::addItem(Item* item)
 {
 	items.push_back(item);
 }

@@ -1,167 +1,161 @@
-#include "Player.h"
-#include "Room.h"
-#include "Game.h"
 #include <string>
 #include <iostream>
+
+#include "Game.h"
+#include "Door.h"
+#include "Player.h"
+#include "Room.h"
 using namespace std;
 
 //Helper Enums used for room ineraction
-enum interact
+enum class Interaction
 {
-	quit = 0,
-	inventory = 1,
-	takeKey = 2,
-	openDoor = 3,
-	unlockDoor = 4,
-	killGoblin = 5,
-	error = 99
+	QUIT = 0,
+	INVENTORY = 1,
+	TAKE_KEY = 2,
+	OPEN_DOOR = 3,
+	UNLOCK_DOOR = 4,
+	KILL_GOBLIN = 5,
+	MOVE_BACK = 6,
+	LOOK = 7,
+	ERROR = 99
 };
 
 
-void Game::gameInteract(Player* player, Room* room)
+void Game::start()
 {
-	/*
-	interact input;
+	Room firstRoom, secondRoom, thirdRoom;
+	Door door(&secondRoom), door2(&thirdRoom, 2), door3(&firstRoom);
+	Key key(&door2), key2(&door2);
+	Enemy enemy("goblin");
+	enemy.addDrop(&key2);
 
-	char userinput[256];
-	bool stayInRoom = true;
+	//Room 1: Initialization
+	firstRoom.addItem(&key);
+	firstRoom.setDoor(RoomDoorIndex::NORTH_DOOR, &door);
 
-	while (stayInRoom)
+	//Room 2: Initialization
+	secondRoom.setDoor(RoomDoorIndex::NORTH_DOOR, &door2);
+	secondRoom.setDoor(RoomDoorIndex::SOUTH_DOOR, &door3);
+	secondRoom.addEnemy(&enemy);
+
+	currentRoom = &firstRoom;
+
+	currentRoom->displayContents();
+
+	bool gameWin = false;
+	while (!gameWin)
 	{
-		cin.getline(userinput, 256);
-		string inputStr(userinput);
+		gameInteract();
 
-		if (inputStr == "q")
-		{
-			input = quit;
-		}
-		else if (inputStr == "i")
-		{
-			input = inventory;
-		}
-		else if (inputStr == "take key")
-		{
-			input = takeKey;
-		}
-		else if (inputStr == "open door")
-		{
-			input = openDoor;
-		}
-
-		else if (inputStr == "kill goblin")
-		{
-			input = killGoblin;
-		}
-		else if (inputStr == "unlock door")
-		{
-			input = unlockDoor;
-		}
-		else
-		{
-			input = error;
-		}
-
-		bool foundKey = false;
-		bool foundDoor = false;
-
-		//Interact
-		switch (input)
-		{
-		case quit:
-			exit(0);
-		case inventory:
-			player->displayInventory();
-			break;
-		case takeKey:
-			//bool foundKey = false;
-
-			for (int i = 0; i < items.size(); i++)
-			{
-				Key* key = dynamic_cast<Key*>(items[i]);
-				if (key != nullptr)
-				{
-					foundKey = true;
-					player->takeItem(items[i]);
-					items.erase(items.begin() + i);
-					break;
-				}
-			}
-
-			if (!foundKey)
-			{
-				cout << "There is no key in the room." << endl;
-			}
-			break;
-		case openDoor:
-			//bool foundDoor = false;
-			for (int i = 0; i < doors.size(); i++)
-			{
-				foundDoor = true;
-				if (doors[i]->isLocked())
-				{
-					cout << "This door is locked and can not be opened yet." << endl;
-					break;
-				}
-				else
-				{
-					cout << "Your opened the door and went to the next room" << endl;
-					stayInRoom = false;
-					break;
-				}
-			}
-
-			if (!foundDoor)
-			{
-				cout << "There is no door to be opened." << endl;
-			};
-			break;
-		case unlockDoor:
-			//bool foundDoor = false;
-
-			for (int i = 0; i < doors.size(); i++)
-			{
-				Door* door = doors[i];
-
-				if (door->isLocked())
-				{
-					foundDoor = true;
-					vector<Key*> keys = player->findKeys(door);
-
-					for (int j = 0; j < keys.size() && door->isLocked(); j++)
-					{
-						door->unlock();
-						player->removeItem(keys[j]);
-					}
-
-					if (door->isLocked())
-					{
-						cout << "Door still has " << door->getLocksLeft() << " lock" << (door->getLocksLeft() > 1 ? "s " : " ") << "left" << endl;
-					}
-					else
-					{
-						cout << "Door is unlocked!" << endl;
-					}
-				}
-			}
-
-			if (!foundDoor)
-			{
-				cout << "There is no door to unlock." << endl;
-			};
-			break;
-		case killGoblin:
-			for (int i = 0; i < enemies.size(); i++)
-			{
-				cout << "Oh my! You've killed the Goblin!" << endl << "It appears that they have dropped a key.\n";
-				enemies.erase(enemies.begin() + i);
-				break;
-			}
-			stayInRoom = false;
-			break;
-		case error:
-			cout << "Sorry, that input is not recognized." << endl;
-			break;
-		}
+		if (currentRoom == &thirdRoom)
+			gameWin = true;
 	}
-	*/
+
+	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
+}
+
+void Game::gameInteract()
+{
+	Interaction input;
+	char userinput[256];
+
+	cin.getline(userinput, 256);
+	string inputStr(userinput);
+
+	if (inputStr == "q")
+	{
+		input = Interaction::QUIT;
+	}
+	else if (inputStr == "i")
+	{
+		input = Interaction::INVENTORY;
+	}
+	else if (inputStr == "take key")
+	{
+		input = Interaction::TAKE_KEY;
+	}
+	else if (inputStr == "open door")
+	{
+		input = Interaction::OPEN_DOOR;
+	}
+	else if (inputStr == "move back")
+	{
+		input = Interaction::MOVE_BACK;
+	}
+	else if (inputStr == "kill goblin")
+	{
+		input = Interaction::KILL_GOBLIN;
+	}
+	else if (inputStr == "unlock door")
+	{
+		input = Interaction::UNLOCK_DOOR;
+	}
+	else if (inputStr == "look")
+	{
+		input = Interaction::LOOK;
+	}
+	else
+	{
+		input = Interaction::ERROR;
+	}
+
+	Room* newRoom;
+	Key* key;
+	vector<Item*> drops;
+
+	//Interact
+	switch (input)
+	{
+	case Interaction::QUIT:
+		exit(0);
+	case Interaction::INVENTORY:
+		player.displayInventory();
+		break;
+	case Interaction::TAKE_KEY:
+		key = currentRoom->takeKey();
+
+		if (key != nullptr)
+		{
+			player.takeItem(key);
+		}
+
+		break;
+	case Interaction::OPEN_DOOR:
+		newRoom = currentRoom->openDoor(RoomDoorIndex::NORTH_DOOR);
+		if (newRoom != nullptr)
+		{
+			currentRoom = newRoom;
+			currentRoom->displayContents();
+		}
+
+		break;
+	case Interaction::MOVE_BACK:
+		newRoom = currentRoom->openDoor(RoomDoorIndex::SOUTH_DOOR);
+		if (newRoom != nullptr)
+		{
+			currentRoom = newRoom;
+			currentRoom->displayContents();
+		}
+
+		break;
+	case Interaction::UNLOCK_DOOR:
+		currentRoom->unlockDoor(RoomDoorIndex::NORTH_DOOR, &player);
+		break;
+	case Interaction::KILL_GOBLIN:
+
+		drops = currentRoom->killGoblin();
+		currentRoom->addItems(drops);
+
+		break;
+	case Interaction::LOOK:
+		currentRoom->displayContents();
+		break;
+	case Interaction::ERROR:
+	default:
+		cout << "Sorry, that input is not recognized." << endl;
+		break;
+	}
+
+	cout << endl;
 };

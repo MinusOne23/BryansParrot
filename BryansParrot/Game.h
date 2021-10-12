@@ -16,16 +16,12 @@ using namespace std;
 class Game
 {
 public:
-	void updateRoom();
-	void gameInteract(Player* player, Room* room);
+	void start();
+	void gameInteract();
 private:
+
 	Room* currentRoom;
-	Door* door;
-	Key* key;
-	Room* goblin;
-	Player* player1;
-	Enemy* enemy;
-	Game* game;
+	Player player;
 };
 
 #endif // GAME_H

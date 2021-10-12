@@ -4,6 +4,10 @@
 
 using namespace std;
 
+Player::Player()
+{
+	inventory = Inventory();
+}
 
 void Player::takeItem(Item* item)
 {
@@ -21,8 +25,10 @@ vector<Key*> Player::findKeys(Door* door)
 {
 	vector<Key*> keys;
 
-	for (int i = 0; i < inventory.items.size(); i++) 
+	//for (int i = 0; i < inventory.items.size(); i++) 
+	for(int i = 0; i < inventory.items.size(); i++)
 	{
+		//Key* curKey = dynamic_cast<Key*>(inventory.items[i]);
 		Key* curKey = dynamic_cast<Key*>(inventory.items[i]);
 		if (curKey != nullptr && curKey->getDoor() == door)
 		{

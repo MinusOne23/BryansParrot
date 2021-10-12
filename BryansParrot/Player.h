@@ -13,6 +13,7 @@ using namespace std;
 
 class Player {
 public:
+	Player();
 	void takeItem(Item* item);
 	void removeItem(Item* item);
 	vector<Key*> findKeys(Door* door);

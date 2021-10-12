@@ -1,15 +1,9 @@
 #include "Door.h"
 #include "Room.h"
 
-
-Door::Door()
+Door::Door(Room* nRoom, int locks)
 {
-	numLocks = 0;
-	locksLeft = 0;
-}
-
-Door::Door(int locks)
-{
+	nextRoom = nRoom;
 	numLocks = locks;
 	locksLeft = locks;
 }

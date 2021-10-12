@@ -4,6 +4,7 @@
 
 #include <string>
 #include "Player.h"
+#include "Item.h"
 
 using namespace std;
 
@@ -23,8 +24,13 @@ public:
 	inline string getEnemyName() const { return name; }
 	Enemy(string _name);
 
+	void addDrop(Item* item);
+
+	inline vector<Item*> getDrops() { return drops; }
+
 protected:
 	string name;
+	vector<Item*> drops;
 };
 
 #endif // Enemy_H

@@ -18,18 +18,19 @@ class Room;
 class Door
 {
 public:
-	Door();
-	Door(int locks);
+	Door(Room* nRoom, int locks = 0);
 
 	bool isLocked() const;
 	int getNumLocks() const;
 	int getLocksLeft() const;
 
+	inline Room* getNextRoom() { return nextRoom; }
+
 	void unlock();
 private:
 	int numLocks;
 	int locksLeft;
-	Room* otherRoom;
+	Room* nextRoom;
 };
 
 #endif // DOOR_H

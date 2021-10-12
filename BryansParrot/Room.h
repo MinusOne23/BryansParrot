@@ -8,8 +8,17 @@
 #include "Door.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Key.h"
 
 using namespace std;
+
+enum class RoomDoorIndex
+{
+	NORTH_DOOR = 0,
+	SOUTH_DOOR = 1,
+	EAST_DOOR = 2,
+	WEST_DOOR = 3
+};
 
 /*
 * Room class that stores all the contents of a room
@@ -22,14 +31,24 @@ class Room
 public:
 	void displayContents() const;
 	void addItem(Item* newItem);
-	void addDoor(Door* newDoor);
+	void addItems(vector<Item*> newItems);
+	void setDoor(RoomDoorIndex index, Door* newDoor);
 	void addEnemy(Enemy* newEnemy);
-	void roomInteract(Player* player);
-	void killEnemy();
+
+	Key* takeKey();
+	Room* openDoor(RoomDoorIndex index);
+	void unlockDoor(RoomDoorIndex index, Player* player);
+	vector<Item*> killGoblin();
+
+	inline Door* getDoor(RoomDoorIndex index) { return doors[(int)index]; }
+
 private:
+	Door* doors[4];
+
 	vector<Item*> items;
-	vector<Door*> doors;
 	vector<Enemy*> enemies;
+
+	void displayDoor(RoomDoorIndex index, Door* door) const;
 
 	void displayItems() const;
 	void displayDoors() const;

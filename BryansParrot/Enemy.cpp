@@ -9,3 +9,8 @@ Enemy::Enemy(string _name)
 {
 	name = _name;
 }
+
+void Enemy::addDrop(Item* item)
+{
+	drops.push_back(item);
+}

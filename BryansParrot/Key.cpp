@@ -1,8 +1,14 @@
 #include "Key.h"
 
+Key::Key()
+{
+	name = "Key";
+	door = nullptr;
+}
+
 Key::Key(Door* _door)
 {
-	name = "key";
+	name = "Key";
 	door = _door;
 }
 
