@@ -15,11 +15,6 @@ int main()
 	Game game;
 	game.start();
 
-	/*
-	Player player;
-	Key key;
-	player.takeItem(&key);
-	*/
 	system("pause");
 	return 0;
 };
