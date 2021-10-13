@@ -8,7 +8,8 @@
 using namespace std;
 
 //Helper Enums used for room ineraction
-enum class Interaction
+
+enum class Interactions
 {
 	QUIT = 0,
 	INVENTORY = 1,
@@ -55,6 +56,18 @@ void Game::start()
 	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
 }
 
+Game::Interaction Game::enumInputChecker(string inputStr)
+{
+	if (inputStr == "q") { return Interaction::QUIT; }
+	else if (inputStr == "i") { return Interaction::INVENTORY; }
+	else if (inputStr == "take key") { return Interaction::TAKE_KEY; }
+	else if (inputStr == "open door") { return Interaction::OPEN_DOOR; }
+	else if (inputStr == "move back") { return Interaction::MOVE_BACK; }
+	else if (inputStr == "kill goblin") { return Interaction::KILL_GOBLIN; }
+	else if (inputStr == "unlock door") { return Interaction::UNLOCK_DOOR; }
+	else if (inputStr == "look") { return Interaction::LOOK; }
+	else { return Interaction::ERROR; }
+}
 void Game::gameInteract()
 {
 	Interaction input;
@@ -63,43 +76,7 @@ void Game::gameInteract()
 	cin.getline(userinput, 256);
 	string inputStr(userinput);
 
-	if (inputStr == "q")
-	{
-		input = Interaction::QUIT;
-	}
-	else if (inputStr == "i")
-	{
-		input = Interaction::INVENTORY;
-	}
-	else if (inputStr == "take key")
-	{
-		input = Interaction::TAKE_KEY;
-	}
-	else if (inputStr == "open door")
-	{
-		input = Interaction::OPEN_DOOR;
-	}
-	else if (inputStr == "move back")
-	{
-		input = Interaction::MOVE_BACK;
-	}
-	else if (inputStr == "kill goblin")
-	{
-		input = Interaction::KILL_GOBLIN;
-	}
-	else if (inputStr == "unlock door")
-	{
-		input = Interaction::UNLOCK_DOOR;
-	}
-	else if (inputStr == "look")
-	{
-		input = Interaction::LOOK;
-	}
-	else
-	{
-		input = Interaction::ERROR;
-	}
-
+	input = enumInputChecker(inputStr);
 	Room* newRoom;
 	Key* key;
 	vector<Item*> drops;
