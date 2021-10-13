@@ -9,13 +9,16 @@ using namespace std;
 
 void Room::displayContents() const
 {
-	cout << "\t===========================================\n";
-	cout << "\t         Inside the room you see:          \n";
-	cout << "\t-------------------------------------------\n";
-	displayItems();
-	displayDoors();
-	displayEnemies();
-	cout << "\t===========================================\n";
+	if (doors[0] != nullptr)
+	{
+		cout << "\t===========================================\n";
+		cout << "\t         Inside the room you see:          \n";
+		cout << "\t-------------------------------------------\n";
+		displayItems();
+		displayDoors();
+		displayEnemies();
+		cout << "\t===========================================\n";
+	};
 }
 
 void Room::addItem(Item* newItem)
@@ -25,7 +28,7 @@ void Room::addItem(Item* newItem)
 
 void Room::addItems(vector<Item*> newItems)
 {
-	for (int i = 0; i < newItems.size(); i++)
+	for (unsigned int i = 0; i < newItems.size(); i++)
 	{
 		items.push_back(newItems[i]);
 	}
@@ -49,7 +52,6 @@ void Room::displayItems() const
 	}
 }
 
-
 void Room::displayDoors() const
 {
 	for (int i = 0; i < 4; i++)
@@ -58,6 +60,15 @@ void Room::displayDoors() const
 			displayDoor((RoomDoorIndex)i, doors[i]);
 	}
 }
+
+void Room::displayEnemies() const
+{
+	for (unsigned int i = 0; i < enemies.size(); i++)
+	{
+		cout << "\t - A " << enemies[i]->getEnemyName() << "." << endl;
+	}
+}
+
 
 void Room::displayDoor(RoomDoorIndex index, Door* door) const
 {
@@ -86,15 +97,6 @@ void Room::displayDoor(RoomDoorIndex index, Door* door) const
 	else
 	{
 		cout << "\t - A " << direction << " Door." << endl;
-	}
-}
-
-
-void Room::displayEnemies() const
-{
-	for (unsigned int i = 0; i < enemies.size(); i++)
-	{
-		cout << "\t - A " << enemies[i]->getEnemyName() << "." << endl;
 	}
 }
 

@@ -15,7 +15,7 @@ using namespace std;
 
 class Game
 {
-public:
+private:
 	enum  Interaction
 	{
 		QUIT = 0,
@@ -29,13 +29,14 @@ public:
 		ERROR = 99
 	};
 
+	Room* currentRoom;
+	Player player;
+
+public:
+	
 	void start();
 	void gameInteract();
 	virtual Interaction enumInputChecker(string inputStr);
-private:
-
-	Room* currentRoom;
-	Player player;
 
 	
 };
