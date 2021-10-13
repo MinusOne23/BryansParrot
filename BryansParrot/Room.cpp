@@ -7,6 +7,7 @@
 
 using namespace std;
 
+//Displays Items / doors / and enemies in curent room
 void Room::displayContents() const
 {
 	if (doors[0] != nullptr)
@@ -21,11 +22,13 @@ void Room::displayContents() const
 	};
 }
 
+//adds a new item to items vector
 void Room::addItem(Item* newItem)
 {
 	items.push_back(newItem);
 }
 
+//adds enemy drops to items vector
 void Room::addItems(vector<Item*> newItems)
 {
 	for (unsigned int i = 0; i < newItems.size(); i++)
@@ -34,16 +37,19 @@ void Room::addItems(vector<Item*> newItems)
 	}
 }
 
+//creates a new door with a index coresponding to direction
 void Room::setDoor(RoomDoorIndex index, Door* newDoor)
 {
 	doors[(int)index] = newDoor;
 }
 
+//adds an enemy to the enemies vector
 void Room::addEnemy(Enemy* newEnemy)
 {
 	enemies.push_back(newEnemy);
 }
 
+//Displays all items in Items vector
 void Room::displayItems() const
 {
 	for (unsigned int i = 0; i < items.size(); i++) 
@@ -52,6 +58,8 @@ void Room::displayItems() const
 	}
 }
 
+//Displays all doors in doors vector
+//calls DisplayDoor to corespon index to direction
 void Room::displayDoors() const
 {
 	for (int i = 0; i < 4; i++)
@@ -61,6 +69,7 @@ void Room::displayDoors() const
 	}
 }
 
+//Displays all Enemies in Enemies vector
 void Room::displayEnemies() const
 {
 	for (unsigned int i = 0; i < enemies.size(); i++)
@@ -69,7 +78,8 @@ void Room::displayEnemies() const
 	}
 }
 
-
+//door index switched to direction
+//displays door with direction and weither or not it has a lock
 void Room::displayDoor(RoomDoorIndex index, Door* door) const
 {
 	string direction;
@@ -100,7 +110,9 @@ void Room::displayDoor(RoomDoorIndex index, Door* door) const
 	}
 }
 
-
+// IF there is a key in the items vector of the room. 
+// Then erase that key from the room and return the key to be added to
+// the players inventory
 Key* Room::takeKey()
 {
 	for (unsigned int i = 0; i < items.size(); i++)
@@ -118,6 +130,8 @@ Key* Room::takeKey()
 	return nullptr;
 }
 
+//If the door is locked then you cant open the door
+//else move the player to the next room
 Room* Room::openDoor(RoomDoorIndex index)
 {
 	int i = (int)index;
@@ -141,6 +155,10 @@ Room* Room::openDoor(RoomDoorIndex index)
 	return nullptr;
 }
 
+//If the door does not have any locks then you cant unlock door
+//if the door is locked and you have a keys
+//	then you can unlock the one of the locks on the door
+//
 void Room::unlockDoor(RoomDoorIndex index, Player* player)
 {
 	if (doors[(int)index] == nullptr)
@@ -174,6 +192,10 @@ void Room::unlockDoor(RoomDoorIndex index, Player* player)
 	}
 }
 
+
+// If there is a goblin in the room,
+// then erase that goblin from the room
+// and drop the loot that the enemy is carrying
 vector<Item*> Room::killGoblin()
 {
 	vector<Item*> result;

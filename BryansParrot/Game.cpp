@@ -56,6 +56,7 @@ void Game::start()
 	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
 }
 
+// Takes in user input and returns corresponding enum used for switch statement
 Game::Interaction Game::enumInputChecker(string inputStr)
 {
 	if (inputStr == "q") { return Interaction::QUIT; }
@@ -68,23 +69,39 @@ Game::Interaction Game::enumInputChecker(string inputStr)
 	else if (inputStr == "look") { return Interaction::LOOK; }
 	else { return Interaction::ERROR; }
 }
+
+//user input turns into action
 void Game::gameInteract()
 {
+	//Obj and Varable creation
 	Interaction input;
+	Room* newRoom;
+	Key* key;
+	vector<Item*> drops;
 	char userinput[256];
 
+	// user actioni input
 	cin.getline(userinput, 256);
 	string inputStr(userinput);
 
+	//Calls enumInputChecker and returns correct enum
 	input = enumInputChecker(inputStr);
 	Room* newRoom;
 	Key* key;
 	vector<Item*> drops;
 
-	//Interact
+	/// Calls different functions for Interaction enums
+	/// QUIT -- exits program
+	/// INVENTORY -- displays uers inventory
+	/// TAKE_KEY -- adds key from room and adds to inventory
+	/// OPEN_DOOR -- opens current rooms door and moves to next room
+	/// MOVE_BACK -- moves to previous room
+	/// UNLOCK_DOOR -- unlocks any locked door
+	/// KILL_GOBLIN -- kills enemy in room and drops key for player to pick up
+	/// LOOK -- displays what is in the room
 	switch (input)
 	{
-	case Interaction::QUIT:
+	case Interaction::QUIT: 
 		exit(0);
 	case Interaction::INVENTORY:
 		player.displayInventory();
