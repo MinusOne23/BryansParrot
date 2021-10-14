@@ -82,13 +82,17 @@ void Game::gameInteract()
 
 	// user actioni input
 	cin.getline(userinput, 256);
+
+	if (cin.fail())
+	{
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+
 	string inputStr(userinput);
 
 	//Calls enumInputChecker and returns correct enum
 	input = enumInputChecker(inputStr);
-	Room* newRoom;
-	Key* key;
-	vector<Item*> drops;
 
 	/// Calls different functions for Interaction enums
 	/// QUIT -- exits program
