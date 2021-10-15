@@ -6,8 +6,6 @@
 #include "Room.h"
 using namespace std;
 
-//Helper Enums used for room ineraction
-
 const map<string, Game::Interaction> Game::actions = {
 	{"q", Interaction::QUIT},
 	{"i", Interaction::INVENTORY},
@@ -55,22 +53,6 @@ void Game::start()
 
 	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
 }
-
-// Takes in user input and returns corresponding enum used for switch statement
-/*
-Game::Interaction Game::enumInputChecker(string inputStr)
-{
-	if (inputStr == "q") { return Interaction::QUIT; }
-	else if (inputStr == "i") { return Interaction::INVENTORY; }
-	else if (inputStr == "take key") { return Interaction::TAKE_KEY; }
-	else if (inputStr == "open door") { return Interaction::OPEN_DOOR; }
-	else if (inputStr == "move back") { return Interaction::MOVE_BACK; }
-	else if (inputStr == "kill goblin") { return Interaction::KILL_GOBLIN; }
-	else if (inputStr == "unlock door") { return Interaction::UNLOCK_DOOR; }
-	else if (inputStr == "look") { return Interaction::LOOK; }
-	else { return Interaction::ERROR; }
-}
-*/
 
 Game::Interaction Game::enumInputChecker(string inputStr)
 {
