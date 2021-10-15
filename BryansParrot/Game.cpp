@@ -1,4 +1,3 @@
-#include <string>
 #include <iostream>
 
 #include "Game.h"
@@ -9,17 +8,18 @@ using namespace std;
 
 //Helper Enums used for room ineraction
 
-enum class Interactions
-{
-	QUIT = 0,
-	INVENTORY = 1,
-	TAKE_KEY = 2,
-	OPEN_DOOR = 3,
-	UNLOCK_DOOR = 4,
-	KILL_GOBLIN = 5,
-	MOVE_BACK = 6,
-	LOOK = 7,
-	ERROR = 99
+const map<string, Game::Interaction> Game::actions = {
+	{"q", Interaction::QUIT},
+	{"i", Interaction::INVENTORY},
+	{"inventory", Interaction::INVENTORY},
+	{"take key", Interaction::TAKE_KEY},
+	{"grab key", Interaction::TAKE_KEY},
+	{"open door", Interaction::OPEN_DOOR},
+	{"unlock door", Interaction::UNLOCK_DOOR},
+	{"kill goblin", Interaction::KILL_GOBLIN},
+	{"move back", Interaction::MOVE_BACK},
+	{"l", Interaction::LOOK},
+	{"look", Interaction::LOOK}
 };
 
 
@@ -57,6 +57,7 @@ void Game::start()
 }
 
 // Takes in user input and returns corresponding enum used for switch statement
+/*
 Game::Interaction Game::enumInputChecker(string inputStr)
 {
 	if (inputStr == "q") { return Interaction::QUIT; }
@@ -68,6 +69,17 @@ Game::Interaction Game::enumInputChecker(string inputStr)
 	else if (inputStr == "unlock door") { return Interaction::UNLOCK_DOOR; }
 	else if (inputStr == "look") { return Interaction::LOOK; }
 	else { return Interaction::ERROR; }
+}
+*/
+
+Game::Interaction Game::enumInputChecker(string inputStr)
+{
+	if (actions.find(inputStr) != actions.end())
+	{
+		return actions.at(inputStr);
+	}
+
+	return Interaction::ERROR;
 }
 
 //user input turns into action

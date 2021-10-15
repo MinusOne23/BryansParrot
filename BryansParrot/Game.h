@@ -3,6 +3,7 @@
 #define GAME_H
 
 #include <string>
+#include <map>
 #include <vector>
 
 #include "Item.h"
@@ -16,7 +17,7 @@ using namespace std;
 class Game
 {
 private:
-	enum  Interaction
+	enum class Interaction
 	{
 		QUIT = 0,
 		INVENTORY = 1,
@@ -28,6 +29,7 @@ private:
 		LOOK = 7,
 		ERROR = 99
 	};
+	static const map<string, Interaction> actions;
 
 	Room* currentRoom;
 	Player player;
