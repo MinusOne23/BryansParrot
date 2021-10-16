@@ -74,7 +74,7 @@ void Room::displayEnemies() const
 {
 	for (unsigned int i = 0; i < enemies.size(); i++)
 	{
-		cout << "\t - A " << enemies[i]->getEnemyName() << "." << endl;
+		cout << "\t - A " << enemies[i]->getName() << "." << endl;
 	}
 }
 
@@ -192,23 +192,45 @@ void Room::unlockDoor(RoomDoorIndex index, Player* player)
 	}
 }
 
-
-// If there is a goblin in the room,
-// then erase that goblin from the room
-// and drop the loot that the enemy is carrying
-vector<Item*> Room::killGoblin()
+void Room::attack(string enemyName, int amt)
 {
-	vector<Item*> result;
-	if (enemies.size() > 0)
+	for (int i = 0; i < enemies.size(); i++)
 	{
-		cout << "Oh my! You've killed the Goblin!" << endl << "It appears that they have dropped a key." << endl;
-		result = enemies[0]->getDrops();
-		enemies.erase(enemies.begin());
-	}
-	else
-	{
-		cout << "There is no Goblin to kill." << endl;
+		Enemy* enemy = enemies[i];
+
+		if (enemy->getName() == enemyName)
+		{
+			cout << "You dealt " << amt << " damage to " << enemy->getName() << "." << endl;
+
+			enemy->damage(amt);
+
+			if (enemy->isDead())
+			{
+				killEnemy(enemy);
+				enemies.erase(enemies.begin() + i);
+			}
+
+			return;
+		}
 	}
 
-	return result;
+	cout << "That is not a valid target to attack." << endl;
+}
+
+void Room::killEnemy(Enemy* enemy)
+{
+	cout << enemy->getName() << " died!" << endl;
+	vector<Item*> drops = enemy->getDrops();
+
+	if (drops.size() > 0)
+	{
+		cout << enemy->getName() << " dropped:" << endl;
+
+		for (int i = 0; i < drops.size(); i++)
+		{
+			cout << "\t" << drops[i]->getDisplay() << endl;
+		}
+
+		addItems(drops);
+	}
 }

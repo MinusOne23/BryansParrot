@@ -24,21 +24,31 @@ private:
 		TAKE_KEY = 2,
 		OPEN_DOOR = 3,
 		UNLOCK_DOOR = 4,
-		KILL_GOBLIN = 5,
+		ATTACK = 5,
 		MOVE_BACK = 6,
 		LOOK = 7,
 		ERROR = 99
 	};
+
+	struct InputCheckerResult
+	{
+		Interaction interaction;
+		string objectName;
+	};
+
+	static const int MAX_ACTION_WORDS;
 	static const map<string, Interaction> actions;
 
 	Room* currentRoom;
 	Player player;
 
+	vector<string> tokenize(string str);
+
 public:
 	
 	void start();
 	void gameInteract();
-	virtual Interaction enumInputChecker(string inputStr);
+	virtual InputCheckerResult enumInputChecker(string inputStr);
 
 	
 };

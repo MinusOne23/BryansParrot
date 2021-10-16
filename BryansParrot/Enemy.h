@@ -23,7 +23,7 @@ public:
 	
 	Enemy(string _name, int maxHealth);
 
-	inline string getEnemyName() const { return name; }
+	inline string getName() const { return name; }
 
 	void addDrop(Item* item);
 	inline vector<Item*> getDrops() { return drops; }

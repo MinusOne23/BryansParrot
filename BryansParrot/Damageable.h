@@ -10,8 +10,9 @@ protected:
 	Health health;
 
 public:
-	inline virtual void damage(int amt) { health.removeHealth(amt); };
-	inline virtual void heal(int amt) { health.addHealth(amt); };
+	inline virtual void damage(int amt) { health.removeHealth(amt); }
+	inline virtual void heal(int amt) { health.addHealth(amt); }
+	inline bool isDead() { return health.getCurrentHealth() == 0; }
 };
 
 #endif // DAMAGEABLE_H

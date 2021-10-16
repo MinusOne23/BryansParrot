@@ -1,10 +1,13 @@
 #include <iostream>
+#include <sstream>
 
 #include "Game.h"
 #include "Door.h"
 #include "Player.h"
 #include "Room.h"
 using namespace std;
+
+const int Game::MAX_ACTION_WORDS = 2;
 
 const map<string, Game::Interaction> Game::actions = {
 	{"q", Interaction::QUIT},
@@ -14,19 +17,34 @@ const map<string, Game::Interaction> Game::actions = {
 	{"grab key", Interaction::TAKE_KEY},
 	{"open door", Interaction::OPEN_DOOR},
 	{"unlock door", Interaction::UNLOCK_DOOR},
-	{"kill goblin", Interaction::KILL_GOBLIN},
 	{"move back", Interaction::MOVE_BACK},
 	{"l", Interaction::LOOK},
-	{"look", Interaction::LOOK}
+	{"look", Interaction::LOOK},
+	{"attack", Interaction::ATTACK}
 };
 
+
+vector<string> Game::tokenize(string str)
+{
+	stringstream stream(str);
+
+	vector<string> tokens;
+	string tok;
+
+	while (stream >> tok)
+	{
+		tokens.push_back(tok);
+	}
+
+	return tokens;
+}
 
 void Game::start()
 {
 	Room firstRoom, secondRoom, thirdRoom;
 	Door door(&secondRoom), door2(&thirdRoom, 2), door3(&firstRoom);
 	Key key(&door2), key2(&door2);
-	Enemy enemy("goblin");
+	Enemy enemy("goblin", 100);
 	enemy.addDrop(&key2);
 
 	//Room 1: Initialization
@@ -54,14 +72,39 @@ void Game::start()
 	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
 }
 
-Game::Interaction Game::enumInputChecker(string inputStr)
+Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
-	if (actions.find(inputStr) != actions.end())
+	InputCheckerResult result;
+	vector<string> tokens = tokenize(inputStr);
+
+	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
 	{
-		return actions.at(inputStr);
+		string actionStr = tokens[0];
+
+		for (int j = 1; j < i; j++)
+		{
+			actionStr += " " + tokens[j];
+		}
+
+		if (actions.find(actionStr) != actions.end())
+		{
+			result.interaction = actions.at(actionStr);
+
+			if (i < tokens.size())
+			{
+				result.objectName = tokens[i];
+				for (int j = i + 1; j < tokens.size(); j++)
+				{
+					result.objectName += " " + tokens[j];
+				}
+			}
+
+			return result;
+		}
 	}
 
-	return Interaction::ERROR;
+	result.interaction = Interaction::ERROR;
+	return result;
 }
 
 //user input turns into action
@@ -86,7 +129,7 @@ void Game::gameInteract()
 	string inputStr(userinput);
 
 	//Calls enumInputChecker and returns correct enum
-	input = enumInputChecker(inputStr);
+	InputCheckerResult inputResult = enumInputChecker(inputStr);
 
 	/// Calls different functions for Interaction enums
 	/// QUIT -- exits program
@@ -97,7 +140,7 @@ void Game::gameInteract()
 	/// UNLOCK_DOOR -- unlocks any locked door
 	/// KILL_GOBLIN -- kills enemy in room and drops key for player to pick up
 	/// LOOK -- displays what is in the room
-	switch (input)
+	switch (inputResult.interaction)
 	{
 	case Interaction::QUIT: 
 		exit(0);
@@ -134,10 +177,9 @@ void Game::gameInteract()
 	case Interaction::UNLOCK_DOOR:
 		currentRoom->unlockDoor(RoomDoorIndex::NORTH_DOOR, &player);
 		break;
-	case Interaction::KILL_GOBLIN:
+	case Interaction::ATTACK:
 
-		drops = currentRoom->killGoblin();
-		currentRoom->addItems(drops);
+		currentRoom->attack(inputResult.objectName, 50);
 
 		break;
 	case Interaction::LOOK:

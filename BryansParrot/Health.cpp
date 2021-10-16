@@ -25,6 +25,9 @@ int Health::getMaxHealth()
 void Health::removeHealth(int amt)
 {
 	currentHealth -= amt;
+	
+	if (currentHealth < 0)
+		currentHealth = 0;
 }
 
 void Health::addHealth(int amt)

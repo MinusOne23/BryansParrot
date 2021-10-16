@@ -38,7 +38,7 @@ public:
 	Key* takeKey();
 	Room* openDoor(RoomDoorIndex index);
 	void unlockDoor(RoomDoorIndex index, Player* player);
-	vector<Item*> killGoblin();
+	void attack(string enemyName, int amt);
 
 	inline Door* getDoor(RoomDoorIndex index) { return doors[(int)index]; }
 
@@ -53,6 +53,8 @@ private:
 	void displayItems() const;
 	void displayDoors() const;
 	void displayEnemies() const;
+
+	void killEnemy(Enemy* enemy);
 };
 
 #endif // ROOM_H
