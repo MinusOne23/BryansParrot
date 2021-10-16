@@ -17,15 +17,15 @@ using namespace std;
 *
 * name -- the name of the item for shorthand display
 */
-class Enemy
+class Enemy : public Damageable
 {
 public:
 	
+	Enemy(string _name, int maxHealth);
+
 	inline string getEnemyName() const { return name; }
-	Enemy(string _name);
 
 	void addDrop(Item* item);
-
 	inline vector<Item*> getDrops() { return drops; }
 
 protected:

@@ -4,11 +4,6 @@
 
 using namespace std;
 
-Player::Player()
-{
-	inventory = Inventory();
-}
-
 void Player::takeItem(Item* item)
 {
 	inventory.addItem(item);

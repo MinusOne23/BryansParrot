@@ -8,12 +8,13 @@
 #include "Item.h"
 #include "Door.h"
 #include "Key.h"
+#include "Damageable.h"
 
 using namespace std;
 
-class Player {
+class Player : public Damageable 
+{
 public:
-	Player();
 	void takeItem(Item* item);
 	void removeItem(Item* item);
 	vector<Key*> findKeys(Door* door);
