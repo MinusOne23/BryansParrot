@@ -8,13 +8,15 @@
 #include "Item.h"
 #include "Door.h"
 #include "Key.h"
-#include "Damageable.h"
+#include "Character.h"
 
 using namespace std;
 
-class Player : public Damageable 
+class Player : public Character 
 {
 public:
+	Player();
+	Player(int maxHealth, int minDamage, int maxDamage, float critChance);
 	void takeItem(Item* item);
 	void removeItem(Item* item);
 	vector<Key*> findKeys(Door* door);

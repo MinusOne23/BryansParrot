@@ -1,5 +1,7 @@
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
+#include <time.h>
 
 #include "Game.h"
 #include "Door.h"
@@ -20,7 +22,9 @@ const map<string, Game::Interaction> Game::actions = {
 	{"move back", Interaction::MOVE_BACK},
 	{"l", Interaction::LOOK},
 	{"look", Interaction::LOOK},
-	{"attack", Interaction::ATTACK}
+	{"attack", Interaction::ATTACK},
+	{"c", Interaction::CHARACTER},
+	{"character", Interaction::CHARACTER}
 };
 
 
@@ -39,12 +43,20 @@ vector<string> Game::tokenize(string str)
 	return tokens;
 }
 
+Game::Game()
+{
+	currentRoom = nullptr;
+	player = Player();
+
+	srand(time(NULL));
+}
+
 void Game::start()
 {
 	Room firstRoom, secondRoom, thirdRoom;
 	Door door(&secondRoom), door2(&thirdRoom, 2), door3(&firstRoom);
 	Key key(&door2), key2(&door2);
-	Enemy enemy("goblin", 100);
+	Enemy enemy("goblin", 100, 5, 10, 0.1f);
 	enemy.addDrop(&key2);
 
 	//Room 1: Initialization
@@ -128,8 +140,9 @@ void Game::gameInteract()
 
 	string inputStr(userinput);
 
-	//Calls enumInputChecker and returns correct enum
 	InputCheckerResult inputResult = enumInputChecker(inputStr);
+
+	bool shouldUpdate = true;
 
 	/// Calls different functions for Interaction enums
 	/// QUIT -- exits program
@@ -146,6 +159,11 @@ void Game::gameInteract()
 		exit(0);
 	case Interaction::INVENTORY:
 		player.displayInventory();
+		shouldUpdate = false;
+		break;
+	case Interaction::CHARACTER:
+		player.displayStats();
+		shouldUpdate = false;
 		break;
 	case Interaction::TAKE_KEY:
 		key = currentRoom->takeKey();
@@ -164,6 +182,8 @@ void Game::gameInteract()
 			currentRoom->displayContents();
 		}
 
+		shouldUpdate = false;
+
 		break;
 	case Interaction::MOVE_BACK:
 		newRoom = currentRoom->openDoor(RoomDoorIndex::SOUTH_DOOR);
@@ -173,23 +193,33 @@ void Game::gameInteract()
 			currentRoom->displayContents();
 		}
 
+		shouldUpdate = false;
+
 		break;
 	case Interaction::UNLOCK_DOOR:
 		currentRoom->unlockDoor(RoomDoorIndex::NORTH_DOOR, &player);
 		break;
 	case Interaction::ATTACK:
+		Character::DamageResult damageResult = player.getDamage();
 
-		currentRoom->attack(inputResult.objectName, 50);
+		if (damageResult.critical)
+			cout << "Critical hit!" << endl;
 
+		currentRoom->attack(inputResult.objectName, damageResult.damage);
 		break;
 	case Interaction::LOOK:
 		currentRoom->displayContents();
+		shouldUpdate = false;
 		break;
 	case Interaction::ERROR:
 	default:
 		cout << "Sorry, that input is not recognized." << endl;
+		shouldUpdate = false;
 		break;
 	}
+
+	if(shouldUpdate)
+		currentRoom->updateTurn(&player);
 
 	cout << endl;
 };

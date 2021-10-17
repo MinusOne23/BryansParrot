@@ -42,6 +42,8 @@ public:
 
 	inline Door* getDoor(RoomDoorIndex index) { return doors[(int)index]; }
 
+	void updateTurn(Player* player);
+
 private:
 	Door* doors[4];
 

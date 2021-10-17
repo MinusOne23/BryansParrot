@@ -29,3 +29,13 @@ void Inventory::display() const
 		cout <<"\t - " << items[i]->getDisplay() << endl;
 	}
 }
+
+Item* Inventory::operator[](int i)
+{
+	return items[i];
+}
+
+int Inventory::numItems()
+{
+	return items.size();
+}

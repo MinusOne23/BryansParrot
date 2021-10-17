@@ -200,14 +200,17 @@ void Room::attack(string enemyName, int amt)
 
 		if (enemy->getName() == enemyName)
 		{
-			cout << "You dealt " << amt << " damage to " << enemy->getName() << "." << endl;
-
 			enemy->damage(amt);
+			cout << "You dealt " << amt << " damage to " << enemy->getName() << "." << endl;
 
 			if (enemy->isDead())
 			{
 				killEnemy(enemy);
 				enemies.erase(enemies.begin() + i);
+			}
+			else
+			{
+				cout << enemy->getName() << " has " << enemy->getCurrentHealth() << " health left." << endl;
 			}
 
 			return;
@@ -217,6 +220,26 @@ void Room::attack(string enemyName, int amt)
 	cout << "That is not a valid target to attack." << endl;
 }
 
+void Room::updateTurn(Player* player)
+{
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		cout << endl;
+
+		Enemy* enemy = enemies[i];
+		Character::DamageResult damageResult = enemy->getDamage();
+
+		if (damageResult.critical)
+			cout << "Critical Hit!" << endl;
+
+		cout << enemy->getName() << " hurt you for " << damageResult.damage << " damage!" << endl;
+
+		player->damage(damageResult.damage);
+
+		cout << "You have " << player->getCurrentHealth() << " health left." << endl;
+	}
+}
+
 void Room::killEnemy(Enemy* enemy)
 {
 	cout << enemy->getName() << " died!" << endl;
@@ -224,12 +247,16 @@ void Room::killEnemy(Enemy* enemy)
 
 	if (drops.size() > 0)
 	{
-		cout << enemy->getName() << " dropped:" << endl;
+		cout << "\t===========================================\n";
+		cout << "\t                  Drops:                   \n";
+		cout << "\t-------------------------------------------\n";
 
 		for (int i = 0; i < drops.size(); i++)
 		{
-			cout << "\t" << drops[i]->getDisplay() << endl;
+			cout << "\t - " << drops[i]->getDisplay() << endl;
 		}
+
+		cout << "\t===========================================\n";
 
 		addItems(drops);
 	}

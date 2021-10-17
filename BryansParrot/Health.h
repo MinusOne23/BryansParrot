@@ -12,8 +12,8 @@ public:
 	Health();
 	Health(int max);
 
-	int getCurrentHealth();
-	int getMaxHealth();
+	int getCurrentHealth() const;
+	int getMaxHealth() const;
 
 	void removeHealth(int amt);
 	void addHealth(int amt);

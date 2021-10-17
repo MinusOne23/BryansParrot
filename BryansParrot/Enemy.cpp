@@ -5,10 +5,14 @@
 #include <iostream>
 using namespace std;
 
-Enemy::Enemy(string _name, int maxHealth)
+Enemy::Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float critChance)
 {
 	name = _name;
 	health = Health(maxHealth);
+
+	damageStats.min = minDamage;
+	damageStats.max = maxDamage;
+	damageStats.critChance = critChance;
 }
 
 void Enemy::addDrop(Item* item)

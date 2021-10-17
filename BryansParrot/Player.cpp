@@ -4,6 +4,24 @@
 
 using namespace std;
 
+Player::Player()
+{
+	name = "Player";
+	health = Health(100);
+	damageStats.min = 10;
+	damageStats.max = 30;
+	damageStats.critChance = 0.2f;
+}
+
+Player::Player(int maxHealth, int minDamage, int maxDamage, float critChance)
+{
+	name = "Player";
+	health = Health(maxHealth);
+	damageStats.min = minDamage;
+	damageStats.max = maxDamage;
+	damageStats.critChance = critChance;
+}
+
 void Player::takeItem(Item* item)
 {
 	inventory.addItem(item);
@@ -21,10 +39,10 @@ vector<Key*> Player::findKeys(Door* door)
 	vector<Key*> keys;
 
 	//for (int i = 0; i < inventory.items.size(); i++) 
-	for(int i = 0; i < inventory.items.size(); i++)
+	for(int i = 0; i < inventory.numItems(); i++)
 	{
 		//Key* curKey = dynamic_cast<Key*>(inventory.items[i]);
-		Key* curKey = dynamic_cast<Key*>(inventory.items[i]);
+		Key* curKey = dynamic_cast<Key*>(inventory[i]);
 		if (curKey != nullptr && curKey->getDoor() == door)
 		{
 			keys.push_back(curKey);
@@ -36,41 +54,9 @@ vector<Key*> Player::findKeys(Door* door)
 
 void Player::displayInventory() const
 {
-	cout << "\t---------- Player Inventory ----------" << endl;
+	cout << "\t===========================================\n";
+	cout << "\t            Player Inventory:              \n";
+	cout << "\t-------------------------------------------\n";
 	inventory.display();
-	cout << "\t--------------------------------------" << endl;
+	cout << "\t===========================================\n";
 }
-/*
-void Player::roomInteract(Item* key, Door door)
-{
-	char input[256];
-	while (true)
-	{
-		cin.getline(input, 256);
-
-		string inputStr(input);
-
-		if (inputStr == "q")
-		{
-			exit(0);
-		}
-		else if (inputStr == "i")
-		{
-			displayInventory();
-		}
-		else if (inputStr == "take key")
-		{
-			takeItem(key);
-		}
-		else if (door.isLocked() == false && inputStr == "open door")
-		{
-			cout << "Your opened the door and went to the next room" << endl;
-			break;
-		}
-		else
-		{
-			cout << "Sorry, that input is not recognized." << endl;
-		}
-	}
-}
-*/

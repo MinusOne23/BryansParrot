@@ -27,6 +27,7 @@ private:
 		ATTACK = 5,
 		MOVE_BACK = 6,
 		LOOK = 7,
+		CHARACTER = 8,
 		ERROR = 99
 	};
 
@@ -39,13 +40,14 @@ private:
 	static const int MAX_ACTION_WORDS;
 	static const map<string, Interaction> actions;
 
+	vector<string> tokenize(string str);
+
 	Room* currentRoom;
 	Player player;
 
-	vector<string> tokenize(string str);
-
 public:
-	
+	Game();
+
 	void start();
 	void gameInteract();
 	virtual InputCheckerResult enumInputChecker(string inputStr);

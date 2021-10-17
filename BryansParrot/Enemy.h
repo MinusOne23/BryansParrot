@@ -3,8 +3,10 @@
 #define ENEMY_H
 
 #include <string>
-#include "Player.h"
+#include <vector>
+
 #include "Item.h"
+#include "Character.h"
 
 using namespace std;
 
@@ -17,19 +19,15 @@ using namespace std;
 *
 * name -- the name of the item for shorthand display
 */
-class Enemy : public Damageable
+class Enemy : public Character
 {
 public:
-	
-	Enemy(string _name, int maxHealth);
-
-	inline string getName() const { return name; }
-
-	void addDrop(Item* item);
+	Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float critChance);
 	inline vector<Item*> getDrops() { return drops; }
 
+	void addDrop(Item* item);
+
 protected:
-	string name;
 	vector<Item*> drops;
 };
 

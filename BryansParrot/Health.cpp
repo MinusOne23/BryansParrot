@@ -12,12 +12,12 @@ Health::Health(int max)
 	currentHealth = max;
 }
 
-int Health::getCurrentHealth()
+int Health::getCurrentHealth() const
 {
 	return currentHealth;
 }
 
-int Health::getMaxHealth()
+int Health::getMaxHealth() const
 {
 	return maxHealth;
 }
