@@ -46,13 +46,9 @@ private:
 	Player player;
 
 public:
-	Game();
-
 	void start();
 	void gameInteract();
 	virtual InputCheckerResult enumInputChecker(string inputStr);
-
-	
 };
 
 #endif // GAME_H

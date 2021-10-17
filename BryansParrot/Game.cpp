@@ -43,20 +43,15 @@ vector<string> Game::tokenize(string str)
 	return tokens;
 }
 
-Game::Game()
-{
-	currentRoom = nullptr;
-	player = Player();
-
-	srand(time(NULL));
-}
-
 void Game::start()
 {
 	Room firstRoom, secondRoom, thirdRoom;
 	Door door(&secondRoom), door2(&thirdRoom, 2), door3(&firstRoom);
 	Key key(&door2), key2(&door2);
 	Enemy enemy("goblin", 100, 5, 10, 0.1f);
+	player = Player();
+	srand(time(NULL));
+
 	enemy.addDrop(&key2);
 
 	//Room 1: Initialization
@@ -226,8 +221,11 @@ void Game::gameInteract()
 		break;
 	}
 
-	if(shouldUpdate)
+	if (shouldUpdate)
+	{
 		currentRoom->updateTurn(&player);
+	}
+
 
 	cout << endl;
 };
