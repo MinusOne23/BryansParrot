@@ -192,7 +192,7 @@ void Room::unlockDoor(RoomDoorIndex index, Player* player)
 	}
 }
 
-void Room::attack(string enemyName, int amt)
+bool Room::attack(string enemyName, int amt)
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
@@ -213,11 +213,12 @@ void Room::attack(string enemyName, int amt)
 				cout << enemy->getName() << " has " << enemy->getCurrentHealth() << " health left." << endl;
 			}
 
-			return;
+			return true;
 		}
 	}
 
 	cout << "That is not a valid target to attack." << endl;
+	return false;
 }
 
 void Room::updateTurn(Player* player)

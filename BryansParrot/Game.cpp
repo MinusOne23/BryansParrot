@@ -173,6 +173,8 @@ void Game::gameInteract()
 			player.takeItem(key);
 		}
 
+		shouldUpdate = false;
+
 		break;
 	case Interaction::OPEN_DOOR:
 		newRoom = currentRoom->openDoor(RoomDoorIndex::NORTH_DOOR);
@@ -200,13 +202,19 @@ void Game::gameInteract()
 		currentRoom->unlockDoor(RoomDoorIndex::NORTH_DOOR, &player);
 		break;
 	case Interaction::ATTACK:
+	{
 		Character::DamageResult damageResult = player.getDamage();
 
 		if (damageResult.critical)
 			cout << "Critical hit!" << endl;
 
-		currentRoom->attack(inputResult.objectName, damageResult.damage);
+		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage);
+
+		if (!foundEnemy)
+			shouldUpdate = false;
+
 		break;
+	}
 	case Interaction::LOOK:
 		currentRoom->displayContents();
 		shouldUpdate = false;

@@ -24,6 +24,9 @@ void Inventory::removeItem(Item* item)
 
 void Inventory::display() const 
 {
+	if (items.size() == 0)
+		cout << "\t Empty" << endl;
+
 	for (int i = 0; i < items.size(); i++)
 	{
 		cout <<"\t - " << items[i]->getDisplay() << endl;

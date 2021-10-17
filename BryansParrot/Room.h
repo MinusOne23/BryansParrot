@@ -38,7 +38,7 @@ public:
 	Key* takeKey();
 	Room* openDoor(RoomDoorIndex index);
 	void unlockDoor(RoomDoorIndex index, Player* player);
-	void attack(string enemyName, int amt);
+	bool attack(string enemyName, int amt);
 
 	inline Door* getDoor(RoomDoorIndex index) { return doors[(int)index]; }
 
