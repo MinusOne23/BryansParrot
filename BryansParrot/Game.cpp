@@ -9,6 +9,8 @@
 #include "Room.h"
 using namespace std;
 
+const string VERSION = "1.2.1";
+
 const int Game::MAX_ACTION_WORDS = 2;
 
 const map<string, Game::Interaction> Game::actions = {
@@ -45,6 +47,8 @@ vector<string> Game::tokenize(string str)
 
 void Game::start()
 {
+	cout << "Bryan's Parrot v" << VERSION << endl << endl;
+
 	Room firstRoom, secondRoom, thirdRoom;
 	Door door(&secondRoom), door2(&thirdRoom, 2), door3(&firstRoom);
 	Key key(&door2), key2(&door2);
