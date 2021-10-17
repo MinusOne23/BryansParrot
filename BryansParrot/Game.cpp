@@ -17,8 +17,8 @@ const map<string, Game::Interaction> Game::actions = {
 	{"q", Interaction::QUIT},
 	{"i", Interaction::INVENTORY},
 	{"inventory", Interaction::INVENTORY},
-	{"take key", Interaction::TAKE_KEY},
-	{"grab key", Interaction::TAKE_KEY},
+	{"take", Interaction::TAKE},
+	{"grab", Interaction::TAKE},
 	{"open door", Interaction::OPEN_DOOR},
 	{"unlock door", Interaction::UNLOCK_DOOR},
 	{"move back", Interaction::MOVE_BACK},
@@ -124,7 +124,7 @@ void Game::gameInteract()
 	//Obj and Varable creation
 	Interaction input;
 	Room* newRoom;
-	Key* key;
+	Item* item;
 	vector<Item*> drops;
 	char userinput[256];
 
@@ -164,12 +164,13 @@ void Game::gameInteract()
 		player.displayStats();
 		shouldUpdate = false;
 		break;
-	case Interaction::TAKE_KEY:
-		key = currentRoom->takeKey();
+	case Interaction::TAKE:
 
-		if (key != nullptr)
+		item = currentRoom->takeItem(inputResult.objectName);
+
+		if (item != nullptr)
 		{
-			player.takeItem(key);
+			player.takeItem(item);
 		}
 
 		shouldUpdate = false;

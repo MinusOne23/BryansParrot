@@ -35,7 +35,7 @@ public:
 	void setDoor(RoomDoorIndex index, Door* newDoor);
 	void addEnemy(Enemy* newEnemy);
 
-	Key* takeKey();
+	Item* takeItem(string objectName);
 	Room* openDoor(RoomDoorIndex index);
 	void unlockDoor(RoomDoorIndex index, Player* player);
 	bool attack(string enemyName, int amt);

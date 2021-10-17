@@ -113,19 +113,19 @@ void Room::displayDoor(RoomDoorIndex index, Door* door) const
 // IF there is a key in the items vector of the room. 
 // Then erase that key from the room and return the key to be added to
 // the players inventory
-Key* Room::takeKey()
+Item* Room::takeItem(string objectName)
 {
 	for (unsigned int i = 0; i < items.size(); i++)
 	{
-		Key* key = dynamic_cast<Key*>(items[i]);
-		if (key != nullptr)
+		if (items[i]->getName() == objectName)
 		{
+			Item* item = items[i];
 			items.erase(items.begin() + i);
-			return key;
+			return item;
 		}
 	}
 
-	cout << "There is no key in the room." << endl;
+	cout << "This item is not in the room." << endl;
 
 	return nullptr;
 }

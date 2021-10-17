@@ -21,7 +21,7 @@ private:
 	{
 		QUIT = 0,
 		INVENTORY = 1,
-		TAKE_KEY = 2,
+		TAKE = 2,
 		OPEN_DOOR = 3,
 		UNLOCK_DOOR = 4,
 		ATTACK = 5,
