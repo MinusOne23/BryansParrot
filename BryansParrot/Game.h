@@ -27,15 +27,19 @@ private:
 		KILL_GOBLIN = 5,
 		MOVE_BACK = 6,
 		LOOK = 7,
+		HELP=8,
 		ERROR = 99
 	};
 	static const map<string, Interaction> actions;
+	vector<string> helper;
 
 	Room* currentRoom;
 	Player player;
 
 public:
 	
+	void addHelper(string);
+	void helperDisplay();
 	void start();
 	void gameInteract();
 	virtual Interaction enumInputChecker(string inputStr);

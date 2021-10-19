@@ -1,4 +1,5 @@
 #include <iostream>
+#include <list>
 
 #include "Game.h"
 #include "Door.h"
@@ -17,7 +18,8 @@ const map<string, Game::Interaction> Game::actions = {
 	{"kill goblin", Interaction::KILL_GOBLIN},
 	{"move back", Interaction::MOVE_BACK},
 	{"l", Interaction::LOOK},
-	{"look", Interaction::LOOK}
+	{"look", Interaction::LOOK},
+	{"h", Interaction::HELP}
 };
 
 
@@ -64,6 +66,25 @@ Game::Interaction Game::enumInputChecker(string inputStr)
 	return Interaction::ERROR;
 }
 
+void Game::addHelper(string input)
+{
+	if (find(helper.begin(), helper.end(), input) == helper.end())
+	{
+		helper.push_back(input);
+	}
+}
+
+void Game::helperDisplay()
+{
+	cout << "\t===========================================\n";
+	cout << "\t\t\tKnownCommands\n";
+	cout << "\t-------------------------------------------\n";
+	for (unsigned int i = 0; i < helper.size(); i++)
+	{
+		cout << "\t- " << helper[i] << endl;
+	}
+	cout << "\t===========================================\n";
+}
 //user input turns into action
 void Game::gameInteract()
 {
@@ -102,9 +123,13 @@ void Game::gameInteract()
 	case Interaction::QUIT: 
 		exit(0);
 	case Interaction::INVENTORY:
+		addHelper("i: Displays Inventory");
+		addHelper("Inventory: Displays Inventory");
 		player.displayInventory();
 		break;
 	case Interaction::TAKE_KEY:
+		addHelper("take: Take an Item ");
+		addHelper("grab: Take an Item ");
 		key = currentRoom->takeKey();
 
 		if (key != nullptr)
@@ -114,6 +139,7 @@ void Game::gameInteract()
 
 		break;
 	case Interaction::OPEN_DOOR:
+		addHelper("open: Opens unlocked door");
 		newRoom = currentRoom->openDoor(RoomDoorIndex::NORTH_DOOR);
 		if (newRoom != nullptr)
 		{
@@ -123,6 +149,7 @@ void Game::gameInteract()
 
 		break;
 	case Interaction::MOVE_BACK:
+		addHelper("move back: move to previous room");
 		newRoom = currentRoom->openDoor(RoomDoorIndex::SOUTH_DOOR);
 		if (newRoom != nullptr)
 		{
@@ -132,16 +159,21 @@ void Game::gameInteract()
 
 		break;
 	case Interaction::UNLOCK_DOOR:
+		addHelper("unlock: unlocks locked door");
 		currentRoom->unlockDoor(RoomDoorIndex::NORTH_DOOR, &player);
 		break;
 	case Interaction::KILL_GOBLIN:
-
+		addHelper("kill: kills enemy");
 		drops = currentRoom->killGoblin();
 		currentRoom->addItems(drops);
-
 		break;
 	case Interaction::LOOK:
+		addHelper("l: displays room");
+		addHelper("look: displays room");
 		currentRoom->displayContents();
+		break;
+	case Interaction::HELP:
+		helperDisplay();
 		break;
 	case Interaction::ERROR:
 	default:
