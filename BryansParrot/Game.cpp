@@ -1,5 +1,4 @@
 #include <iostream>
-#include <sstream>
 #include <stdlib.h>
 #include <time.h>
 
@@ -7,6 +6,8 @@
 #include "Door.h"
 #include "Player.h"
 #include "Room.h"
+#include "Utils.h"
+
 using namespace std;
 
 const string VERSION = "1.2.1";
@@ -29,64 +30,74 @@ const map<string, Game::Interaction> Game::actions = {
 	{"character", Interaction::CHARACTER}
 };
 
-
-vector<string> Game::tokenize(string str)
+Game::~Game()
 {
-	stringstream stream(str);
-
-	vector<string> tokens;
-	string tok;
-
-	while (stream >> tok)
-	{
-		tokens.push_back(tok);
-	}
-
-	return tokens;
+	for (Room* room : allRooms)
+		delete room;
+	allRooms.clear();
 }
 
 void Game::start()
 {
 	cout << "Bryan's Parrot v" << VERSION << endl << endl;
 
-	Room firstRoom, secondRoom, thirdRoom;
-	Door door(&secondRoom), door2(&thirdRoom, 2), door3(&firstRoom);
-	Key key(&door2), key2(&door2);
-	Enemy enemy("goblin", 100, 5, 10, 0.1f);
-	player = Player();
-	srand(time(NULL));
-
-	enemy.addDrop(&key2);
-
-	//Room 1: Initialization
-	firstRoom.addItem(&key);
-	firstRoom.setDoor(RoomDoorIndex::NORTH_DOOR, &door);
-
-	//Room 2: Initialization
-	secondRoom.setDoor(RoomDoorIndex::NORTH_DOOR, &door2);
-	secondRoom.setDoor(RoomDoorIndex::SOUTH_DOOR, &door3);
-	secondRoom.addEnemy(&enemy);
-
-	currentRoom = &firstRoom;
+	initializeGame();
 
 	currentRoom->displayContents();
 
-	bool gameWin = false;
-	while (!gameWin)
+	while (gameState == GameState::PLAY)
 	{
 		gameInteract();
 
-		if (currentRoom == &thirdRoom)
-			gameWin = true;
+		if (player.isDead())
+			playerDied();
+		else if (currentRoom == winRoom)
+			playerWin();
 	}
 
-	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
+}
+
+void Game::initializeGame()
+{
+	srand(time(NULL));
+
+	allRooms = { 
+		new Room(), 
+		new Room(), 
+		new Room() 
+	};
+
+	Room* firstRoom = allRooms[0];
+	Room* secondRoom = allRooms[1];
+	Room* thirdRoom = allRooms[2];
+
+	Door* door1 = new Door(secondRoom);
+	Door* door2 = new Door(thirdRoom, 2);
+	Door* door3 = new Door(firstRoom);
+
+	player = Player();
+	gameState = GameState::PLAY;
+
+	Enemy* goblin = new Enemy("Goblin", 100, 5, 10, 0.1f);
+	goblin->addDrop(new Key(door2));
+
+	//Room 1: Initialization
+	firstRoom->setDoor(RoomDoorIndex::NORTH_DOOR, door1);
+	firstRoom->addItem(new Key(door2));
+
+	//Room 2: Initialization
+	secondRoom->setDoor(RoomDoorIndex::NORTH_DOOR, door2);
+	secondRoom->setDoor(RoomDoorIndex::SOUTH_DOOR, door3);
+	secondRoom->addEnemy(goblin);
+
+	currentRoom = firstRoom;
+	winRoom = thirdRoom;
 }
 
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
 	InputCheckerResult result;
-	vector<string> tokens = tokenize(inputStr);
+	vector<string> tokens = Utils::tokenize(inputStr);
 
 	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
 	{
@@ -118,26 +129,52 @@ Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 	return result;
 }
 
+void Game::playerDied()
+{
+	gameState = GameState::DIED;
+	cout << "Oh no! It appears you have died!" << endl;
+
+	promptReplay();
+}
+
+void Game::playerWin()
+{
+	gameState = GameState::WIN;
+	cout << "Congratulations you have navigated through all the rooms and beat the game!" << endl;
+
+	promptReplay();
+}
+
+void Game::promptReplay()
+{
+	cout << "Would you like to play again?" << endl;
+
+	string in = Utils::inputValidator();
+
+	while (in != "yes" && in != "y" && in != "no" && in != "n")
+	{
+		cout << "Please enter yes or no" << endl;
+		in = Utils::inputValidator();
+	}
+
+	if (in == "yes" || in == "y")
+	{
+		gameState = GameState::PLAY;
+		initializeGame();
+		cout << endl;
+		currentRoom->displayContents();
+	}
+}
+
 //user input turns into action
 void Game::gameInteract()
 {
 	//Obj and Varable creation
 	Interaction input;
 	Room* newRoom;
-	Item* item;
 	vector<Item*> drops;
-	char userinput[256];
 
-	// user actioni input
-	cin.getline(userinput, 256);
-
-	if (cin.fail())
-	{
-		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	}
-
-	string inputStr(userinput);
+	string inputStr = Utils::inputValidator();
 
 	InputCheckerResult inputResult = enumInputChecker(inputStr);
 
@@ -165,10 +202,14 @@ void Game::gameInteract()
 		shouldUpdate = false;
 		break;
 	case Interaction::TAKE:
+	{
+		Item* item = currentRoom->takeItem(inputResult.objectName);
 
-		item = currentRoom->takeItem(inputResult.objectName);
-
-		if (item != nullptr)
+		if (item == nullptr)
+		{
+			cout << "This item is not in the room." << endl;
+		}
+		else 
 		{
 			player.takeItem(item);
 		}
@@ -176,6 +217,7 @@ void Game::gameInteract()
 		shouldUpdate = false;
 
 		break;
+	}
 	case Interaction::OPEN_DOOR:
 		newRoom = currentRoom->openDoor(RoomDoorIndex::NORTH_DOOR);
 		if (newRoom != nullptr)
@@ -227,9 +269,7 @@ void Game::gameInteract()
 	}
 
 	if (shouldUpdate)
-	{
 		currentRoom->updateTurn(&player);
-	}
 
 
 	cout << endl;

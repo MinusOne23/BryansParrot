@@ -5,6 +5,13 @@
 
 using namespace std;
 
+Inventory::~Inventory()
+{
+	for (Item* item : items)
+		delete item;
+	items.clear();
+}
+
 void Inventory::addItem(Item* item)
 {
 	items.push_back(item);

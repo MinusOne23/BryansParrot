@@ -4,6 +4,7 @@
 #include "Room.h"
 #include "Key.h"
 #include "Enemy.h"
+#include "Utils.h"
 
 using namespace std;
 
@@ -117,15 +118,14 @@ Item* Room::takeItem(string objectName)
 {
 	for (unsigned int i = 0; i < items.size(); i++)
 	{
-		if (items[i]->getName() == objectName)
+		if (Utils::equalsCI(items[i]->getName(), objectName))
 		{
 			Item* item = items[i];
 			items.erase(items.begin() + i);
+
 			return item;
 		}
 	}
-
-	cout << "This item is not in the room." << endl;
 
 	return nullptr;
 }
@@ -198,7 +198,7 @@ bool Room::attack(string enemyName, int amt)
 	{
 		Enemy* enemy = enemies[i];
 
-		if (enemy->getName() == enemyName)
+		if(Utils::equalsCI(enemy->getName(), enemyName))
 		{
 			enemy->damage(amt);
 			cout << "You dealt " << amt << " damage to " << enemy->getName() << "." << endl;
@@ -241,10 +241,24 @@ void Room::updateTurn(Player* player)
 	}
 }
 
+Room::~Room()
+{
+	for (Door* door : doors)
+		delete door;
+
+	for (Item* item : items)
+		delete item;
+	items.clear();
+
+	for (Enemy* enemy : enemies)
+		delete enemy;
+	enemies.clear();
+}
+
 void Room::killEnemy(Enemy* enemy)
 {
 	cout << enemy->getName() << " died!" << endl;
-	vector<Item*> drops = enemy->getDrops();
+	vector<Item*> drops = enemy->removeDrops();
 
 	if (drops.size() > 0)
 	{
@@ -261,4 +275,6 @@ void Room::killEnemy(Enemy* enemy)
 
 		addItems(drops);
 	}
+
+	delete enemy;
 }

@@ -22,9 +22,10 @@ using namespace std;
 class Enemy : public Character
 {
 public:
+	~Enemy();
 	Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float critChance);
-	inline vector<Item*> getDrops() { return drops; }
 
+	vector<Item*> removeDrops();
 	void addDrop(Item* item);
 
 protected:

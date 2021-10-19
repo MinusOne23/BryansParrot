@@ -18,6 +18,8 @@ private:
 	vector<Item*> items;
 
 public:
+	~Inventory();
+
 	void addItem(Item* item);
 	void removeItem(Item* item);
 	void display() const;

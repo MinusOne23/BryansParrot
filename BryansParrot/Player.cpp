@@ -32,17 +32,18 @@ void Player::takeItem(Item* item)
 void Player::removeItem(Item* item)
 {
 	inventory.removeItem(item);
+
+	cout << item->getName() << " has been removed from your inventory." << endl;
 }
 
 vector<Key*> Player::findKeys(Door* door)
 {
 	vector<Key*> keys;
 
-	//for (int i = 0; i < inventory.items.size(); i++) 
 	for(int i = 0; i < inventory.numItems(); i++)
 	{
-		//Key* curKey = dynamic_cast<Key*>(inventory.items[i]);
 		Key* curKey = dynamic_cast<Key*>(inventory[i]);
+
 		if (curKey != nullptr && curKey->getDoor() == door)
 		{
 			keys.push_back(curKey);

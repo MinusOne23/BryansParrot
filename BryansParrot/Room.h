@@ -29,6 +29,8 @@ enum class RoomDoorIndex
 class Room
 {
 public:
+	~Room();
+
 	void displayContents() const;
 	void addItem(Item* newItem);
 	void addItems(vector<Item*> newItems);

@@ -24,7 +24,7 @@ public:
 	int getNumLocks() const;
 	int getLocksLeft() const;
 
-	inline Room* getNextRoom() { return nextRoom; }
+	inline Room* getNextRoom() const { return nextRoom; }
 
 	void unlock();
 private:

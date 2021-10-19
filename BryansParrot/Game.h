@@ -31,6 +31,13 @@ private:
 		ERROR = 99
 	};
 
+	enum class GameState
+	{
+		PLAY,
+		WIN,
+		DIED
+	};
+
 	struct InputCheckerResult
 	{
 		Interaction interaction;
@@ -40,15 +47,24 @@ private:
 	static const int MAX_ACTION_WORDS;
 	static const map<string, Interaction> actions;
 
-	vector<string> tokenize(string str);
-
+	GameState gameState;
 	Room* currentRoom;
+	Room* winRoom;
 	Player player;
 
+	vector<Room*> allRooms;
+
+	void initializeGame();
+	InputCheckerResult enumInputChecker(string inputStr);
+	void playerDied();
+	void playerWin();
+	void promptReplay();
+
 public:
+	~Game();
+
 	void start();
 	void gameInteract();
-	virtual InputCheckerResult enumInputChecker(string inputStr);
 };
 
 #endif // GAME_H
