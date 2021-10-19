@@ -19,7 +19,8 @@ const map<string, Game::Interaction> Game::actions = {
 	{"move back", Interaction::MOVE_BACK},
 	{"l", Interaction::LOOK},
 	{"look", Interaction::LOOK},
-	{"h", Interaction::HELP}
+	{"h", Interaction::HELP},
+	{"help", Interaction::HELP}
 };
 
 
