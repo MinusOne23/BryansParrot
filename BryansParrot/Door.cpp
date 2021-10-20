@@ -1,12 +1,8 @@
 #include "Door.h"
 #include "Room.h"
 
-Door::Door(Room* nRoom, int locks)
-{
-	nextRoom = nRoom;
-	numLocks = locks;
-	locksLeft = locks;
-}
+Door::Door(Room& nRoom, int locks) 
+	: nextRoom(nRoom), numLocks(locks), locksLeft(locks) {}
 
 bool Door::isLocked() const
 {

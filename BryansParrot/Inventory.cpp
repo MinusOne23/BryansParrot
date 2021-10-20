@@ -5,12 +5,12 @@
 
 using namespace std;
 
-void Inventory::addItem(Item* item)
+void Inventory::addItem(shared_ptr<Item> item)
 {
 	items.push_back(item);
 }
 
-void Inventory::removeItem(Item* item)
+void Inventory::removeItem(shared_ptr<Item> item)
 {
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -24,8 +24,21 @@ void Inventory::removeItem(Item* item)
 
 void Inventory::display() const 
 {
+	if (items.size() == 0)
+		cout << "\t Empty" << endl;
+
 	for (int i = 0; i < items.size(); i++)
 	{
 		cout <<"\t - " << items[i]->getDisplay() << endl;
 	}
+}
+
+shared_ptr<Item> Inventory::operator[](int i)
+{
+	return items[i];
+}
+
+int Inventory::numItems()
+{
+	return items.size();
 }

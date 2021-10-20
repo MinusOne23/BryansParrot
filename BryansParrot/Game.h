@@ -19,28 +19,53 @@ class Game
 private:
 	enum class Interaction
 	{
-		QUIT = 0,
-		INVENTORY = 1,
-		TAKE_KEY = 2,
-		OPEN_DOOR = 3,
-		UNLOCK_DOOR = 4,
-		KILL_GOBLIN = 5,
-		MOVE_BACK = 6,
-		LOOK = 7,
-		ERROR = 99
+		QUIT,
+		INVENTORY,
+		TAKE,
+		OPEN,
+		UNLOCK,
+		ATTACK,
+		LOOK,
+		CHARACTER,
+		ERROR
 	};
+
+	enum class GameState
+	{
+		PLAY,
+		WIN,
+		DIED
+	};
+
+	struct InputCheckerResult
+	{
+		Interaction interaction;
+		string objectName;
+	};
+
+	static const int MAX_ACTION_WORDS;
 	static const map<string, Interaction> actions;
 
-	Room* currentRoom;
+	GameState gameState;
 	Player player;
 
+	vector<Room> allRooms;
+
+	Room* currentRoom;
+	Room* winRoom;
+
+	void initializeGame();
+	InputCheckerResult enumInputChecker(string inputStr);
+	void playerDied();
+	void playerWin();
+	void promptReplay();
+
+	void openDoor(Room::DoorIndex index);
+	Room::DoorIndex getDoorIndex(string doorName);
+
 public:
-	
 	void start();
 	void gameInteract();
-	virtual Interaction enumInputChecker(string inputStr);
-
-	
 };
 
 #endif // GAME_H
