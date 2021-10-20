@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 #include "Player.h"
 
@@ -22,27 +23,27 @@ Player::Player(int maxHealth, int minDamage, int maxDamage, float critChance)
 	damageStats.critChance = critChance;
 }
 
-void Player::takeItem(Item* item)
+void Player::takeItem(shared_ptr<Item> item)
 {
 	inventory.addItem(item);
 
 	cout << item->getName() << " has been added to your inventory." << endl;
 }
 
-void Player::removeItem(Item* item)
+void Player::removeItem(shared_ptr<Item> item)
 {
 	inventory.removeItem(item);
 
 	cout << item->getName() << " has been removed from your inventory." << endl;
 }
 
-vector<Key*> Player::findKeys(Door* door)
+vector<shared_ptr<Key>> Player::findKeys(shared_ptr<Door> door)
 {
-	vector<Key*> keys;
+	vector<shared_ptr<Key>> keys;
 
 	for(int i = 0; i < inventory.numItems(); i++)
 	{
-		Key* curKey = dynamic_cast<Key*>(inventory[i]);
+		shared_ptr<Key> curKey = dynamic_pointer_cast<Key>(inventory[i]);
 
 		if (curKey != nullptr && curKey->getDoor() == door)
 		{

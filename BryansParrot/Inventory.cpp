@@ -5,19 +5,12 @@
 
 using namespace std;
 
-Inventory::~Inventory()
-{
-	for (Item* item : items)
-		delete item;
-	items.clear();
-}
-
-void Inventory::addItem(Item* item)
+void Inventory::addItem(shared_ptr<Item> item)
 {
 	items.push_back(item);
 }
 
-void Inventory::removeItem(Item* item)
+void Inventory::removeItem(shared_ptr<Item> item)
 {
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -40,7 +33,7 @@ void Inventory::display() const
 	}
 }
 
-Item* Inventory::operator[](int i)
+shared_ptr<Item> Inventory::operator[](int i)
 {
 	return items[i];
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <memory>
 
 #include "Game.h"
 #include "Door.h"
@@ -20,22 +21,14 @@ const map<string, Game::Interaction> Game::actions = {
 	{"inventory", Interaction::INVENTORY},
 	{"take", Interaction::TAKE},
 	{"grab", Interaction::TAKE},
-	{"open door", Interaction::OPEN_DOOR},
-	{"unlock door", Interaction::UNLOCK_DOOR},
-	{"move back", Interaction::MOVE_BACK},
+	{"open", Interaction::OPEN},
+	{"unlock", Interaction::UNLOCK},
 	{"l", Interaction::LOOK},
 	{"look", Interaction::LOOK},
 	{"attack", Interaction::ATTACK},
 	{"c", Interaction::CHARACTER},
 	{"character", Interaction::CHARACTER}
 };
-
-Game::~Game()
-{
-	for (Room* room : allRooms)
-		delete room;
-	allRooms.clear();
-}
 
 void Game::start()
 {
@@ -61,37 +54,38 @@ void Game::initializeGame()
 {
 	srand(time(NULL));
 
-	allRooms = { 
-		new Room(), 
-		new Room(), 
-		new Room() 
-	};
-
-	Room* firstRoom = allRooms[0];
-	Room* secondRoom = allRooms[1];
-	Room* thirdRoom = allRooms[2];
-
-	Door* door1 = new Door(secondRoom);
-	Door* door2 = new Door(thirdRoom, 2);
-	Door* door3 = new Door(firstRoom);
-
 	player = Player();
 	gameState = GameState::PLAY;
 
-	Enemy* goblin = new Enemy("Goblin", 100, 5, 10, 0.1f);
-	goblin->addDrop(new Key(door2));
+	allRooms = {
+		Room(),
+		Room(),
+		Room()
+	};
+
+	Room& firstRoom = allRooms[0];
+	Room& secondRoom = allRooms[1];
+	Room& thirdRoom = allRooms[2];
+
+	shared_ptr<Door> door1(new Door(secondRoom));
+	shared_ptr<Door> door2(new Door(thirdRoom, 2));
+	shared_ptr<Door> door3(new Door(firstRoom));
+
+	Enemy goblin("Goblin", 100, 5, 10, 0.1f);
+
+	goblin.addDrop(shared_ptr<Item>(new Key(door2)));
 
 	//Room 1: Initialization
-	firstRoom->setDoor(RoomDoorIndex::NORTH_DOOR, door1);
-	firstRoom->addItem(new Key(door2));
+	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door1);
+	firstRoom.addItem(shared_ptr<Item>(new Key(door2)));
 
 	//Room 2: Initialization
-	secondRoom->setDoor(RoomDoorIndex::NORTH_DOOR, door2);
-	secondRoom->setDoor(RoomDoorIndex::SOUTH_DOOR, door3);
-	secondRoom->addEnemy(goblin);
+	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door2);
+	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, door3);
+	secondRoom.addEnemy(goblin);
 
-	currentRoom = firstRoom;
-	winRoom = thirdRoom;
+	currentRoom = &firstRoom;
+	winRoom = &thirdRoom;
 }
 
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
@@ -166,20 +160,48 @@ void Game::promptReplay()
 	}
 }
 
+void Game::openDoor(Room::DoorIndex index)
+{
+	shared_ptr<Door> door = currentRoom->getDoor(index);
+
+	if (door == nullptr)
+		cout << "There is no door in this direction." << endl;
+	else
+	{
+		if (door->isLocked())
+			cout << "This door is locked and can not be opend yet." << endl;
+		else
+		{
+			cout << "You opened the door and went to the next room" << endl;
+			currentRoom = &door->getNextRoom();
+
+			currentRoom->displayContents();
+		}
+	}
+}
+
+Room::DoorIndex Game::getDoorIndex(string doorName)
+{
+	if (Utils::equalsCI(doorName, "north door"))
+		return Room::DoorIndex::NORTH_DOOR;
+	else if (Utils::equalsCI(doorName, "south door"))
+		return Room::DoorIndex::SOUTH_DOOR;
+	else if (Utils::equalsCI(doorName, "east door"))
+		return Room::DoorIndex::EAST_DOOR;
+	else if (Utils::equalsCI(doorName, "west door"))
+		return Room::DoorIndex::WEST_DOOR;
+
+	return Room::DoorIndex::NONE;
+}
+
 //user input turns into action
 void Game::gameInteract()
 {
-	//Obj and Varable creation
 	Interaction input;
-	Room* newRoom;
-	vector<Item*> drops;
-
 	string inputStr = Utils::inputValidator();
-
 	InputCheckerResult inputResult = enumInputChecker(inputStr);
 
 	bool shouldUpdate = true;
-
 	/// Calls different functions for Interaction enums
 	/// QUIT -- exits program
 	/// INVENTORY -- displays uers inventory
@@ -192,18 +214,24 @@ void Game::gameInteract()
 	switch (inputResult.interaction)
 	{
 	case Interaction::QUIT: 
+	{
 		exit(0);
+	}
 	case Interaction::INVENTORY:
+	{
 		player.displayInventory();
 		shouldUpdate = false;
 		break;
+	}
 	case Interaction::CHARACTER:
+	{
 		player.displayStats();
 		shouldUpdate = false;
 		break;
+	}
 	case Interaction::TAKE:
 	{
-		Item* item = currentRoom->takeItem(inputResult.objectName);
+		shared_ptr<Item> item = currentRoom->takeItem(inputResult.objectName);
 
 		if (item == nullptr)
 		{
@@ -218,31 +246,29 @@ void Game::gameInteract()
 
 		break;
 	}
-	case Interaction::OPEN_DOOR:
-		newRoom = currentRoom->openDoor(RoomDoorIndex::NORTH_DOOR);
-		if (newRoom != nullptr)
-		{
-			currentRoom = newRoom;
-			currentRoom->displayContents();
-		}
+	case Interaction::OPEN:
+	{
+		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
+
+		if (index == Room::DoorIndex::NONE)
+			cout << "That is not a valid object to open." << endl;
+		else
+			openDoor(index);
 
 		shouldUpdate = false;
+		break;
+	}
+	case Interaction::UNLOCK:
+	{
+		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
+
+		if (index == Room::DoorIndex::NONE)
+			cout << "That is not a valid object to unlock." << endl;
+		else
+			currentRoom->unlockDoor(index, player);
 
 		break;
-	case Interaction::MOVE_BACK:
-		newRoom = currentRoom->openDoor(RoomDoorIndex::SOUTH_DOOR);
-		if (newRoom != nullptr)
-		{
-			currentRoom = newRoom;
-			currentRoom->displayContents();
-		}
-
-		shouldUpdate = false;
-
-		break;
-	case Interaction::UNLOCK_DOOR:
-		currentRoom->unlockDoor(RoomDoorIndex::NORTH_DOOR, &player);
-		break;
+	}
 	case Interaction::ATTACK:
 	{
 		Character::DamageResult damageResult = player.getDamage();
@@ -258,18 +284,22 @@ void Game::gameInteract()
 		break;
 	}
 	case Interaction::LOOK:
+	{
 		currentRoom->displayContents();
 		shouldUpdate = false;
 		break;
+	}
 	case Interaction::ERROR:
 	default:
+	{
 		cout << "Sorry, that input is not recognized." << endl;
 		shouldUpdate = false;
 		break;
 	}
+	}
 
 	if (shouldUpdate)
-		currentRoom->updateTurn(&player);
+		currentRoom->updateTurn(player);
 
 
 	cout << endl;

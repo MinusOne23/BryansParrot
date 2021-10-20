@@ -15,16 +15,14 @@ using namespace std;
 */
 class Inventory {
 private:
-	vector<Item*> items;
+	vector<shared_ptr<Item>> items;
 
 public:
-	~Inventory();
-
-	void addItem(Item* item);
-	void removeItem(Item* item);
+	void addItem(shared_ptr<Item> item);
+	void removeItem(shared_ptr<Item> item);
 	void display() const;
 
-	Item* operator[] (int i);
+	shared_ptr<Item> operator[] (int i);
 	int numItems();
 };
 #endif // !INVENTORY_H

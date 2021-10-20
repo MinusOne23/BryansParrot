@@ -6,13 +6,13 @@ Key::Key()
 	door = nullptr;
 }
 
-Key::Key(Door* _door)
+Key::Key(shared_ptr<Door> _door)
 {
 	name = "Key";
 	door = _door;
 }
 
-Key::Key(string _name, Door* _door)
+Key::Key(string _name, shared_ptr<Door> _door)
 {
 	name = _name;
 	door = _door;

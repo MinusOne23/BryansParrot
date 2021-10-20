@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Item.h"
 #include "Character.h"
@@ -22,14 +23,13 @@ using namespace std;
 class Enemy : public Character
 {
 public:
-	~Enemy();
 	Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float critChance);
 
-	vector<Item*> removeDrops();
-	void addDrop(Item* item);
+	vector<shared_ptr<Item>> removeDrops();
+	void addDrop(shared_ptr<Item> item);
 
 protected:
-	vector<Item*> drops;
+	vector<shared_ptr<Item>> drops;
 };
 
 #endif // Enemy_H

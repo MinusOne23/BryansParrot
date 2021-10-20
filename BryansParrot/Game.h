@@ -19,16 +19,15 @@ class Game
 private:
 	enum class Interaction
 	{
-		QUIT = 0,
-		INVENTORY = 1,
-		TAKE = 2,
-		OPEN_DOOR = 3,
-		UNLOCK_DOOR = 4,
-		ATTACK = 5,
-		MOVE_BACK = 6,
-		LOOK = 7,
-		CHARACTER = 8,
-		ERROR = 99
+		QUIT,
+		INVENTORY,
+		TAKE,
+		OPEN,
+		UNLOCK,
+		ATTACK,
+		LOOK,
+		CHARACTER,
+		ERROR
 	};
 
 	enum class GameState
@@ -48,11 +47,12 @@ private:
 	static const map<string, Interaction> actions;
 
 	GameState gameState;
-	Room* currentRoom;
-	Room* winRoom;
 	Player player;
 
-	vector<Room*> allRooms;
+	vector<Room> allRooms;
+
+	Room* currentRoom;
+	Room* winRoom;
 
 	void initializeGame();
 	InputCheckerResult enumInputChecker(string inputStr);
@@ -60,9 +60,10 @@ private:
 	void playerWin();
 	void promptReplay();
 
-public:
-	~Game();
+	void openDoor(Room::DoorIndex index);
+	Room::DoorIndex getDoorIndex(string doorName);
 
+public:
 	void start();
 	void gameInteract();
 };

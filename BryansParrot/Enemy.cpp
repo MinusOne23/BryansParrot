@@ -5,12 +5,6 @@
 #include <iostream>
 using namespace std;
 
-Enemy::~Enemy()
-{
-	for (Item* item : drops)
-		delete item;
-}
-
 Enemy::Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float critChance)
 {
 	name = _name;
@@ -21,15 +15,15 @@ Enemy::Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float cr
 	damageStats.critChance = critChance;
 }
 
-vector<Item*> Enemy::removeDrops()
+vector<shared_ptr<Item>> Enemy::removeDrops()
 {
-	vector<Item*> result = drops;
+	vector<shared_ptr<Item>> result = drops;
 	drops.clear();
 
 	return result;
 }
 
-void Enemy::addDrop(Item* item)
+void Enemy::addDrop(shared_ptr<Item> item)
 {
 	drops.push_back(item);
 }

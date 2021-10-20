@@ -24,28 +24,28 @@ void Room::displayContents() const
 }
 
 //adds a new item to items vector
-void Room::addItem(Item* newItem)
+void Room::addItem(shared_ptr<Item> newItem)
 {
 	items.push_back(newItem);
 }
 
 //adds enemy drops to items vector
-void Room::addItems(vector<Item*> newItems)
+void Room::addItems(vector<shared_ptr<Item>> newItems)
 {
 	for (unsigned int i = 0; i < newItems.size(); i++)
 	{
-		items.push_back(newItems[i]);
+		addItem(newItems[i]);
 	}
 }
 
 //creates a new door with a index coresponding to direction
-void Room::setDoor(RoomDoorIndex index, Door* newDoor)
+void Room::setDoor(DoorIndex index, shared_ptr<Door> newDoor)
 {
 	doors[(int)index] = newDoor;
 }
 
 //adds an enemy to the enemies vector
-void Room::addEnemy(Enemy* newEnemy)
+void Room::addEnemy(Enemy newEnemy)
 {
 	enemies.push_back(newEnemy);
 }
@@ -65,8 +65,7 @@ void Room::displayDoors() const
 {
 	for (int i = 0; i < 4; i++)
 	{
-		if (doors[i] != nullptr)
-			displayDoor((RoomDoorIndex)i, doors[i]);
+		displayDoor((DoorIndex)i);
 	}
 }
 
@@ -75,28 +74,33 @@ void Room::displayEnemies() const
 {
 	for (unsigned int i = 0; i < enemies.size(); i++)
 	{
-		cout << "\t - A " << enemies[i]->getName() << "." << endl;
+		cout << "\t - A " << enemies[i].getName() << "." << endl;
 	}
 }
 
 //door index switched to direction
 //displays door with direction and weither or not it has a lock
-void Room::displayDoor(RoomDoorIndex index, Door* door) const
+void Room::displayDoor(DoorIndex index) const
 {
+	shared_ptr<Door> door = doors[(int)index];
+
+	if (door == nullptr)
+		return;
+
 	string direction;
 
 	switch(index)
 	{
-	case RoomDoorIndex::NORTH_DOOR:
+	case DoorIndex::NORTH_DOOR:
 		direction = "North";
 		break;
-	case RoomDoorIndex::SOUTH_DOOR:
+	case DoorIndex::SOUTH_DOOR:
 		direction = "South";
 		break;
-	case RoomDoorIndex::EAST_DOOR:
+	case DoorIndex::EAST_DOOR:
 		direction = "East";
 		break;
-	case RoomDoorIndex::WEST_DOOR:
+	case DoorIndex::WEST_DOOR:
 		direction = "West";
 		break;
 	}
@@ -114,13 +118,13 @@ void Room::displayDoor(RoomDoorIndex index, Door* door) const
 // IF there is a key in the items vector of the room. 
 // Then erase that key from the room and return the key to be added to
 // the players inventory
-Item* Room::takeItem(string objectName)
+shared_ptr<Item> Room::takeItem(string objectName)
 {
 	for (unsigned int i = 0; i < items.size(); i++)
 	{
 		if (Utils::equalsCI(items[i]->getName(), objectName))
 		{
-			Item* item = items[i];
+			shared_ptr<Item> item = items[i];
 			items.erase(items.begin() + i);
 
 			return item;
@@ -130,36 +134,11 @@ Item* Room::takeItem(string objectName)
 	return nullptr;
 }
 
-//If the door is locked then you cant open the door
-//else move the player to the next room
-Room* Room::openDoor(RoomDoorIndex index)
-{
-	int i = (int)index;
-
-	if (doors[i] != nullptr)
-	{
-		if (doors[i]->isLocked())
-		{
-			cout << "This door is locked and can not be opened yet." << endl;
-			return nullptr;
-		}
-		else if(doors[i]->getNextRoom() != nullptr)
-		{
-			cout << "You opened the door and went to the next room" << endl;
-			return doors[i]->getNextRoom();
-		}
-	}
-
-	cout << "There is no door in this direction." << endl;
-
-	return nullptr;
-}
-
 //If the door does not have any locks then you cant unlock door
 //if the door is locked and you have a keys
 //	then you can unlock the one of the locks on the door
 //
-void Room::unlockDoor(RoomDoorIndex index, Player* player)
+void Room::unlockDoor(DoorIndex index, Player& player)
 {
 	if (doors[(int)index] == nullptr)
 	{
@@ -167,7 +146,7 @@ void Room::unlockDoor(RoomDoorIndex index, Player* player)
 		return;
 	}
 
-	Door* door = doors[(int)index];
+	shared_ptr<Door> door = doors[(int)index];
 
 	if (!door->isLocked())
 	{
@@ -175,11 +154,11 @@ void Room::unlockDoor(RoomDoorIndex index, Player* player)
 		return;
 	}
 
-	vector<Key*> keys = player->findKeys(door);
+	vector<shared_ptr<Key>> keys = player.findKeys(door);
 	for (unsigned int i = 0; i < keys.size() && door->isLocked(); i++)
 	{
 		door->unlock();
-		player->removeItem(keys[i]);
+		player.removeItem(keys[i]);
 	}
 
 	if (door->isLocked())
@@ -196,21 +175,21 @@ bool Room::attack(string enemyName, int amt)
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		Enemy* enemy = enemies[i];
+		Enemy& enemy = enemies[i];
 
-		if(Utils::equalsCI(enemy->getName(), enemyName))
+		if(Utils::equalsCI(enemy.getName(), enemyName))
 		{
-			enemy->damage(amt);
-			cout << "You dealt " << amt << " damage to " << enemy->getName() << "." << endl;
+			enemy.damage(amt);
+			cout << "You dealt " << amt << " damage to " << enemy.getName() << "." << endl;
 
-			if (enemy->isDead())
+			if (enemy.isDead())
 			{
 				killEnemy(enemy);
 				enemies.erase(enemies.begin() + i);
 			}
 			else
 			{
-				cout << enemy->getName() << " has " << enemy->getCurrentHealth() << " health left." << endl;
+				cout << enemy.getName() << " has " << enemy.getCurrentHealth() << " health left." << endl;
 			}
 
 			return true;
@@ -221,44 +200,30 @@ bool Room::attack(string enemyName, int amt)
 	return false;
 }
 
-void Room::updateTurn(Player* player)
+void Room::updateTurn(Player& player)
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
 		cout << endl;
 
-		Enemy* enemy = enemies[i];
-		Character::DamageResult damageResult = enemy->getDamage();
+		Enemy& enemy = enemies[i];
+		Character::DamageResult damageResult = enemy.getDamage();
 
 		if (damageResult.critical)
 			cout << "Critical Hit!" << endl;
 
-		cout << enemy->getName() << " hurt you for " << damageResult.damage << " damage!" << endl;
+		cout << enemy.getName() << " hurt you for " << damageResult.damage << " damage!" << endl;
 
-		player->damage(damageResult.damage);
+		player.damage(damageResult.damage);
 
-		cout << "You have " << player->getCurrentHealth() << " health left." << endl;
+		cout << "You have " << player.getCurrentHealth() << " health left." << endl;
 	}
 }
 
-Room::~Room()
+void Room::killEnemy(Enemy& enemy)
 {
-	for (Door* door : doors)
-		delete door;
-
-	for (Item* item : items)
-		delete item;
-	items.clear();
-
-	for (Enemy* enemy : enemies)
-		delete enemy;
-	enemies.clear();
-}
-
-void Room::killEnemy(Enemy* enemy)
-{
-	cout << enemy->getName() << " died!" << endl;
-	vector<Item*> drops = enemy->removeDrops();
+	cout << enemy.getName() << " died!" << endl;
+	vector<shared_ptr<Item>> drops = enemy.removeDrops();
 
 	if (drops.size() > 0)
 	{
@@ -275,6 +240,4 @@ void Room::killEnemy(Enemy* enemy)
 
 		addItems(drops);
 	}
-
-	delete enemy;
 }
