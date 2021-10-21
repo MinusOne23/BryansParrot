@@ -12,7 +12,7 @@
 
 using namespace std;
 
-const string VERSION = "1.2.1";
+const string VERSION = "1.2.3";
 
 const int Game::MAX_ACTION_WORDS = 2;
 
@@ -62,6 +62,7 @@ void Game::initializeGame()
 	allRooms = {
 		Room(),
 		Room(),
+		Room(),
 		Room()
 	};
 
@@ -69,37 +70,47 @@ void Game::initializeGame()
 	Room& firstRoom = allRooms[0];
 	Room& secondRoom = allRooms[1];
 	Room& thirdRoom = allRooms[2];
+	Room& forthRoom = allRooms[3];
 
 	//create new doors that will be added to doors vector
-	shared_ptr<Door> door1(new Door(secondRoom));
-	shared_ptr<Door> door2(new Door(thirdRoom, 2));
-	shared_ptr<Door> door3(new Door(firstRoom));
+	shared_ptr<Door> firstNorthDoor(new Door(secondRoom));
+	shared_ptr<Door> secondNorthDoor(new Door(thirdRoom, 2));
+	shared_ptr<Door> secondSouthDoor(new Door(firstRoom));
+	shared_ptr<Door> thirdNorthDoor(new Door(forthRoom));
+	shared_ptr<Door> thirdSouthDoor(new Door(secondRoom));
 
 	//create new items that will be added to Inventory
-	shared_ptr<Item> smallPotion(new Potion(50));
+	Potion sPotion("Small Potion", 25);
+	Potion mPotion("Medium Potion", 50);
+	Potion lPotion("Large Potion", 100);
 
 	//Create new Enemy that will be added to a room
 	Enemy goblin("Goblin", 100, 5, 10, 0.1f);
 
 	//Add drops to specific Enemy Object 
-	goblin.addDrop(shared_ptr<Item>(new Key(door2)));
+	goblin.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
 
 	//Room 1: Initialization
-	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door1);
-	firstRoom.addItem(shared_ptr<Item>(new Key(door2)));
-	firstRoom.addItem(shared_ptr<Item>(new Potion(smallPotion)));
+	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
+	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
 
 	//Room 2: Initialization
-	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door2);
-	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, door3);
+	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
+	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, secondSouthDoor);
 	secondRoom.addEnemy(goblin);
+
+	//Room3: Initialization
+	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
+	thirdRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, thirdSouthDoor);
+	thirdRoom.addItem(make_shared<Item>(sPotion)); // make_shared: makes smart prt with contents of sPotion
+
 
 
 	//Current Room player is in. Will change when player enters new room
 	currentRoom = &firstRoom;
 
 	//When player enters winRoom, game is over
-	winRoom = &thirdRoom;
+	winRoom = &forthRoom;
 }
 
 

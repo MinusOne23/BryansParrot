@@ -1,7 +1,12 @@
 #include "Potion.h"
 
-Potion::Potion(int amount)
+Potion::Potion(string _name, int _potionSize)
 {
-	name = "Small Potion";
-	healthAmount = amount;
+	name = _name;
+	potionSize = _potionSize;
+}
+
+string Potion::getDisplay() const
+{
+	return name;
 }

@@ -3,18 +3,19 @@
 #define POTION_H
 
 #include "Item.h"
-#include "Door.h"
 
-/*
-* 
-*/
 class Potion : public Item
 {
 public:
-	Potion(int amount);
 
-	inline shared_ptr<Item> getPotion() { return potion; }
-	//void usePotion(shared_ptr<item> item);
+	Potion(string name, int amount);
+
+	inline int getPotionSize() { return potionSize; }
+
+	string getDisplay() const;
+
+protected:
+	int potionSize;
 };
 
 #endif // KEY_H

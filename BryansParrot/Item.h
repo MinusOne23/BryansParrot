@@ -18,9 +18,9 @@ using namespace std;
 class Item
 {
 public:
-	inline string getName() const { return name; }
+	inline string getName() const { return name; } // gets name if item
 
-	virtual string getDisplay() const = 0;
+	virtual string getDisplay() const = 0; //displays item in room
 
 protected:
 	string name;
