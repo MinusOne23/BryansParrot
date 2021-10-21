@@ -14,8 +14,10 @@ using namespace std;
 
 const string VERSION = "1.2.3";
 
+//Can only use one command at a time
 const int Game::MAX_ACTION_WORDS = 2;
 
+//Map associating the interactions enum and the user input
 const map<string, Game::Interaction> Game::actions = {
 	{"q", Interaction::QUIT},
 	{"i", Interaction::INVENTORY},
@@ -33,6 +35,7 @@ const map<string, Game::Interaction> Game::actions = {
 	{"character", Interaction::CHARACTER}
 };
 
+/// STARTS THE GAME
 void Game::start()
 {
 	cout << "Bryan's Parrot v" << VERSION << endl << endl;
@@ -53,6 +56,13 @@ void Game::start()
 
 }
 
+/// Creation of the rooms and everything inside the rooms
+/// -Creates 
+///		-Door objects
+///		-key objects
+///		-enemy object
+///		-Potion objects
+/// Initialization of all the rooms
 void Game::initializeGame()
 {
 	srand(time(NULL));
@@ -114,13 +124,11 @@ void Game::initializeGame()
 	winRoom = &forthRoom;
 }
 
-
 /// Converts the player user input to the enum action + object the action is taking on
 /// 
 /// Inputs: User input string 
 /// returns: specific Actions Enum
 /// Returns: Object name
-
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
 	InputCheckerResult result;
@@ -157,8 +165,6 @@ Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 }
 
 /// PlayerDied(): Health reaches 0
-/// PlayerWin(): PLayer enters winRoom
-/// PromptReplay(): game has ended and asks to play again
 void Game::playerDied()
 {
 	gameState = GameState::DIED;
@@ -167,6 +173,7 @@ void Game::playerDied()
 	promptReplay();
 }
 
+/// PlayerWin(): PLayer enters winRoom
 void Game::playerWin()
 {
 	gameState = GameState::WIN;
@@ -175,6 +182,7 @@ void Game::playerWin()
 	promptReplay();
 }
 
+/// PromptReplay(): game has ended and asks to play again
 void Game::promptReplay()
 {
 	cout << "Would you like to play again?" << endl;
@@ -219,7 +227,6 @@ void Game::openDoor(Room::DoorIndex index)
 }
 
 /// Door Index = Door Direction
-///
 Room::DoorIndex Game::getDoorIndex(string doorName)
 {
 	if (Utils::equalsCI(doorName, "north door"))
@@ -235,6 +242,19 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 }
 
 //user input turns into action
+
+
+/// Game Loop: Takes in user input ant turns input into actions
+/// Calls different functions for Interaction enums
+///		QUIT -- exits program
+///		INVENTORY -- displays uers inventory
+///		TAKE -- adds key from room and adds to inventory
+///		USE -- uses the item with its intended purpose
+///		OPEN -- opens current rooms door and moves to next room
+///		DROP -- drops item into current room
+///		UNLOCK -- unlocks any locked door
+///		ATTACK -- kills enemy in room and drops key for player to pick up
+///		LOOK -- displays what is in the room
 void Game::gameInteract()
 {
 	Interaction input;
@@ -242,15 +262,7 @@ void Game::gameInteract()
 	InputCheckerResult inputResult = enumInputChecker(inputStr);
 
 	bool shouldUpdate = true;
-	/// Calls different functions for Interaction enums
-	/// QUIT -- exits program
-	/// INVENTORY -- displays uers inventory
-	/// TAKE_KEY -- adds key from room and adds to inventory
-	/// OPEN_DOOR -- opens current rooms door and moves to next room
-	/// MOVE_BACK -- moves to previous room
-	/// UNLOCK_DOOR -- unlocks any locked door
-	/// KILL_GOBLIN -- kills enemy in room and drops key for player to pick up
-	/// LOOK -- displays what is in the room
+	
 	switch (inputResult.interaction)
 	{
 	case Interaction::QUIT: 
