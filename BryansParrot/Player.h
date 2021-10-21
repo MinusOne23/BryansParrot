@@ -18,6 +18,8 @@ public:
 	Player();
 	Player(int maxHealth, int minDamage, int maxDamage, float critChance);
 	void takeItem(shared_ptr<Item> item);
+	void useItem(string item);
+	shared_ptr<Item> dropItem(string item);
 	void removeItem(shared_ptr<Item> item);
 	vector<shared_ptr<Key>> findKeys(shared_ptr<Door> door);
 	void displayInventory() const;

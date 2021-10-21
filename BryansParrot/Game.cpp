@@ -24,6 +24,7 @@ const map<string, Game::Interaction> Game::actions = {
 	{"grab", Interaction::TAKE},
 	{"use", Interaction::USE},
 	{"open", Interaction::OPEN},
+	{"drop", Interaction::DROP},
 	{"unlock", Interaction::UNLOCK},
 	{"l", Interaction::LOOK},
 	{"look", Interaction::LOOK},
@@ -93,6 +94,7 @@ void Game::initializeGame()
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
 	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
+	firstRoom.addItem(make_shared<Potion>(sPotion));
 
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
@@ -102,7 +104,7 @@ void Game::initializeGame()
 	//Room3: Initialization
 	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
 	thirdRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, thirdSouthDoor);
-	thirdRoom.addItem(make_shared<Item>(sPotion)); // make_shared: makes smart prt with contents of sPotion
+	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
 
 
 
@@ -285,6 +287,11 @@ void Game::gameInteract()
 
 		break;
 	}
+	case Interaction::USE:
+	{
+		player.useItem(inputResult.objectName);
+		break;
+	}
 	case Interaction::OPEN:
 	{
 		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
@@ -295,6 +302,20 @@ void Game::gameInteract()
 			openDoor(index);
 
 		shouldUpdate = false;
+		break;
+	}
+
+	case Interaction::DROP:
+	{
+		shared_ptr<Item>item = player.dropItem(inputResult.objectName);
+		if (item != nullptr)
+		{
+			currentRoom->addItem(item);
+		}
+		else
+		{
+			cout << "Invalid item to drop" << endl;
+		}
 		break;
 	}
 	case Interaction::UNLOCK:

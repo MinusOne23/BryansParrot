@@ -24,6 +24,7 @@ private:
 		TAKE,
 		USE,
 		OPEN,
+		DROP,
 		UNLOCK,
 		ATTACK,
 		LOOK,
