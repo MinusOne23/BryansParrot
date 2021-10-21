@@ -16,11 +16,13 @@ class Player : public Character
 {
 public:
 	Player();
-	Player(int maxHealth, int minDamage, int maxDamage, float critChance);
+	Player(int maxHealth, Weapon _baseWeapon);
+
 	void takeItem(shared_ptr<Item> item);
 	void removeItem(shared_ptr<Item> item);
 	vector<shared_ptr<Key>> findKeys(shared_ptr<Door> door);
 	void displayInventory() const;
+	void equipWeapon(string weaponName);
 private:
 	Inventory inventory;
 };

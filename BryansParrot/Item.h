@@ -23,6 +23,7 @@ public:
 	virtual string getDisplay() const = 0;
 
 protected:
+	Item(string _name) : name(_name) {};
 	string name;
 };
 

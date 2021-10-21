@@ -5,33 +5,27 @@
 #include <string>
 
 #include "Health.h"
+#include "Weapon.h"
 
 using namespace std;
 
 class Character
 {
 protected:
-
-	struct DamageStats
+	struct Equipment
 	{
-		int max;
-		int min;
+		Weapon baseWeapon;
 
-		float critChance;
+		shared_ptr<Weapon> mainWeapon;
 	};
 
 	Health health;
-	DamageStats damageStats;
 	string name;
+	Equipment equipment;
 
 public:
 
-	struct DamageResult
-	{
-		bool critical;
-		int damage;
-	};
-
+	Character(Health _health, string _name, Weapon _baseWeapon);
 
 	int getCurrentHealth() const;
 	int getMaxHealth() const;
@@ -40,8 +34,9 @@ public:
 
 	virtual void damage(int amt);
 	virtual void heal(int amt);
+	virtual void equipWeapon(shared_ptr<Weapon> weapon);
+	virtual Weapon::DamageResult getDamage();
 
-	DamageResult getDamage();
 	void displayStats();
 };
 

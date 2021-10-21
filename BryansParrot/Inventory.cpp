@@ -10,7 +10,7 @@ void Inventory::addItem(shared_ptr<Item> item)
 	items.push_back(item);
 }
 
-void Inventory::removeItem(shared_ptr<Item> item)
+void Inventory::remove(shared_ptr<Item> item)
 {
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -20,6 +20,11 @@ void Inventory::removeItem(shared_ptr<Item> item)
 			return;
 		}
 	}
+}
+
+void Inventory::remove(int index)
+{
+	items.erase(items.begin() + index);
 }
 
 void Inventory::display() const 

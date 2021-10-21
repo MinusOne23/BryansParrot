@@ -38,7 +38,7 @@ public:
 
 	shared_ptr<Item> takeItem(string objectName);
 	void unlockDoor(DoorIndex index, Player& player);
-	bool attack(string enemyName, int amt);
+	bool attack(string enemyName, int amt, bool critical);
 
 	inline shared_ptr<Door> getDoor(DoorIndex index) { return doors[(int)index]; }
 

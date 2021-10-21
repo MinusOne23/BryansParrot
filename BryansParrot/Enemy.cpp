@@ -5,15 +5,8 @@
 #include <iostream>
 using namespace std;
 
-Enemy::Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float critChance)
-{
-	name = _name;
-	health = Health(maxHealth);
-
-	damageStats.min = minDamage;
-	damageStats.max = maxDamage;
-	damageStats.critChance = critChance;
-}
+Enemy::Enemy(string _name, int maxHealth, Weapon _baseWeapon)
+	: Character{ Health(maxHealth), _name, _baseWeapon } {}
 
 vector<shared_ptr<Item>> Enemy::removeDrops()
 {
