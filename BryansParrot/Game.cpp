@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Room.h"
 #include "Utils.h"
+#include "Potion.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ const map<string, Game::Interaction> Game::actions = {
 	{"inventory", Interaction::INVENTORY},
 	{"take", Interaction::TAKE},
 	{"grab", Interaction::TAKE},
+	{"use", Interaction::USE},
 	{"open", Interaction::OPEN},
 	{"unlock", Interaction::UNLOCK},
 	{"l", Interaction::LOOK},
@@ -63,30 +65,49 @@ void Game::initializeGame()
 		Room()
 	};
 
+	//Create room object that will set it to array of all all rooms
 	Room& firstRoom = allRooms[0];
 	Room& secondRoom = allRooms[1];
 	Room& thirdRoom = allRooms[2];
 
+	//create new doors that will be added to doors vector
 	shared_ptr<Door> door1(new Door(secondRoom));
 	shared_ptr<Door> door2(new Door(thirdRoom, 2));
 	shared_ptr<Door> door3(new Door(firstRoom));
 
+	//create new items that will be added to Inventory
+	shared_ptr<Item> smallPotion(new Potion(50));
+
+	//Create new Enemy that will be added to a room
 	Enemy goblin("Goblin", 100, 5, 10, 0.1f);
 
+	//Add drops to specific Enemy Object 
 	goblin.addDrop(shared_ptr<Item>(new Key(door2)));
 
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door1);
 	firstRoom.addItem(shared_ptr<Item>(new Key(door2)));
+	firstRoom.addItem(shared_ptr<Item>(new Potion(smallPotion)));
 
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door2);
 	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, door3);
 	secondRoom.addEnemy(goblin);
 
+
+	//Current Room player is in. Will change when player enters new room
 	currentRoom = &firstRoom;
+
+	//When player enters winRoom, game is over
 	winRoom = &thirdRoom;
 }
+
+
+/// Converts the player user input to the enum action + object the action is taking on
+/// 
+/// Inputs: User input string 
+/// returns: specific Actions Enum
+/// Returns: Object name
 
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
@@ -123,6 +144,9 @@ Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 	return result;
 }
 
+/// PlayerDied(): Health reaches 0
+/// PlayerWin(): PLayer enters winRoom
+/// PromptReplay(): game has ended and asks to play again
 void Game::playerDied()
 {
 	gameState = GameState::DIED;
@@ -160,6 +184,8 @@ void Game::promptReplay()
 	}
 }
 
+
+/// Opens door in room specified by direction
 void Game::openDoor(Room::DoorIndex index)
 {
 	shared_ptr<Door> door = currentRoom->getDoor(index);
@@ -180,6 +206,8 @@ void Game::openDoor(Room::DoorIndex index)
 	}
 }
 
+/// Door Index = Door Direction
+///
 Room::DoorIndex Game::getDoorIndex(string doorName)
 {
 	if (Utils::equalsCI(doorName, "north door"))

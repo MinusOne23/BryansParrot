@@ -22,6 +22,7 @@ private:
 		QUIT,
 		INVENTORY,
 		TAKE,
+		USE,
 		OPEN,
 		UNLOCK,
 		ATTACK,
