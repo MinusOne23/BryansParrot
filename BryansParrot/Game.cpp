@@ -94,7 +94,6 @@ void Game::initializeGame()
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
 	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
-	firstRoom.addItem(make_shared<Potion>(sPotion));
 
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
