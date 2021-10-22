@@ -30,7 +30,7 @@ void Character::equipWeapon(shared_ptr<Weapon> weapon)
 	equipment.mainWeapon = weapon;
 }
 
-Weapon::DamageResult Character::getDamage()
+Weapon::DamageResult Character::getDamage() const
 {
 	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.getDamage()) : (equipment.mainWeapon->getDamage());
 }
@@ -53,7 +53,10 @@ bool Character::isDead() const
 void Character::displayStats()
 {
 	Weapon mainWeapon = equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
-	Weapon::Stats mainStats = mainWeapon.getStats();
+
+	Weapon::Damage base = mainWeapon.getBaseDamage();
+	float critChance = mainWeapon.getCritChance();
+	Weapon::Damage critDamage = mainWeapon.getCritDamage();
 
 	cout << "\t===========================================\n";
 	cout << "\t " << name << " Stats:" << endl;
@@ -61,8 +64,8 @@ void Character::displayStats()
 	cout << "\t Health: " << health.getCurrentHealth() << " / " << health.getMaxHealth() << endl;
 	cout << "\t Equipment: " << endl;
 	cout << "\t    MainWeapon: " << mainWeapon.getName() << endl;
-	cout << "\t       Base Damage: " << mainStats.base.min << "-" << mainStats.base.max << endl;
-	cout << "\t       Crit Chance: " << fixed << setprecision(2) << mainStats.critChance * 100 << "%" << endl;
-	cout << "\t       Crit Damage: " << mainStats.critDamage.min << "-" << mainStats.critDamage.max << endl;
+	cout << "\t       Base Damage: " << base.min << "-" << base.max << endl;
+	cout << "\t       Crit Chance: " << fixed << setprecision(2) << critChance * 100 << "%" << endl;
+	cout << "\t       Crit Damage: " << critDamage.min << "-" << critDamage.max << endl;
 	cout << "\t===========================================\n";
 }
