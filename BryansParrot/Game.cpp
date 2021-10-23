@@ -12,7 +12,7 @@
 
 using namespace std;
 
-const string VERSION = "1.2.3";
+const string VERSION = "1.2.3.1";
 
 ///HOW TO CREATE A NEW ITEM:
 /// 1) CREATE A NEW  HEADER/CPP FILE FOR THAT ITEM. EX: 

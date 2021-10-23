@@ -33,4 +33,8 @@ void Health::removeHealth(int amt)
 void Health::addHealth(int amt)
 {
 	currentHealth += amt;
+	if (currentHealth > maxHealth)
+	{
+		currentHealth = maxHealth;
+	}
 }
