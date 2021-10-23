@@ -8,6 +8,23 @@
 
 using namespace std;
 
+///PLAYER CONSTRUCTOR
+///		-Default
+///PLAYER OVERLOADED CONSTRCTOR
+///		-Changes max health, max damage, min damage, and crit chance
+///TAKE ITEM:
+///		-Input: Specific Item obj Name
+///		-Adds that item to the inventory
+///	USE ITEM:
+///		-Input item string name
+///		-If item is a potion then add potion amount to health
+/// DROP ITEM:
+///		-removes item from players inventory and adds to current room
+/// FIND KEYS:
+///		-Adds a key to the key vector 
+/// DISPLAY INVENTORY
+///		-Displays all individual item from Items vector 
+
 // Stats for the player constructor
 Player::Player()
 {
@@ -73,15 +90,12 @@ shared_ptr<Item> Player::dropItem(string item)
 	return nullptr;
 }
 
-
-
 void Player::removeItem(shared_ptr<Item> item)
 {
 	inventory.removeItem(item);
 
 	cout << item->getName() << " has been removed from your inventory." << endl;
 }
-
 
 vector<shared_ptr<Key>> Player::findKeys(shared_ptr<Door> door)
 {
@@ -100,7 +114,7 @@ vector<shared_ptr<Key>> Player::findKeys(shared_ptr<Door> door)
 	return keys;
 }
 
-
+//Displays only the items that the player has in his inventory
 void Player::displayInventory() const
 {
 	cout << "\t===========================================\n";

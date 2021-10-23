@@ -12,6 +12,11 @@
 
 using namespace std;
 
+/// PLAYER CLASS
+/// 
+/// -defines player stats
+///	-interacts with items from the current room
+/// 
 class Player : public Character 
 {
 public:
