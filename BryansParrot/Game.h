@@ -14,6 +14,20 @@
 
 using namespace std;
 
+/// GAME CLASS
+/// -DEFINES ACTION ENUMS
+/// -Used to interact with all rooms
+/// -Game loops untill player dies or enters the winning room
+/// 
+/// INITIALIZE_GAME: Creates all rooms filled with items and enemies
+/// ENUM_INPUT_CHECKER: Converst uiser input into an action
+/// PLAYER_DIED: PLayer health reaches 0 - ends game
+/// PLAYER_WIN: PLayer enters winning room - ends game
+/// PROMPT_REPLAY: Game is over and asks to play game again
+/// OPEN_DOOR: Player enters new room
+/// START: Starts game and checks untill PLayer dies or player wins
+/// GAME_INTERACT: Game loops and performs actions
+
 class Game
 {
 private:

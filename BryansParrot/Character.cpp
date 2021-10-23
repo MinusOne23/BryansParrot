@@ -7,6 +7,17 @@
 
 using namespace std;
 
+/// CHARACTER CLASS FUNCTIONS
+/// 
+/// GET_NAME: Returns character name
+/// DAMAGE: Lowers players heath
+/// HEAL: Adds to players health
+/// GET_CURRENT_HEALTH: Returns players current health
+/// GET_MAX_HEALTH: Returns max health possible
+/// IS_DEAD: Player health reaches 0
+/// GET_DAMAGE: Adds up damage health and returns
+/// DISPLAY_STATS: Displays Current/Max Health, min/max damage, and Crit chance percentage
+
 string Character::getName() const
 {
 	return name;
