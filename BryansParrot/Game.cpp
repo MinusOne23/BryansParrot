@@ -14,6 +14,20 @@ using namespace std;
 
 const string VERSION = "1.2.3";
 
+///HOW TO CREATE A NEW ITEM:
+/// 1) CREATE A NEW  HEADER/CPP FILE FOR THAT ITEM. EX: 
+///		Potion.H and Potion.cpp
+///	class Potion : public Item
+/// {
+/// publuc:
+///		Potion(string name, int potionsize) <-Constructor 
+///		
+///		string getDisplay() const; <- returns name of item
+/// private:
+///		any variables created should be privated
+/// }
+
+
 //Can only use one command at a time
 const int Game::MAX_ACTION_WORDS = 2;
 
@@ -35,7 +49,12 @@ const map<string, Game::Interaction> Game::actions = {
 	{"character", Interaction::CHARACTER}
 };
 
-/// STARTS THE GAME
+/// STARTS THE GAME:
+/// Game will continue untill:
+///		-Player is Dead
+///		or
+///		-Player enters winning room
+/// 
 void Game::start()
 {
 	cout << "Bryan's Parrot v" << VERSION << endl << endl;
@@ -56,13 +75,35 @@ void Game::start()
 
 }
 
-/// Creation of the rooms and everything inside the rooms
-/// -Creates 
-///		-Door objects
-///		-key objects
-///		-enemy object
-///		-Potion objects
-/// Initialization of all the rooms
+/// HOW TO CREATE NEW ROOM:
+///		-Add Room() to the allRooms array
+///		- create the new room object linking it to the index of the room you added in addRooms
+///			Room& [ROOMNAME] = allRooms[INDEX]
+/// 
+///	ADDING A DOOR TO A ROOM:
+///		-shared_ptr<Door>DOOR_NAME(new Door(NEXT ROOM, LOCKS AMOUNT)); 
+///			DOOR_NAME: firstNorthDoor
+///			NEXT_ROOM: secondRoom
+///			LOCKS: INT <-If no locks then only have Next Room in ( )
+/// 
+///		-ROOM_OBJ.setDoor(Room::DoorIndex::[CARDNAL_DIRECTION_DOOR, DOOR_NAME_FORM_ABOVE);
+/// 
+/// ADDING ITEMS TO A ROOM:
+///		-create object for item
+///			Potion sPotion
+///		-add item to specific room
+///			ROOM_OBJ.addItem(make_shared<ITEM_CLASS>(OBJ_NAME))
+///				- ITEM_CLASS: Potion
+///				- OBJ_NAME: sPotion
+/// 
+/// ADDING AN ENEMY TO A ROOM:
+///		-create enemy object
+///			Enemy ENEMY_NAME("DETAILED_NAME", INT MAX_HEALTH, INT MIN_DAMAGE, INT MAX_DAMAGE, FLOAT CRITICAL_CHANCE)
+///				EX: Enemy goblin("Goblin", 100, 5, 10, 0.1f);
+///		-add enemy to specific room
+///			ROOM_NAME.addEnemy(ENEMY_OBJ);
+/// 
+/// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
 void Game::initializeGame()
 {
 	srand(time(NULL));
@@ -125,9 +166,8 @@ void Game::initializeGame()
 }
 
 /// Converts the player user input to the enum action + object the action is taking on
-/// 
 /// Inputs: User input string 
-/// returns: specific Actions Enum
+/// Returns: specific Actions Enum
 /// Returns: Object name
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
@@ -206,6 +246,8 @@ void Game::promptReplay()
 
 
 /// Opens door in room specified by direction
+///Input: DOOR DIRECTOM
+///Updates: NEW ROOM
 void Game::openDoor(Room::DoorIndex index)
 {
 	shared_ptr<Door> door = currentRoom->getDoor(index);
@@ -227,6 +269,8 @@ void Game::openDoor(Room::DoorIndex index)
 }
 
 /// Door Index = Door Direction
+///Input: user input Door name
+/// Returns: Specific door direction enum
 Room::DoorIndex Game::getDoorIndex(string doorName)
 {
 	if (Utils::equalsCI(doorName, "north door"))
@@ -240,9 +284,6 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 
 	return Room::DoorIndex::NONE;
 }
-
-//user input turns into action
-
 
 /// Game Loop: Takes in user input ant turns input into actions
 /// Calls different functions for Interaction enums
