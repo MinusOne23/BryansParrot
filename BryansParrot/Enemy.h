@@ -23,7 +23,7 @@ using namespace std;
 class Enemy : public Character
 {
 public:
-	Enemy(string _name, int maxHealth, int minDamage, int maxDamage, float critChance);
+	Enemy(string _name, int maxHealth, Weapon _baseWeapon);
 
 	vector<shared_ptr<Item>> removeDrops();
 	void addDrop(shared_ptr<Item> item);

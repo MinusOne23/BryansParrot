@@ -27,7 +27,8 @@ const map<string, Game::Interaction> Game::actions = {
 	{"look", Interaction::LOOK},
 	{"attack", Interaction::ATTACK},
 	{"c", Interaction::CHARACTER},
-	{"character", Interaction::CHARACTER}
+	{"character", Interaction::CHARACTER},
+	{"equip", Interaction::EQUIP}
 };
 
 void Game::start()
@@ -54,7 +55,11 @@ void Game::initializeGame()
 {
 	srand(time(NULL));
 
-	player = Player();
+	Weapon playerFists("Fists", { 10, 20 }, 0.2f, {20, 30});
+	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
+	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
+
+	player = Player(100, playerFists);
 	gameState = GameState::PLAY;
 
 	allRooms = {
@@ -71,13 +76,14 @@ void Game::initializeGame()
 	shared_ptr<Door> door2(new Door(thirdRoom, 2));
 	shared_ptr<Door> door3(new Door(firstRoom));
 
-	Enemy goblin("Goblin", 100, 5, 10, 0.1f);
+	Enemy goblin("Goblin", 100, goblinFists);
 
 	goblin.addDrop(shared_ptr<Item>(new Key(door2)));
 
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door1);
 	firstRoom.addItem(shared_ptr<Item>(new Key(door2)));
+	firstRoom.addItem(make_shared<Weapon>(ironSword));
 
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door2);
@@ -223,6 +229,12 @@ void Game::gameInteract()
 		shouldUpdate = false;
 		break;
 	}
+	case Interaction::EQUIP:
+	{
+		player.equipWeapon(inputResult.objectName);
+		shouldUpdate = false;
+		break;
+	}
 	case Interaction::CHARACTER:
 	{
 		player.displayStats();
@@ -271,12 +283,9 @@ void Game::gameInteract()
 	}
 	case Interaction::ATTACK:
 	{
-		Character::DamageResult damageResult = player.getDamage();
+		Weapon::DamageResult damageResult = player.getDamage();
 
-		if (damageResult.critical)
-			cout << "Critical hit!" << endl;
-
-		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage);
+		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage, damageResult.critical);
 
 		if (!foundEnemy)
 			shouldUpdate = false;

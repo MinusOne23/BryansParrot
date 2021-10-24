@@ -27,6 +27,7 @@ private:
 		ATTACK,
 		LOOK,
 		CHARACTER,
+		EQUIP,
 		ERROR
 	};
 

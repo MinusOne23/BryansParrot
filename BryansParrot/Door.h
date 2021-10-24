@@ -13,11 +13,13 @@ class Room;
 * Door class for players to be able to move from room
 * to room
 * 
-* numLocks -- total number of locks on the door
-* locksLeft -- number of locked locks left on the door
-* otherRoom -- the other room that this door leads to
+* methods:
+*	unlock() - unlocks a single lock on the door
 * 
-* unlock() -- unlocks a single lock on the door
+* member variables:
+*	numLocks - total number of locks on the door
+*	locksLeft - number of locked locks left on the door
+*	otherRoom - the other room that this door leads to
 */
 class Door
 {

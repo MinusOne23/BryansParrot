@@ -7,6 +7,9 @@
 
 using namespace std;
 
+Character::Character(Health _health, string _name, Weapon _baseWeapon)
+	: health(_health), name(_name), equipment{_baseWeapon} {}
+
 string Character::getName() const
 {
 	return name;
@@ -20,6 +23,16 @@ void Character::damage(int amt)
 void Character::heal(int amt)
 {
 	health.addHealth(amt);
+}
+
+void Character::equipWeapon(shared_ptr<Weapon> weapon)
+{
+	equipment.mainWeapon = weapon;
+}
+
+Weapon::DamageResult Character::getDamage() const
+{
+	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.getDamage()) : (equipment.mainWeapon->getDamage());
 }
 
 int Character::getCurrentHealth() const
@@ -37,29 +50,22 @@ bool Character::isDead() const
 	return health.getCurrentHealth() <= 0;
 }
 
-Character::DamageResult Character::getDamage()
-{
-	DamageResult result;
-
-	int critNum = rand() % 1000;
-
-	result.critical = critNum <= 1000 * damageStats.critChance;
-
-	result.damage = rand() % (damageStats.max - damageStats.min + 1) + damageStats.min;
-
-	if (result.critical)
-		result.damage *= 2;
-
-	return result;
-}
-
 void Character::displayStats()
 {
+	Weapon mainWeapon = equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
+
+	Weapon::Damage base = mainWeapon.getBaseDamage();
+	float critChance = mainWeapon.getCritChance();
+	Weapon::Damage critDamage = mainWeapon.getCritDamage();
+
 	cout << "\t===========================================\n";
 	cout << "\t " << name << " Stats:" << endl;
 	cout << "\t-------------------------------------------\n";
 	cout << "\t Health: " << health.getCurrentHealth() << " / " << health.getMaxHealth() << endl;
-	cout << "\t Damage: " << damageStats.min << "-" << damageStats.max << endl;
-	cout << "\t Critical Chance: " << fixed << setprecision(2) << damageStats.critChance * 100 << "%" << endl;
+	cout << "\t Equipment: " << endl;
+	cout << "\t    MainWeapon: " << mainWeapon.getName() << endl;
+	cout << "\t       Base Damage: " << base.min << "-" << base.max << endl;
+	cout << "\t       Crit Chance: " << fixed << setprecision(2) << critChance * 100 << "%" << endl;
+	cout << "\t       Crit Damage: " << critDamage.min << "-" << critDamage.max << endl;
 	cout << "\t===========================================\n";
 }
