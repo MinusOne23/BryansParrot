@@ -1,12 +1,12 @@
 #include "Door.h"
 #include "Room.h"
 
-Door::Door(Room* nRoom, int locks)
-{
-	nextRoom = nRoom;
-	numLocks = locks;
-	locksLeft = locks;
-}
+/// DOOR CLASS FUNCTIONS
+///		-constructor: connecting next room. number of locks
+///		-IS_LOCKED: returns number of locks
+/// 
+Door::Door(Room& nRoom, int locks) 
+	: nextRoom(nRoom), numLocks(locks), locksLeft(locks) {}
 
 bool Door::isLocked() const
 {

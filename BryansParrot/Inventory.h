@@ -14,11 +14,17 @@ using namespace std;
 * addItem -- Adds the item to the inventory and holds it
 */
 class Inventory {
+private:
+	vector<shared_ptr<Item>> items;
+
 public:
-	void addItem(Item* item);
-	void removeItem(Item* item);
+	void addItem(shared_ptr<Item> item);
+	void remove(shared_ptr<Item> item);
+	void remove(int index);
 	void display() const;
-	vector<Item*> items;
+
+	shared_ptr<Item> operator[] (int i);
+	int numItems();
 };
 #endif // !INVENTORY_H
 

@@ -12,14 +12,6 @@
 
 using namespace std;
 
-enum class RoomDoorIndex
-{
-	NORTH_DOOR = 0,
-	SOUTH_DOOR = 1,
-	EAST_DOOR = 2,
-	WEST_DOOR = 3
-};
-
 /*
 * Room class that stores all the contents of a room
 * 
@@ -29,30 +21,42 @@ enum class RoomDoorIndex
 class Room
 {
 public:
+	enum class DoorIndex
+	{
+		NONE = -1,
+		NORTH_DOOR = 0,
+		SOUTH_DOOR = 1,
+		EAST_DOOR = 2,
+		WEST_DOOR = 3
+	};
+
 	void displayContents() const;
-	void addItem(Item* newItem);
-	void addItems(vector<Item*> newItems);
-	void setDoor(RoomDoorIndex index, Door* newDoor);
-	void addEnemy(Enemy* newEnemy);
+	void addItem(shared_ptr<Item> newItem);
+	void addItems(vector<shared_ptr<Item>> newItems);
+	void setDoor(DoorIndex index, shared_ptr<Door> newDoor);
+	void addEnemy(Enemy newEnemy);
 
-	Key* takeKey();
-	Room* openDoor(RoomDoorIndex index);
-	void unlockDoor(RoomDoorIndex index, Player* player);
-	vector<Item*> killGoblin();
+	shared_ptr<Item> takeItem(string objectName);
+	void unlockDoor(DoorIndex index, Player& player);
+	bool attack(string enemyName, int amt, bool critical);
 
-	inline Door* getDoor(RoomDoorIndex index) { return doors[(int)index]; }
+	inline shared_ptr<Door> getDoor(DoorIndex index) { return doors[(int)index]; }
+
+	void updateTurn(Player& player);
 
 private:
-	Door* doors[4];
+	shared_ptr<Door> doors[4];
 
-	vector<Item*> items;
-	vector<Enemy*> enemies;
+	vector<shared_ptr<Item>> items;
+	vector<Enemy> enemies;
 
-	void displayDoor(RoomDoorIndex index, Door* door) const;
+	void displayDoor(DoorIndex index) const;
 
 	void displayItems() const;
 	void displayDoors() const;
 	void displayEnemies() const;
+
+	void killEnemy(Enemy& enemy);
 };
 
 #endif // ROOM_H

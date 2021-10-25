@@ -15,25 +15,42 @@
 
 using namespace std;
 
+/// GAME CLASS
+/// -DEFINES ACTION ENUMS
+/// -Used to interact with all rooms
+/// -Game loops untill player dies or enters the winning room
+/// 
+/// INITIALIZE_GAME: Creates all rooms filled with items and enemies
+/// ENUM_INPUT_CHECKER: Converst uiser input into an action
+/// PLAYER_DIED: PLayer health reaches 0 - ends game
+/// PLAYER_WIN: PLayer enters winning room - ends game
+/// PROMPT_REPLAY: Game is over and asks to play game again
+/// OPEN_DOOR: Player enters new room
+/// START: Starts game and checks untill PLayer dies or player wins
+/// GAME_INTERACT: Game loops and performs actions
+
 class Game
 {
 private:
 
 	enum class Interaction
 	{
-		QUIT = 0,
-		INVENTORY = 1,
-		TAKE_KEY = 2,
-		OPEN_DOOR = 3,
-		UNLOCK_DOOR = 4,
-		KILL_GOBLIN = 5,
-		MOVE_BACK = 6,
-		LOOK = 7,
-		HELP=8,
-		ERROR = 99
+		QUIT,
+		INVENTORY,
+		TAKE,
+		USE,
+		OPEN,
+		DROP,
+		UNLOCK,
+		ATTACK,
+		LOOK,
+		CHARACTER,
+		EQUIP,
+    HELP,
+		ERROR
 	};
-
-	struct ActionResult
+  
+  struct ActionResult
 	{
 		Interaction interaction;
 		string helpStr;
@@ -42,17 +59,42 @@ private:
 	static const map<string, ActionResult> actions;
 	set<string> actionsUsed;
 
-	Room* currentRoom;
+	enum class GameState
+	{
+		PLAY,
+		WIN,
+		DIED
+	};
+
+	struct InputCheckerResult
+	{
+		Interaction interaction;
+		string objectName;
+	};
+
+	static const int MAX_ACTION_WORDS;
+
+	GameState gameState;
 	Player player;
 
+	vector<Room> allRooms;
+
+	Room* currentRoom;
+	Room* winRoom;
+
+	void initializeGame();
+	InputCheckerResult enumInputChecker(string inputStr);
+	void playerDied();
+	void playerWin();
+	void promptReplay();
+
+	void openDoor(Room::DoorIndex index);
+	Room::DoorIndex getDoorIndex(string doorName);
+
 public:
-	
 	void helperDisplay();
 	void start();
 	void gameInteract();
-	virtual Interaction enumInputChecker(string inputStr);
-
-	
 };
 
 #endif // GAME_H

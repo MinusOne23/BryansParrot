@@ -5,12 +5,18 @@
 #include <iostream>
 using namespace std;
 
-Enemy::Enemy(string _name)
+Enemy::Enemy(string _name, int maxHealth, Weapon _baseWeapon)
+	: Character{ Health(maxHealth), _name, _baseWeapon } {}
+
+vector<shared_ptr<Item>> Enemy::removeDrops()
 {
-	name = _name;
+	vector<shared_ptr<Item>> result = drops;
+	drops.clear();
+
+	return result;
 }
 
-void Enemy::addDrop(Item* item)
+void Enemy::addDrop(shared_ptr<Item> item)
 {
 	drops.push_back(item);
 }

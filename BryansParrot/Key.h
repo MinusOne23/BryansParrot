@@ -15,13 +15,13 @@ class Key : public Item
 {
 public:
 	Key();
-	Key(Door* _door);
-	Key(string _name, Door* _door);
+	Key(shared_ptr<Door> _door);
+	Key(string _name, shared_ptr<Door> _door);
 	string getDisplay() const;
 
-	inline Door* getDoor() { return door; }
+	inline shared_ptr<Door> getDoor() { return door; }
 private:
-	Door* door;
+	shared_ptr<Door> door;
 };
 
 #endif // KEY_H
