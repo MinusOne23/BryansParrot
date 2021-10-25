@@ -7,20 +7,20 @@
 #include "Room.h"
 using namespace std;
 
-const map<string, Game::Interaction> Game::actions = {
-	{"q", Interaction::QUIT},
-	{"i", Interaction::INVENTORY},
-	{"inventory", Interaction::INVENTORY},
-	{"take key", Interaction::TAKE_KEY},
-	{"grab key", Interaction::TAKE_KEY},
-	{"open door", Interaction::OPEN_DOOR},
-	{"unlock door", Interaction::UNLOCK_DOOR},
-	{"kill goblin", Interaction::KILL_GOBLIN},
-	{"move back", Interaction::MOVE_BACK},
-	{"l", Interaction::LOOK},
-	{"look", Interaction::LOOK},
-	{"h", Interaction::HELP},
-	{"help", Interaction::HELP}
+const map<string, Game::ActionResult> Game::actions = {
+	{"q", {Interaction::QUIT, ""}},
+	{"i", {Interaction::INVENTORY, "Displays Inventory"}},
+	{"inventory", {Interaction::INVENTORY, "Displays Inventory"}},
+	{"take key", {Interaction::TAKE_KEY, "Takes the specified item in the room"}},
+	{"grab key", {Interaction::TAKE_KEY, "Takes the specified item in the room"}},
+	{"open door", {Interaction::OPEN_DOOR, "Opens the specified container/door"}},
+	{"unlock door", {Interaction::UNLOCK_DOOR, "unlocks the specified container/door"}},
+	{"kill goblin", {Interaction::KILL_GOBLIN, "Kills goblin in the room"}},
+	{"move back", {Interaction::MOVE_BACK, "Opens the specified container/door"}},
+	{"l", {Interaction::LOOK, "Displays the contents of the room"}},
+	{"look", {Interaction::LOOK, "Displays the contents of the room"}},
+	{"h", {Interaction::HELP, ""}},
+	{"help", {Interaction::HELP, ""}}
 };
 
 
@@ -61,18 +61,10 @@ Game::Interaction Game::enumInputChecker(string inputStr)
 {
 	if (actions.find(inputStr) != actions.end())
 	{
-		return actions.at(inputStr);
+		return actions.at(inputStr).interaction;
 	}
 
 	return Interaction::ERROR;
-}
-
-void Game::addHelper(string input)
-{
-	if (find(helper.begin(), helper.end(), input) == helper.end())
-	{
-		helper.push_back(input);
-	}
 }
 
 void Game::helperDisplay()
@@ -80,9 +72,9 @@ void Game::helperDisplay()
 	cout << "\t===========================================\n";
 	cout << "\t\t\tKnownCommands\n";
 	cout << "\t-------------------------------------------\n";
-	for (unsigned int i = 0; i < helper.size(); i++)
+	for (string act : actionsUsed)
 	{
-		cout << "\t- " << helper[i] << endl;
+		cout << "\t- " << act << ": " << actions.at(act).helpStr << endl;
 	}
 	cout << "\t===========================================\n";
 }
@@ -90,6 +82,8 @@ void Game::helperDisplay()
 void Game::gameInteract()
 {
 	//Obj and Varable creation
+	bool addHelpText = true;
+
 	Interaction input;
 	Room* newRoom;
 	Key* key;
@@ -124,13 +118,9 @@ void Game::gameInteract()
 	case Interaction::QUIT: 
 		exit(0);
 	case Interaction::INVENTORY:
-		addHelper("i: Displays Inventory");
-		addHelper("Inventory: Displays Inventory");
 		player.displayInventory();
 		break;
 	case Interaction::TAKE_KEY:
-		addHelper("take: Take an Item ");
-		addHelper("grab: Take an Item ");
 		key = currentRoom->takeKey();
 
 		if (key != nullptr)
@@ -140,7 +130,6 @@ void Game::gameInteract()
 
 		break;
 	case Interaction::OPEN_DOOR:
-		addHelper("open: Opens unlocked door");
 		newRoom = currentRoom->openDoor(RoomDoorIndex::NORTH_DOOR);
 		if (newRoom != nullptr)
 		{
@@ -150,7 +139,6 @@ void Game::gameInteract()
 
 		break;
 	case Interaction::MOVE_BACK:
-		addHelper("move back: move to previous room");
 		newRoom = currentRoom->openDoor(RoomDoorIndex::SOUTH_DOOR);
 		if (newRoom != nullptr)
 		{
@@ -160,27 +148,28 @@ void Game::gameInteract()
 
 		break;
 	case Interaction::UNLOCK_DOOR:
-		addHelper("unlock: unlocks locked door");
 		currentRoom->unlockDoor(RoomDoorIndex::NORTH_DOOR, &player);
 		break;
 	case Interaction::KILL_GOBLIN:
-		addHelper("kill: kills enemy");
 		drops = currentRoom->killGoblin();
 		currentRoom->addItems(drops);
 		break;
 	case Interaction::LOOK:
-		addHelper("l: displays room");
-		addHelper("look: displays room");
 		currentRoom->displayContents();
 		break;
 	case Interaction::HELP:
 		helperDisplay();
+		addHelpText = false;
 		break;
 	case Interaction::ERROR:
 	default:
+		addHelpText = false;
 		cout << "Sorry, that input is not recognized." << endl;
 		break;
 	}
+
+	if(addHelpText)
+		actionsUsed.insert(inputStr);
 
 	cout << endl;
 };

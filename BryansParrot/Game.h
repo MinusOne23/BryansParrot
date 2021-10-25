@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <set>
 
 #include "Item.h"
 #include "Door.h"
@@ -17,6 +18,7 @@ using namespace std;
 class Game
 {
 private:
+
 	enum class Interaction
 	{
 		QUIT = 0,
@@ -30,15 +32,21 @@ private:
 		HELP=8,
 		ERROR = 99
 	};
-	static const map<string, Interaction> actions;
-	vector<string> helper;
+
+	struct ActionResult
+	{
+		Interaction interaction;
+		string helpStr;
+	};
+
+	static const map<string, ActionResult> actions;
+	set<string> actionsUsed;
 
 	Room* currentRoom;
 	Player player;
 
 public:
 	
-	void addHelper(string);
 	void helperDisplay();
 	void start();
 	void gameInteract();
