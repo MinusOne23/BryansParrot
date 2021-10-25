@@ -16,22 +16,22 @@ const map<string, Game::ActionResult> Game::actions = {
 	{"q", {Interaction::QUIT, ""}},
 	{"i", {Interaction::INVENTORY, "Displays Inventory"}},
 	{"inventory", {Interaction::INVENTORY, "Displays Inventory"}},
-	{"take", {Interaction::TAKE_KEY, "Takes the specified item in the room"}},
-	{"grab", {Interaction::TAKE_KEY, "Takes the specified item in the room"}},
-	{"open", {Interaction::OPEN_DOOR, "Opens the specified container/door"}},
-	{"unlock", {Interaction::UNLOCK_DOOR, "unlocks the specified container/door"}},
+	{"take", {Interaction::TAKE, "Takes the specified item in the room"}},
+	{"grab", {Interaction::TAKE, "Takes the specified item in the room"}},
+	{"open", {Interaction::OPEN, "Opens the specified container/door"}},
+	{"unlock", {Interaction::UNLOCK, "unlocks the specified container/door"}},
 	{"l", {Interaction::LOOK, "Displays the contents of the room"}},
 	{"look", {Interaction::LOOK, "Displays the contents of the room"}},
 	{"h", {Interaction::HELP, ""}},
 	{"help", {Interaction::HELP, ""}},
-  {"use", {Interaction::USE, "Use the specified item from the inventory"}},
+	{"use", {Interaction::USE, "Use the specified item from the inventory"}},
 	{"drop", {Interaction::DROP, "Drop the specified item from the inventory into the room"}},
 	{"attack", {Interaction::ATTACK, "Attack the specified enemy in the room"}},
 	{"c", {Interaction::CHARACTER, "Displays the player stats"}},
 	{"character", {Interaction::CHARACTER, "Displays the player stats"}},
 	{"equip", {Interaction::EQUIP, "Equips the specified piece of equipment from the inventory"}}
 };
-  
+
 const string VERSION = "1.2.3.1";
 const int Game::MAX_ACTION_WORDS = 1;
 
@@ -94,7 +94,7 @@ void Game::initializeGame()
 {
 	srand(time(NULL));
 
-	Weapon playerFists("Fists", { 10, 20 }, 0.2f, {20, 30});
+	Weapon playerFists("Fists", { 10, 20 }, 0.2f, { 20, 30 });
 	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
 	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
 
@@ -185,6 +185,8 @@ Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 					result.objectName += " " + tokens[j];
 				}
 			}
+
+			result.actionStr = Utils::strToLower(actionStr);
 
 			return result;
 		}
@@ -304,10 +306,11 @@ void Game::gameInteract()
 	InputCheckerResult inputResult = enumInputChecker(inputStr);
 
 	bool shouldUpdate = true;
-	
+	bool addHelpText = true;
+
 	switch (inputResult.interaction)
 	{
-	case Interaction::QUIT: 
+	case Interaction::QUIT:
 	{
 		exit(0);
 	}
@@ -337,7 +340,7 @@ void Game::gameInteract()
 		{
 			cout << "This item is not in the room." << endl;
 		}
-		else 
+		else
 		{
 			player.takeItem(item);
 		}
@@ -362,7 +365,7 @@ void Game::gameInteract()
 
 		shouldUpdate = false;
 		break;
-  }
+	}
 	case Interaction::DROP:
 	{
 		shared_ptr<Item>item = player.dropItem(inputResult.objectName);
@@ -386,7 +389,7 @@ void Game::gameInteract()
 			currentRoom->unlockDoor(index, player);
 
 		break;
-  }
+	}
 	case Interaction::ATTACK:
 	{
 		Weapon::DamageResult damageResult = player.getDamage();
@@ -403,16 +406,16 @@ void Game::gameInteract()
 		currentRoom->displayContents();
 		shouldUpdate = false;
 		break;
-  }
+	}
 	case Interaction::HELP:
-  {
+	{
 		helperDisplay();
 		addHelpText = false;
 		break;
-  }
+	}
 	case Interaction::ERROR:
 	default:
-  {
+	{
 		addHelpText = false;
 		cout << "Sorry, that input is not recognized." << endl;
 		shouldUpdate = false;
@@ -424,8 +427,8 @@ void Game::gameInteract()
 		currentRoom->updateTurn(player);
 
 
-	if(addHelpText)
-		actionsUsed.insert(inputStr);
+	if (addHelpText)
+		actionsUsed.insert(inputResult.actionStr);
 
 	cout << endl;
 };

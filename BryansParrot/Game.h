@@ -46,11 +46,11 @@ private:
 		LOOK,
 		CHARACTER,
 		EQUIP,
-    HELP,
+		HELP,
 		ERROR
 	};
-  
-  struct ActionResult
+
+	struct ActionResult
 	{
 		Interaction interaction;
 		string helpStr;
@@ -70,6 +70,7 @@ private:
 	{
 		Interaction interaction;
 		string objectName;
+		string actionStr;
 	};
 
 	static const int MAX_ACTION_WORDS;

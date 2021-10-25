@@ -43,3 +43,9 @@ bool Utils::equalsCI(string a, string b)
 	transform(b.begin(), b.end(), b.begin(), tolower);
 	return a == b;
 }
+
+string Utils::strToLower(string str)
+{
+	transform(str.begin(), str.end(), str.begin(), tolower);
+	return str;
+}
