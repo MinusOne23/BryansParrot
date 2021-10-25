@@ -53,7 +53,7 @@ void Player::useItem(string item)
 			if (potion != nullptr)
 			{
 				heal(potion->getPotionSize());
-				inventory.removeItem(potion);
+				inventory.remove(i);
 				cout << "Your health has been raised by " << potion->getPotionSize() << endl;
 			}
 			return ;
@@ -65,13 +65,13 @@ void Player::useItem(string item)
 
 shared_ptr<Item> Player::dropItem(string item)
 {
-	for (int i = 0;i < inventory.numItems(); i++)
+	for (int i = 0; i < inventory.numItems(); i++)
 	{
 		if (Utils::equalsCI(item, inventory[i]->getName()))
 		{
 			cout << "You dropped " << inventory[i]->getName() << endl;
 			shared_ptr<Item>item = inventory[i];
-			inventory.removeItem(item);
+			inventory.remove(i);
 			return item;
 		}
 	}

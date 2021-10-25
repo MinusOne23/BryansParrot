@@ -32,7 +32,6 @@ protected:
 	Item(string _name) : name(_name) {};
 	string name;
 
-
 };
 
 #endif // ITEM_H
