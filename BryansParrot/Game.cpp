@@ -157,8 +157,7 @@ void Game::initializeGame()
 
 /// Converts the player user input to the enum action + object the action is taking on
 /// Inputs: User input string 
-/// Returns: specific Actions Enum
-/// Returns: Object name
+/// Returns: specific Interactions Enum, target object string, and action string
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
 	InputCheckerResult result;
@@ -292,6 +291,8 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 /// Calls different functions for Interaction enums
 ///		QUIT -- exits program
 ///		INVENTORY -- displays uers inventory
+///		EQUIP -- equips the piece of equipment from the player's inventory
+///		CHARACTER -- displays the player's stats
 ///		TAKE -- adds key from room and adds to inventory
 ///		USE -- uses the item with its intended purpose
 ///		OPEN -- opens current rooms door and moves to next room
@@ -299,6 +300,7 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 ///		UNLOCK -- unlocks any locked door
 ///		ATTACK -- kills enemy in room and drops key for player to pick up
 ///		LOOK -- displays what is in the room
+///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
 	Interaction input;
