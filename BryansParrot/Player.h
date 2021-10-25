@@ -12,6 +12,11 @@
 
 using namespace std;
 
+/// PLAYER CLASS
+/// 
+/// -defines player stats
+///	-interacts with items from the current room
+/// 
 class Player : public Character 
 {
 public:
@@ -19,6 +24,8 @@ public:
 	Player(int maxHealth, Weapon _baseWeapon);
 
 	void takeItem(shared_ptr<Item> item);
+	void useItem(string item);
+	shared_ptr<Item> dropItem(string item);
 	void removeItem(shared_ptr<Item> item);
 	vector<shared_ptr<Key>> findKeys(shared_ptr<Door> door);
 	void displayInventory() const;

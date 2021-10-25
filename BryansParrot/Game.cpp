@@ -8,20 +8,39 @@
 #include "Player.h"
 #include "Room.h"
 #include "Utils.h"
+#include "Potion.h"
 
 using namespace std;
 
-const string VERSION = "1.2.1";
+const string VERSION = "1.2.3.1";
 
+///HOW TO CREATE A NEW ITEM:
+/// 1) CREATE A NEW  HEADER/CPP FILE FOR THAT ITEM. EX: 
+///		Potion.H and Potion.cpp
+///	class Potion : public Item
+/// {
+/// publuc:
+///		Potion(string name, int potionsize) <-Constructor 
+///		
+///		string getDisplay() const; <- returns name of item
+/// private:
+///		any variables created should be privated
+/// }
+
+
+//Can only use one command at a time
 const int Game::MAX_ACTION_WORDS = 2;
 
+//Map associating the interactions enum and the user input
 const map<string, Game::Interaction> Game::actions = {
 	{"q", Interaction::QUIT},
 	{"i", Interaction::INVENTORY},
 	{"inventory", Interaction::INVENTORY},
 	{"take", Interaction::TAKE},
 	{"grab", Interaction::TAKE},
+	{"use", Interaction::USE},
 	{"open", Interaction::OPEN},
+	{"drop", Interaction::DROP},
 	{"unlock", Interaction::UNLOCK},
 	{"l", Interaction::LOOK},
 	{"look", Interaction::LOOK},
@@ -31,6 +50,12 @@ const map<string, Game::Interaction> Game::actions = {
 	{"equip", Interaction::EQUIP}
 };
 
+/// STARTS THE GAME:
+/// Game will continue untill:
+///		-Player is Dead
+///		or
+///		-Player enters winning room
+/// 
 void Game::start()
 {
 	cout << "Bryan's Parrot v" << VERSION << endl << endl;
@@ -51,6 +76,35 @@ void Game::start()
 
 }
 
+/// HOW TO CREATE NEW ROOM:
+///		-Add Room() to the allRooms array
+///		- create the new room object linking it to the index of the room you added in addRooms
+///			Room& [ROOMNAME] = allRooms[INDEX]
+/// 
+///	ADDING A DOOR TO A ROOM:
+///		-shared_ptr<Door>DOOR_NAME(new Door(NEXT ROOM, LOCKS AMOUNT)); 
+///			DOOR_NAME: firstNorthDoor
+///			NEXT_ROOM: secondRoom
+///			LOCKS: INT <-If no locks then only have Next Room in ( )
+/// 
+///		-ROOM_OBJ.setDoor(Room::DoorIndex::[CARDNAL_DIRECTION_DOOR, DOOR_NAME_FORM_ABOVE);
+/// 
+/// ADDING ITEMS TO A ROOM:
+///		-create object for item
+///			Potion sPotion
+///		-add item to specific room
+///			ROOM_OBJ.addItem(make_shared<ITEM_CLASS>(OBJ_NAME))
+///				- ITEM_CLASS: Potion
+///				- OBJ_NAME: sPotion
+/// 
+/// ADDING AN ENEMY TO A ROOM:
+///		-create enemy object
+///			Enemy ENEMY_NAME("DETAILED_NAME", INT MAX_HEALTH, INT MIN_DAMAGE, INT MAX_DAMAGE, FLOAT CRITICAL_CHANCE)
+///				EX: Enemy goblin("Goblin", 100, 5, 10, 0.1f);
+///		-add enemy to specific room
+///			ROOM_NAME.addEnemy(ENEMY_OBJ);
+/// 
+/// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
 void Game::initializeGame()
 {
 	srand(time(NULL));
@@ -65,35 +119,61 @@ void Game::initializeGame()
 	allRooms = {
 		Room(),
 		Room(),
+		Room(),
 		Room()
 	};
 
+	//Create room object that will set it to array of all all rooms
 	Room& firstRoom = allRooms[0];
 	Room& secondRoom = allRooms[1];
 	Room& thirdRoom = allRooms[2];
+	Room& forthRoom = allRooms[3];
 
-	shared_ptr<Door> door1(new Door(secondRoom));
-	shared_ptr<Door> door2(new Door(thirdRoom, 2));
-	shared_ptr<Door> door3(new Door(firstRoom));
+	//create new doors that will be added to doors vector
+	shared_ptr<Door> firstNorthDoor(new Door(secondRoom));
+	shared_ptr<Door> secondNorthDoor(new Door(thirdRoom, 2));
+	shared_ptr<Door> secondSouthDoor(new Door(firstRoom));
+	shared_ptr<Door> thirdNorthDoor(new Door(forthRoom));
+	shared_ptr<Door> thirdSouthDoor(new Door(secondRoom));
+
+	//create new items that will be added to Inventory
+	Potion sPotion("Small Potion", 25);
+	Potion mPotion("Medium Potion", 50);
+	Potion lPotion("Large Potion", 100);
 
 	Enemy goblin("Goblin", 100, goblinFists);
 
-	goblin.addDrop(shared_ptr<Item>(new Key(door2)));
+	//Add drops to specific Enemy Object 
+	goblin.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
 
 	//Room 1: Initialization
-	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door1);
-	firstRoom.addItem(shared_ptr<Item>(new Key(door2)));
+	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
+	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
 	firstRoom.addItem(make_shared<Weapon>(ironSword));
 
 	//Room 2: Initialization
-	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, door2);
-	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, door3);
+	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
+	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, secondSouthDoor);
 	secondRoom.addEnemy(goblin);
 
+	//Room3: Initialization
+	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
+	thirdRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, thirdSouthDoor);
+	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
+
+
+
+	//Current Room player is in. Will change when player enters new room
 	currentRoom = &firstRoom;
-	winRoom = &thirdRoom;
+
+	//When player enters winRoom, game is over
+	winRoom = &forthRoom;
 }
 
+/// Converts the player user input to the enum action + object the action is taking on
+/// Inputs: User input string 
+/// Returns: specific Actions Enum
+/// Returns: Object name
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
 	InputCheckerResult result;
@@ -129,6 +209,7 @@ Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 	return result;
 }
 
+/// PlayerDied(): Health reaches 0
 void Game::playerDied()
 {
 	gameState = GameState::DIED;
@@ -137,6 +218,7 @@ void Game::playerDied()
 	promptReplay();
 }
 
+/// PlayerWin(): PLayer enters winRoom
 void Game::playerWin()
 {
 	gameState = GameState::WIN;
@@ -145,6 +227,7 @@ void Game::playerWin()
 	promptReplay();
 }
 
+/// PromptReplay(): game has ended and asks to play again
 void Game::promptReplay()
 {
 	cout << "Would you like to play again?" << endl;
@@ -166,6 +249,10 @@ void Game::promptReplay()
 	}
 }
 
+
+/// Opens door in room specified by direction
+///Input: DOOR DIRECTOM
+///Updates: NEW ROOM
 void Game::openDoor(Room::DoorIndex index)
 {
 	shared_ptr<Door> door = currentRoom->getDoor(index);
@@ -186,6 +273,9 @@ void Game::openDoor(Room::DoorIndex index)
 	}
 }
 
+/// Door Index = Door Direction
+///Input: user input Door name
+/// Returns: Specific door direction enum
 Room::DoorIndex Game::getDoorIndex(string doorName)
 {
 	if (Utils::equalsCI(doorName, "north door"))
@@ -200,7 +290,17 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 	return Room::DoorIndex::NONE;
 }
 
-//user input turns into action
+/// Game Loop: Takes in user input ant turns input into actions
+/// Calls different functions for Interaction enums
+///		QUIT -- exits program
+///		INVENTORY -- displays uers inventory
+///		TAKE -- adds key from room and adds to inventory
+///		USE -- uses the item with its intended purpose
+///		OPEN -- opens current rooms door and moves to next room
+///		DROP -- drops item into current room
+///		UNLOCK -- unlocks any locked door
+///		ATTACK -- kills enemy in room and drops key for player to pick up
+///		LOOK -- displays what is in the room
 void Game::gameInteract()
 {
 	Interaction input;
@@ -208,15 +308,7 @@ void Game::gameInteract()
 	InputCheckerResult inputResult = enumInputChecker(inputStr);
 
 	bool shouldUpdate = true;
-	/// Calls different functions for Interaction enums
-	/// QUIT -- exits program
-	/// INVENTORY -- displays uers inventory
-	/// TAKE_KEY -- adds key from room and adds to inventory
-	/// OPEN_DOOR -- opens current rooms door and moves to next room
-	/// MOVE_BACK -- moves to previous room
-	/// UNLOCK_DOOR -- unlocks any locked door
-	/// KILL_GOBLIN -- kills enemy in room and drops key for player to pick up
-	/// LOOK -- displays what is in the room
+	
 	switch (inputResult.interaction)
 	{
 	case Interaction::QUIT: 
@@ -258,6 +350,11 @@ void Game::gameInteract()
 
 		break;
 	}
+	case Interaction::USE:
+	{
+		player.useItem(inputResult.objectName);
+		break;
+	}
 	case Interaction::OPEN:
 	{
 		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
@@ -268,6 +365,20 @@ void Game::gameInteract()
 			openDoor(index);
 
 		shouldUpdate = false;
+		break;
+	}
+
+	case Interaction::DROP:
+	{
+		shared_ptr<Item>item = player.dropItem(inputResult.objectName);
+		if (item != nullptr)
+		{
+			currentRoom->addItem(item);
+		}
+		else
+		{
+			cout << "Invalid item to drop" << endl;
+		}
 		break;
 	}
 	case Interaction::UNLOCK:
