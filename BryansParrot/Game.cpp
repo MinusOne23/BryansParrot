@@ -46,7 +46,8 @@ const map<string, Game::Interaction> Game::actions = {
 	{"look", Interaction::LOOK},
 	{"attack", Interaction::ATTACK},
 	{"c", Interaction::CHARACTER},
-	{"character", Interaction::CHARACTER}
+	{"character", Interaction::CHARACTER},
+	{"equip", Interaction::EQUIP}
 };
 
 /// STARTS THE GAME:
@@ -108,7 +109,11 @@ void Game::initializeGame()
 {
 	srand(time(NULL));
 
-	player = Player();
+	Weapon playerFists("Fists", { 10, 20 }, 0.2f, {20, 30});
+	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
+	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
+
+	player = Player(100, playerFists);
 	gameState = GameState::PLAY;
 
 	allRooms = {
@@ -136,8 +141,7 @@ void Game::initializeGame()
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
 
-	//Create new Enemy that will be added to a room
-	Enemy goblin("Goblin", 100, 5, 10, 0.1f);
+	Enemy goblin("Goblin", 100, goblinFists);
 
 	//Add drops to specific Enemy Object 
 	goblin.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
@@ -145,6 +149,7 @@ void Game::initializeGame()
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
 	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
+	firstRoom.addItem(make_shared<Weapon>(ironSword));
 
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
@@ -316,6 +321,12 @@ void Game::gameInteract()
 		shouldUpdate = false;
 		break;
 	}
+	case Interaction::EQUIP:
+	{
+		player.equipWeapon(inputResult.objectName);
+		shouldUpdate = false;
+		break;
+	}
 	case Interaction::CHARACTER:
 	{
 		player.displayStats();
@@ -383,12 +394,9 @@ void Game::gameInteract()
 	}
 	case Interaction::ATTACK:
 	{
-		Character::DamageResult damageResult = player.getDamage();
+		Weapon::DamageResult damageResult = player.getDamage();
 
-		if (damageResult.critical)
-			cout << "Critical hit!" << endl;
-
-		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage);
+		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage, damageResult.critical);
 
 		if (!foundEnemy)
 			shouldUpdate = false;

@@ -29,6 +29,7 @@ public:
 	virtual string getDisplay() const = 0; //displays item in room
 
 protected:
+	Item(string _name) : name(_name) {};
 	string name;
 
 

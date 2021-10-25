@@ -27,22 +27,10 @@ using namespace std;
 
 // Stats for the player constructor
 Player::Player()
-{
-	name = "Player";
-	health = Health(100);
-	damageStats.min = 10;
-	damageStats.max = 30;
-	damageStats.critChance = 0.2f;
-}
+	: Character{ Health(100), "Player", Weapon("Fists", {10, 20}, 0.2f, {20,40})} {}
 
-Player::Player(int maxHealth, int minDamage, int maxDamage, float critChance)
-{
-	name = "Player";
-	health = Health(maxHealth);
-	damageStats.min = minDamage;
-	damageStats.max = maxDamage;
-	damageStats.critChance = critChance;
-}
+Player::Player(int maxHealth, Weapon _baseWeapon)
+	: Character{ Health(maxHealth), "Player", _baseWeapon } {}
 
 
 //Takes a Item form the room and adds it into your inventory
@@ -92,7 +80,7 @@ shared_ptr<Item> Player::dropItem(string item)
 
 void Player::removeItem(shared_ptr<Item> item)
 {
-	inventory.removeItem(item);
+	inventory.remove(item);
 
 	cout << item->getName() << " has been removed from your inventory." << endl;
 }
@@ -122,4 +110,23 @@ void Player::displayInventory() const
 	cout << "\t-------------------------------------------\n";
 	inventory.display();
 	cout << "\t===========================================\n";
+}
+
+void Player::equipWeapon(string weaponName)
+{
+	for (int i = 0; i < inventory.numItems(); i++)
+	{
+		shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(inventory[i]);
+
+		if (weapon != nullptr && Utils::equalsCI(weapon->getName(), weaponName))
+		{
+			equipment.mainWeapon = weapon;
+			inventory.remove(i);
+
+			cout << "You equipped " << weapon->getName() << "." << endl;
+			return;
+		}
+	}
+
+	cout << "That equipment is not in your inventory." << endl;
 }

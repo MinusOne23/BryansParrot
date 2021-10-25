@@ -171,7 +171,7 @@ void Room::unlockDoor(DoorIndex index, Player& player)
 	}
 }
 
-bool Room::attack(string enemyName, int amt)
+bool Room::attack(string enemyName, int amt, bool critical)
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
@@ -179,6 +179,9 @@ bool Room::attack(string enemyName, int amt)
 
 		if(Utils::equalsCI(enemy.getName(), enemyName))
 		{
+			if (critical)
+				cout << "Critical Hit!" << endl;
+
 			enemy.damage(amt);
 			cout << "You dealt " << amt << " damage to " << enemy.getName() << "." << endl;
 
@@ -207,7 +210,7 @@ void Room::updateTurn(Player& player)
 		cout << endl;
 
 		Enemy& enemy = enemies[i];
-		Character::DamageResult damageResult = enemy.getDamage();
+		Weapon::DamageResult damageResult = enemy.getDamage();
 
 		if (damageResult.critical)
 			cout << "Critical Hit!" << endl;

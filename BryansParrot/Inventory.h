@@ -19,7 +19,8 @@ private:
 
 public:
 	void addItem(shared_ptr<Item> item);
-	void removeItem(shared_ptr<Item> item);
+	void remove(shared_ptr<Item> item);
+	void remove(int index);
 	void display() const;
 
 	shared_ptr<Item> operator[] (int i);
