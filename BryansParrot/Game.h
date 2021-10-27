@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <set>
 
 #include "Item.h"
 #include "Door.h"
@@ -31,6 +32,7 @@ using namespace std;
 class Game
 {
 private:
+
 	enum class Interaction
 	{
 		QUIT,
@@ -44,8 +46,18 @@ private:
 		LOOK,
 		CHARACTER,
 		EQUIP,
+		HELP,
 		ERROR
 	};
+
+	struct ActionResult
+	{
+		Interaction interaction;
+		string helpStr;
+	};
+
+	static const map<string, ActionResult> actions;
+	set<string> actionsUsed;
 
 	enum class GameState
 	{
@@ -58,10 +70,10 @@ private:
 	{
 		Interaction interaction;
 		string objectName;
+		string actionStr;
 	};
 
 	static const int MAX_ACTION_WORDS;
-	static const map<string, Interaction> actions;
 
 	GameState gameState;
 	Player player;
@@ -81,6 +93,7 @@ private:
 	Room::DoorIndex getDoorIndex(string doorName);
 
 public:
+	void helperDisplay();
 	void start();
 	void gameInteract();
 };

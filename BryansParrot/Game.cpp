@@ -12,43 +12,28 @@
 
 using namespace std;
 
-const string VERSION = "1.2.3.1";
-
-///HOW TO CREATE A NEW ITEM:
-/// 1) CREATE A NEW  HEADER/CPP FILE FOR THAT ITEM. EX: 
-///		Potion.H and Potion.cpp
-///	class Potion : public Item
-/// {
-/// publuc:
-///		Potion(string name, int potionsize) <-Constructor 
-///		
-///		string getDisplay() const; <- returns name of item
-/// private:
-///		any variables created should be privated
-/// }
-
-
-//Can only use one command at a time
-const int Game::MAX_ACTION_WORDS = 2;
-
-//Map associating the interactions enum and the user input
-const map<string, Game::Interaction> Game::actions = {
-	{"q", Interaction::QUIT},
-	{"i", Interaction::INVENTORY},
-	{"inventory", Interaction::INVENTORY},
-	{"take", Interaction::TAKE},
-	{"grab", Interaction::TAKE},
-	{"use", Interaction::USE},
-	{"open", Interaction::OPEN},
-	{"drop", Interaction::DROP},
-	{"unlock", Interaction::UNLOCK},
-	{"l", Interaction::LOOK},
-	{"look", Interaction::LOOK},
-	{"attack", Interaction::ATTACK},
-	{"c", Interaction::CHARACTER},
-	{"character", Interaction::CHARACTER},
-	{"equip", Interaction::EQUIP}
+const map<string, Game::ActionResult> Game::actions = {
+	{"q", {Interaction::QUIT, ""}},
+	{"i", {Interaction::INVENTORY, "Displays Inventory"}},
+	{"inventory", {Interaction::INVENTORY, "Displays Inventory"}},
+	{"take", {Interaction::TAKE, "Takes the specified item in the room"}},
+	{"grab", {Interaction::TAKE, "Takes the specified item in the room"}},
+	{"open", {Interaction::OPEN, "Opens the specified container/door"}},
+	{"unlock", {Interaction::UNLOCK, "unlocks the specified container/door"}},
+	{"l", {Interaction::LOOK, "Displays the contents of the room"}},
+	{"look", {Interaction::LOOK, "Displays the contents of the room"}},
+	{"h", {Interaction::HELP, ""}},
+	{"help", {Interaction::HELP, ""}},
+	{"use", {Interaction::USE, "Use the specified item from the inventory"}},
+	{"drop", {Interaction::DROP, "Drop the specified item from the inventory into the room"}},
+	{"attack", {Interaction::ATTACK, "Attack the specified enemy in the room"}},
+	{"c", {Interaction::CHARACTER, "Displays the player stats"}},
+	{"character", {Interaction::CHARACTER, "Displays the player stats"}},
+	{"equip", {Interaction::EQUIP, "Equips the specified piece of equipment from the inventory"}}
 };
+
+const string VERSION = "1.2.3.1";
+const int Game::MAX_ACTION_WORDS = 1;
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -109,7 +94,7 @@ void Game::initializeGame()
 {
 	srand(time(NULL));
 
-	Weapon playerFists("Fists", { 10, 20 }, 0.2f, {20, 30});
+	Weapon playerFists("Fists", { 10, 20 }, 0.2f, { 20, 30 });
 	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
 	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
 
@@ -172,8 +157,7 @@ void Game::initializeGame()
 
 /// Converts the player user input to the enum action + object the action is taking on
 /// Inputs: User input string 
-/// Returns: specific Actions Enum
-/// Returns: Object name
+/// Returns: specific Interactions Enum, target object string, and action string
 Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 {
 	InputCheckerResult result;
@@ -190,7 +174,7 @@ Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 
 		if (actions.find(actionStr) != actions.end())
 		{
-			result.interaction = actions.at(actionStr);
+			result.interaction = actions.at(actionStr).interaction;
 
 			if (i < tokens.size())
 			{
@@ -200,6 +184,8 @@ Game::InputCheckerResult Game::enumInputChecker(string inputStr)
 					result.objectName += " " + tokens[j];
 				}
 			}
+
+			result.actionStr = Utils::strToLower(actionStr);
 
 			return result;
 		}
@@ -249,6 +235,17 @@ void Game::promptReplay()
 	}
 }
 
+void Game::helperDisplay()
+{
+	cout << "\t===========================================\n";
+	cout << "\t\t\tKnownCommands\n";
+	cout << "\t-------------------------------------------\n";
+	for (string act : actionsUsed)
+	{
+		cout << "\t- " << act << ": " << actions.at(act).helpStr << endl;
+	}
+	cout << "\t===========================================\n";
+}
 
 /// Opens door in room specified by direction
 ///Input: DOOR DIRECTOM
@@ -294,6 +291,8 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 /// Calls different functions for Interaction enums
 ///		QUIT -- exits program
 ///		INVENTORY -- displays uers inventory
+///		EQUIP -- equips the piece of equipment from the player's inventory
+///		CHARACTER -- displays the player's stats
 ///		TAKE -- adds key from room and adds to inventory
 ///		USE -- uses the item with its intended purpose
 ///		OPEN -- opens current rooms door and moves to next room
@@ -301,6 +300,7 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 ///		UNLOCK -- unlocks any locked door
 ///		ATTACK -- kills enemy in room and drops key for player to pick up
 ///		LOOK -- displays what is in the room
+///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
 	Interaction input;
@@ -308,10 +308,11 @@ void Game::gameInteract()
 	InputCheckerResult inputResult = enumInputChecker(inputStr);
 
 	bool shouldUpdate = true;
-	
+	bool addHelpText = true;
+
 	switch (inputResult.interaction)
 	{
-	case Interaction::QUIT: 
+	case Interaction::QUIT:
 	{
 		exit(0);
 	}
@@ -341,7 +342,7 @@ void Game::gameInteract()
 		{
 			cout << "This item is not in the room." << endl;
 		}
-		else 
+		else
 		{
 			player.takeItem(item);
 		}
@@ -367,7 +368,6 @@ void Game::gameInteract()
 		shouldUpdate = false;
 		break;
 	}
-
 	case Interaction::DROP:
 	{
 		shared_ptr<Item>item = player.dropItem(inputResult.objectName);
@@ -409,9 +409,16 @@ void Game::gameInteract()
 		shouldUpdate = false;
 		break;
 	}
+	case Interaction::HELP:
+	{
+		helperDisplay();
+		addHelpText = false;
+		break;
+	}
 	case Interaction::ERROR:
 	default:
 	{
+		addHelpText = false;
 		cout << "Sorry, that input is not recognized." << endl;
 		shouldUpdate = false;
 		break;
@@ -421,6 +428,9 @@ void Game::gameInteract()
 	if (shouldUpdate)
 		currentRoom->updateTurn(player);
 
+
+	if (addHelpText)
+		actionsUsed.insert(inputResult.actionStr);
 
 	cout << endl;
 };

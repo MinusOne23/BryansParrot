@@ -13,6 +13,7 @@ public:
 	static vector<string> tokenize(string str);
 	static string inputValidator();
 	static bool equalsCI(string a, string b);
+	static string strToLower(string str);
 
 private:
 	Utils();
