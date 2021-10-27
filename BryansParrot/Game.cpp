@@ -32,7 +32,7 @@ const map<string, Game::ActionResult> Game::actions = {
 	{"equip", {Interaction::EQUIP, "Equips the specified piece of equipment from the inventory"}}
 };
 
-const string VERSION = "1.2.3.1";
+const string VERSION = "1.3.0";
 const int Game::MAX_ACTION_WORDS = 1;
 
 /// STARTS THE GAME:
