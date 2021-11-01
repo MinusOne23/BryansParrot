@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "EnemyEncounter.h"
 #include "Room.h"
 #include "Key.h"
 #include "Enemy.h"
@@ -45,9 +46,14 @@ void Room::setDoor(DoorIndex index, shared_ptr<Door> newDoor)
 }
 
 //adds an enemy to the enemies vector
-void Room::addEnemy(Enemy newEnemy)
+void Room::addEnemy(Enemy newEnemy, int waveIndex)
 {
 	enemies.push_back(newEnemy);
+	
+	while (waves.size() <= waveIndex)
+		waves.push_back(vector<Enemy*>());
+
+	waves[waveIndex].push_back(&enemies[enemies.size() - 1]);
 }
 
 //Displays all items in Items vector
@@ -221,6 +227,28 @@ void Room::updateTurn(Player& player)
 
 		cout << "You have " << player.getCurrentHealth() << " health left." << endl;
 	}
+}
+
+EnemyEncounter::EncounterResult Room::startEncounter(Player& player)
+{
+	if (waves.size() == 0)
+		return EnemyEncounter::EncounterResult::NONE;
+
+	while (waves.size() > 0)
+	{
+		EnemyEncounter encounter(player, waves[0]);
+
+		EnemyEncounter::EncounterResult result = encounter.begin();
+
+		if (result == EnemyEncounter::EncounterResult::WIN)
+			waves.erase(waves.begin());
+		else
+			return result;
+	}
+
+	enemies.clear();
+
+	return EnemyEncounter::EncounterResult::WIN;
 }
 
 void Room::killEnemy(Enemy& enemy)

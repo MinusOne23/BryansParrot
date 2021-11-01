@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include "EnemyEncounter.h"
 #include "Item.h"
 #include "Door.h"
 #include "Player.h"
@@ -34,7 +35,7 @@ public:
 	void addItem(shared_ptr<Item> newItem);
 	void addItems(vector<shared_ptr<Item>> newItems);
 	void setDoor(DoorIndex index, shared_ptr<Door> newDoor);
-	void addEnemy(Enemy newEnemy);
+	void addEnemy(Enemy newEnemy, int waveIndex = 0);
 
 	shared_ptr<Item> takeItem(string objectName);
 	void unlockDoor(DoorIndex index, Player& player);
@@ -43,12 +44,14 @@ public:
 	inline shared_ptr<Door> getDoor(DoorIndex index) { return doors[(int)index]; }
 
 	void updateTurn(Player& player);
+	EnemyEncounter::EncounterResult startEncounter(Player& player);
 
 private:
 	shared_ptr<Door> doors[4];
 
 	vector<shared_ptr<Item>> items;
 	vector<Enemy> enemies;
+	vector<vector<Enemy*>> waves;
 
 	void displayDoor(DoorIndex index) const;
 

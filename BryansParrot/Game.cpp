@@ -9,6 +9,7 @@
 #include "Room.h"
 #include "Utils.h"
 #include "Potion.h"
+#include "EnemyEncounter.h"
 
 using namespace std;
 
@@ -146,8 +147,6 @@ void Game::initializeGame()
 	thirdRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, thirdSouthDoor);
 	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
 
-
-
 	//Current Room player is in. Will change when player enters new room
 	currentRoom = &firstRoom;
 
@@ -255,19 +254,45 @@ void Game::openDoor(Room::DoorIndex index)
 	shared_ptr<Door> door = currentRoom->getDoor(index);
 
 	if (door == nullptr)
-		cout << "There is no door in this direction." << endl;
-	else
 	{
-		if (door->isLocked())
-			cout << "This door is locked and can not be opend yet." << endl;
-		else
-		{
-			cout << "You opened the door and went to the next room" << endl;
-			currentRoom = &door->getNextRoom();
-
-			currentRoom->displayContents();
-		}
+		cout << "There is no door in this direction." << endl;
+		return;
 	}
+
+	if (door->isLocked())
+	{
+		cout << "This door is locked and can not be opend yet." << endl;
+		return;
+	}
+
+	EnemyEncounter::EncounterResult result;
+
+	Room* nextRoom = &door->getNextRoom();
+	result = nextRoom->startEncounter(player);
+	
+	if (result == EnemyEncounter::EncounterResult::RETREAT)
+	{
+		cout << "You have retreated back to the previous room" << endl;
+	}
+	else if (result == EnemyEncounter::EncounterResult::WIN)
+	{
+		cout << "You defeated all of the enemies and can now interact with the room" << endl;
+		currentRoom = nextRoom;
+	}
+	else if (result == EnemyEncounter::EncounterResult::LOSE)
+	{
+		if (player.isDead())
+			playerDied();
+		else
+			cout << "You lost the encounter and are now back in the previous room" << endl;
+	}
+	else if (result == EnemyEncounter::EncounterResult::NONE)
+	{
+		cout << "You opened the door and went to the next room" << endl;
+		currentRoom = nextRoom;
+	}
+
+	currentRoom->displayContents();
 }
 
 /// Door Index = Door Direction
