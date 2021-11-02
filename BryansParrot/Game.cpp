@@ -61,6 +61,10 @@ void Game::start()
 
 }
 
+void Game::initializeGameTest() {
+	Game::initializeGame();
+}
+
 /// HOW TO CREATE NEW ROOM:
 ///		-Add Room() to the allRooms array
 ///		- create the new room object linking it to the index of the room you added in addRooms

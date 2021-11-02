@@ -96,6 +96,9 @@ public:
 	void helperDisplay();
 	void start();
 	void gameInteract();
+
+	// Unit Test methods
+	void initializeGameTest();
 };
 
 #endif // GAME_H
