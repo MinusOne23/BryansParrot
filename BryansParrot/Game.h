@@ -35,6 +35,7 @@ private:
 
 	enum class Interaction
 	{
+		ERROR = -1,
 		QUIT,
 		INVENTORY,
 		TAKE,
@@ -46,17 +47,11 @@ private:
 		LOOK,
 		CHARACTER,
 		EQUIP,
-		HELP,
-		ERROR
+		HELP
 	};
 
-	struct ActionResult
-	{
-		Interaction interaction;
-		string helpStr;
-	};
-
-	static const map<string, ActionResult> actions;
+	static const map<string, Interaction> actions;
+	static const map<Interaction, string> helpStrings;
 	set<string> actionsUsed;
 
 	enum class GameState
@@ -64,13 +59,6 @@ private:
 		PLAY,
 		WIN,
 		DIED
-	};
-
-	struct InputCheckerResult
-	{
-		Interaction interaction;
-		string objectName;
-		string actionStr;
 	};
 
 	static const int MAX_ACTION_WORDS;
@@ -84,7 +72,6 @@ private:
 	Room* winRoom;
 
 	void initializeGame();
-	InputCheckerResult enumInputChecker(string inputStr);
 	void playerDied();
 	void playerWin();
 	void promptReplay();

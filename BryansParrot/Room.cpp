@@ -229,18 +229,18 @@ void Room::updateTurn(Player& player)
 	}
 }
 
-EnemyEncounter::EncounterResult Room::startEncounter(Player& player)
+EnemyEncounter::EncounterState Room::startEncounter(Player& player)
 {
 	if (waves.size() == 0)
-		return EnemyEncounter::EncounterResult::NONE;
+		return EnemyEncounter::EncounterState::NONE;
 
 	while (waves.size() > 0)
 	{
 		EnemyEncounter encounter(player, waves[0]);
 
-		EnemyEncounter::EncounterResult result = encounter.begin();
+		EnemyEncounter::EncounterState result = encounter.begin();
 
-		if (result == EnemyEncounter::EncounterResult::WIN)
+		if (result == EnemyEncounter::EncounterState::WIN)
 			waves.erase(waves.begin());
 		else
 			return result;
@@ -248,7 +248,7 @@ EnemyEncounter::EncounterResult Room::startEncounter(Player& player)
 
 	enemies.clear();
 
-	return EnemyEncounter::EncounterResult::WIN;
+	return EnemyEncounter::EncounterState::WIN;
 }
 
 void Room::killEnemy(Enemy& enemy)

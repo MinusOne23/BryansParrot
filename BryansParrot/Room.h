@@ -44,7 +44,7 @@ public:
 	inline shared_ptr<Door> getDoor(DoorIndex index) { return doors[(int)index]; }
 
 	void updateTurn(Player& player);
-	EnemyEncounter::EncounterResult startEncounter(Player& player);
+	EnemyEncounter::EncounterState startEncounter(Player& player);
 
 private:
 	shared_ptr<Door> doors[4];

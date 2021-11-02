@@ -7,30 +7,43 @@
 #include "Door.h"
 #include "Player.h"
 #include "Room.h"
-#include "Utils.h"
 #include "Potion.h"
 #include "EnemyEncounter.h"
+#include "Utils.h"
 
 using namespace std;
 
-const map<string, Game::ActionResult> Game::actions = {
-	{"q", {Interaction::QUIT, ""}},
-	{"i", {Interaction::INVENTORY, "Displays Inventory"}},
-	{"inventory", {Interaction::INVENTORY, "Displays Inventory"}},
-	{"take", {Interaction::TAKE, "Takes the specified item in the room"}},
-	{"grab", {Interaction::TAKE, "Takes the specified item in the room"}},
-	{"open", {Interaction::OPEN, "Opens the specified container/door"}},
-	{"unlock", {Interaction::UNLOCK, "unlocks the specified container/door"}},
-	{"l", {Interaction::LOOK, "Displays the contents of the room"}},
-	{"look", {Interaction::LOOK, "Displays the contents of the room"}},
-	{"h", {Interaction::HELP, ""}},
-	{"help", {Interaction::HELP, ""}},
-	{"use", {Interaction::USE, "Use the specified item from the inventory"}},
-	{"drop", {Interaction::DROP, "Drop the specified item from the inventory into the room"}},
-	{"attack", {Interaction::ATTACK, "Attack the specified enemy in the room"}},
-	{"c", {Interaction::CHARACTER, "Displays the player stats"}},
-	{"character", {Interaction::CHARACTER, "Displays the player stats"}},
-	{"equip", {Interaction::EQUIP, "Equips the specified piece of equipment from the inventory"}}
+const map<string, Game::Interaction> Game::actions = {
+	{"q", Interaction::QUIT},
+	{"i", Interaction::INVENTORY},
+	{"inventory", Interaction::INVENTORY},
+	{"take", Interaction::TAKE},
+	{"grab", Interaction::TAKE},
+	{"open", Interaction::OPEN},
+	{"unlock", Interaction::UNLOCK},
+	{"l", Interaction::LOOK},
+	{"look", Interaction::LOOK},
+	{"h", Interaction::HELP},
+	{"help", Interaction::HELP},
+	{"use", Interaction::USE},
+	{"drop", Interaction::DROP},
+	{"attack", Interaction::ATTACK},
+	{"c", Interaction::CHARACTER},
+	{"character", Interaction::CHARACTER},
+	{"equip", Interaction::EQUIP}
+};
+
+const map<Game::Interaction, string> Game::helpStrings = {
+	{Interaction::INVENTORY, "Displays Inventory"},
+	{Interaction::TAKE, "Takes the specified item in the room"},
+	{Interaction::USE, "Use the specified item from the inventory"},
+	{Interaction::OPEN, "Opens the specified container/door"},
+	{Interaction::DROP, "Drop the specified item from the inventory into the room"},
+	{Interaction::UNLOCK, "Unlocks the specified container/door"},
+	{Interaction::ATTACK, "Attack the specified enemy in the room"},
+	{Interaction::LOOK, "Displays the contents of the room"},
+	{Interaction::CHARACTER, "Displays the player stats"},
+	{Interaction::EQUIP, "Equips the specified piece of equipment from the inventory"}
 };
 
 const string VERSION = "1.3.0";
@@ -154,46 +167,6 @@ void Game::initializeGame()
 	winRoom = &forthRoom;
 }
 
-/// Converts the player user input to the enum action + object the action is taking on
-/// Inputs: User input string 
-/// Returns: specific Interactions Enum, target object string, and action string
-Game::InputCheckerResult Game::enumInputChecker(string inputStr)
-{
-	InputCheckerResult result;
-	vector<string> tokens = Utils::tokenize(inputStr);
-
-	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
-	{
-		string actionStr = tokens[0];
-
-		for (int j = 1; j < i; j++)
-		{
-			actionStr += " " + tokens[j];
-		}
-
-		if (actions.find(actionStr) != actions.end())
-		{
-			result.interaction = actions.at(actionStr).interaction;
-
-			if (i < tokens.size())
-			{
-				result.objectName = tokens[i];
-				for (int j = i + 1; j < tokens.size(); j++)
-				{
-					result.objectName += " " + tokens[j];
-				}
-			}
-
-			result.actionStr = Utils::strToLower(actionStr);
-
-			return result;
-		}
-	}
-
-	result.interaction = Interaction::ERROR;
-	return result;
-}
-
 /// PlayerDied(): Health reaches 0
 void Game::playerDied()
 {
@@ -241,7 +214,10 @@ void Game::helperDisplay()
 	cout << "\t-------------------------------------------\n";
 	for (string act : actionsUsed)
 	{
-		cout << "\t- " << act << ": " << actions.at(act).helpStr << endl;
+		Interaction interaction = actions.at(act);
+
+		if(helpStrings.find(interaction) != helpStrings.end())
+			cout << "\t- " << act << ": " << helpStrings.at(interaction) << endl;
 	}
 	cout << "\t===========================================\n";
 }
@@ -265,28 +241,28 @@ void Game::openDoor(Room::DoorIndex index)
 		return;
 	}
 
-	EnemyEncounter::EncounterResult result;
+	EnemyEncounter::EncounterState result;
 
 	Room* nextRoom = &door->getNextRoom();
 	result = nextRoom->startEncounter(player);
 	
-	if (result == EnemyEncounter::EncounterResult::RETREAT)
+	if (result == EnemyEncounter::EncounterState::RETREAT)
 	{
 		cout << "You have retreated back to the previous room" << endl;
 	}
-	else if (result == EnemyEncounter::EncounterResult::WIN)
+	else if (result == EnemyEncounter::EncounterState::WIN)
 	{
 		cout << "You defeated all of the enemies and can now interact with the room" << endl;
 		currentRoom = nextRoom;
 	}
-	else if (result == EnemyEncounter::EncounterResult::LOSE)
+	else if (result == EnemyEncounter::EncounterState::LOSE)
 	{
 		if (player.isDead())
 			playerDied();
 		else
 			cout << "You lost the encounter and are now back in the previous room" << endl;
 	}
-	else if (result == EnemyEncounter::EncounterResult::NONE)
+	else if (result == EnemyEncounter::EncounterState::NONE)
 	{
 		cout << "You opened the door and went to the next room" << endl;
 		currentRoom = nextRoom;
@@ -328,14 +304,13 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 ///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
-	Interaction input;
 	string inputStr = Utils::inputValidator();
-	InputCheckerResult inputResult = enumInputChecker(inputStr);
+	Utils::ActionResult inputResult = Utils::actionChecker(actions, inputStr, MAX_ACTION_WORDS);
 
 	bool shouldUpdate = true;
 	bool addHelpText = true;
 
-	switch (inputResult.interaction)
+	switch ((Game::Interaction)inputResult.interaction)
 	{
 	case Interaction::QUIT:
 	{
