@@ -62,7 +62,7 @@ void Game::start()
 }
 
 void Game::initializeGameTest() {
-	Game::initializeGame();
+	initializeGame();
 }
 
 /// HOW TO CREATE NEW ROOM:
