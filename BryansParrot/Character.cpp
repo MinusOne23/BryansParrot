@@ -60,7 +60,7 @@ bool Character::isDead() const
 	return health.getCurrentHealth() <= 0;
 }
 
-void Character::displayStats()
+void Character::displayStats() const
 {
 	Weapon mainWeapon = equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
 

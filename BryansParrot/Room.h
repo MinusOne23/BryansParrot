@@ -35,31 +35,28 @@ public:
 	void addItem(shared_ptr<Item> newItem);
 	void addItems(vector<shared_ptr<Item>> newItems);
 	void setDoor(DoorIndex index, shared_ptr<Door> newDoor);
-	void addEnemy(Enemy newEnemy, int waveIndex = 0);
+	void addEnemyEncounter(EnemyEncounter encounter);
 
 	shared_ptr<Item> takeItem(string objectName);
 	void unlockDoor(DoorIndex index, Player& player);
-	bool attack(string enemyName, int amt, bool critical);
 
 	inline shared_ptr<Door> getDoor(DoorIndex index) { return doors[(int)index]; }
 
-	void updateTurn(Player& player);
-	EnemyEncounter::EncounterState startEncounter(Player& player);
+	EnemyEncounter& nextEncounter();
+	void completeEncounter();
+
+	int encounterCount();
 
 private:
 	shared_ptr<Door> doors[4];
 
 	vector<shared_ptr<Item>> items;
-	vector<Enemy> enemies;
-	vector<vector<Enemy*>> waves;
+	vector<EnemyEncounter> encounters;
 
 	void displayDoor(DoorIndex index) const;
 
 	void displayItems() const;
 	void displayDoors() const;
-	void displayEnemies() const;
-
-	void killEnemy(Enemy& enemy);
 };
 
 #endif // ROOM_H

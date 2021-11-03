@@ -108,10 +108,11 @@ void Game::initializeGame()
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
 
-	Enemy goblin("Goblin", 100, goblinFists);
+	EnemyEncounter secondRoomEncounter;
+	secondRoomEncounter.addEnemy(Enemy("Goblin", 100, goblinFists));
 
 	//Add drops to specific Enemy Object 
-	goblin.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
+	secondRoomEncounter.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
 
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
@@ -121,7 +122,7 @@ void Game::initializeGame()
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
 	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, secondSouthDoor);
-	secondRoom.addEnemy(goblin);
+	secondRoom.addEnemyEncounter(secondRoomEncounter);
 
 	//Room3: Initialization
 	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
@@ -209,34 +210,30 @@ void Game::openDoor(Room::DoorIndex index)
 		return;
 	}
 
-	EnemyEncounter::EncounterState result;
-
 	Room* nextRoom = &door->getNextRoom();
-	result = nextRoom->startEncounter(player);
+
+	if (nextRoom->encounterCount() == 0)
+	{
+		currentRoom = nextRoom;
+		currentRoom->displayContents();
+		return;
+	}
+
+	EnemyEncounter& encounter = nextRoom->nextEncounter();
+
+	bool startEncounter = encounter.startEncounter();
 	
-	if (result == EnemyEncounter::EncounterState::RETREAT)
+	if (!startEncounter)
 	{
 		cout << "You have retreated back to the previous room" << endl;
 	}
-	else if (result == EnemyEncounter::EncounterState::WIN)
+	else
 	{
-		cout << "You defeated all of the enemies and can now interact with the room" << endl;
+		nextRoom->completeEncounter();
 		currentRoom = nextRoom;
-	}
-	else if (result == EnemyEncounter::EncounterState::LOSE)
-	{
-		if (player.isDead())
-			playerDied();
-		else
-			cout << "You lost the encounter and are now back in the previous room" << endl;
-	}
-	else if (result == EnemyEncounter::EncounterState::NONE)
-	{
-		cout << "You opened the door and went to the next room" << endl;
-		currentRoom = nextRoom;
-	}
 
-	currentRoom->displayContents();
+		currentRoom->displayContents();
+	}
 }
 
 /// Door Index = Door Direction
@@ -350,14 +347,6 @@ void Game::gameInteract()
 
 		break;
 	}
-	case Interaction::ActionType::ATTACK:
-	{
-		Weapon::DamageResult damageResult = player.getDamage();
-
-		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage, damageResult.critical);
-
-		break;
-	}
 	case Interaction::ActionType::LOOK:
 	{
 		currentRoom->displayContents();
@@ -375,9 +364,6 @@ void Game::gameInteract()
 		break;
 	}
 	}
-
-	if (inputResult.isActiveAction)
-		currentRoom->updateTurn(player);
 
 
 	if (inputResult.actionType != Interaction::ActionType::ERROR)

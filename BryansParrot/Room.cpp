@@ -19,7 +19,6 @@ void Room::displayContents() const
 		cout << "\t-------------------------------------------\n";
 		displayItems();
 		displayDoors();
-		displayEnemies();
 		cout << "\t===========================================\n";
 	};
 }
@@ -45,15 +44,9 @@ void Room::setDoor(DoorIndex index, shared_ptr<Door> newDoor)
 	doors[(int)index] = newDoor;
 }
 
-//adds an enemy to the enemies vector
-void Room::addEnemy(Enemy newEnemy, int waveIndex)
+void Room::addEnemyEncounter(EnemyEncounter encounter)
 {
-	enemies.push_back(newEnemy);
-	
-	while (waves.size() <= waveIndex)
-		waves.push_back(vector<Enemy*>());
-
-	waves[waveIndex].push_back(&enemies[enemies.size() - 1]);
+	encounters.push_back(encounter);
 }
 
 //Displays all items in Items vector
@@ -72,15 +65,6 @@ void Room::displayDoors() const
 	for (int i = 0; i < 4; i++)
 	{
 		displayDoor((DoorIndex)i);
-	}
-}
-
-//Displays all Enemies in Enemies vector
-void Room::displayEnemies() const
-{
-	for (unsigned int i = 0; i < enemies.size(); i++)
-	{
-		cout << "\t - A " << enemies[i].getName() << "." << endl;
 	}
 }
 
@@ -177,84 +161,17 @@ void Room::unlockDoor(DoorIndex index, Player& player)
 	}
 }
 
-bool Room::attack(string enemyName, int amt, bool critical)
+EnemyEncounter& Room::nextEncounter()
 {
-	for (int i = 0; i < enemies.size(); i++)
-	{
-		Enemy& enemy = enemies[i];
-
-		if(Utils::equalsCI(enemy.getName(), enemyName))
-		{
-			if (critical)
-				cout << "Critical Hit!" << endl;
-
-			enemy.damage(amt);
-			cout << "You dealt " << amt << " damage to " << enemy.getName() << "." << endl;
-
-			if (enemy.isDead())
-			{
-				killEnemy(enemy);
-				enemies.erase(enemies.begin() + i);
-			}
-			else
-			{
-				cout << enemy.getName() << " has " << enemy.getCurrentHealth() << " health left." << endl;
-			}
-
-			return true;
-		}
-	}
-
-	cout << "That is not a valid target to attack." << endl;
-	return false;
+	return encounters[0];
 }
 
-void Room::updateTurn(Player& player)
+void Room::completeEncounter()
 {
-	for (int i = 0; i < enemies.size(); i++)
-	{
-		cout << endl;
-
-		Enemy& enemy = enemies[i];
-		Weapon::DamageResult damageResult = enemy.getDamage();
-
-		if (damageResult.critical)
-			cout << "Critical Hit!" << endl;
-
-		cout << enemy.getName() << " hurt you for " << damageResult.damage << " damage!" << endl;
-
-		player.damage(damageResult.damage);
-
-		cout << "You have " << player.getCurrentHealth() << " health left." << endl;
-	}
-}
-
-EnemyEncounter::EncounterState Room::startEncounter(Player& player)
-{
-	if (waves.size() == 0)
-		return EnemyEncounter::EncounterState::NONE;
-
-	while (waves.size() > 0)
-	{
-		EnemyEncounter encounter(player, waves[0]);
-
-		EnemyEncounter::EncounterState result = encounter.begin();
-
-		if (result == EnemyEncounter::EncounterState::WIN)
-			waves.erase(waves.begin());
-		else
-			return result;
-	}
-
-	enemies.clear();
-
-	return EnemyEncounter::EncounterState::WIN;
-}
-
-void Room::killEnemy(Enemy& enemy)
-{
-	cout << enemy.getName() << " died!" << endl;
-	vector<shared_ptr<Item>> drops = enemy.removeDrops();
+	if (encounters.size() == 0)
+		return;
+	
+	vector<shared_ptr<Item>> drops = encounters[0].removeDrops();
 
 	if (drops.size() > 0)
 	{
@@ -271,4 +188,11 @@ void Room::killEnemy(Enemy& enemy)
 
 		addItems(drops);
 	}
+
+	encounters.erase(encounters.begin());
+}
+
+int Room::encounterCount()
+{
+	return encounters.size();
 }

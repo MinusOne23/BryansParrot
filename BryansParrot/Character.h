@@ -64,7 +64,7 @@ public:
 	virtual void equipWeapon(shared_ptr<Weapon> weapon);
 	virtual Weapon::DamageResult getDamage() const;
 
-	void displayStats();
+	void displayStats() const;
 };
 
 #endif // CHARACTER_H
