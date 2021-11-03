@@ -32,7 +32,6 @@ public:
 		QUIT
 	};
 
-	const static map<string, EncounterAction> encounterActions;
 	const static vector<string> playerOptions;
 
 	EnemyEncounter(Player& _player, vector<Enemy*>& _enemies);

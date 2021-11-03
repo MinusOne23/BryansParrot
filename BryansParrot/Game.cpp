@@ -10,41 +10,9 @@
 #include "Potion.h"
 #include "EnemyEncounter.h"
 #include "Utils.h"
+#include "Interaction.h"
 
 using namespace std;
-
-const map<string, Game::Interaction> Game::actions = {
-	{"q", Interaction::QUIT},
-	{"i", Interaction::INVENTORY},
-	{"inventory", Interaction::INVENTORY},
-	{"take", Interaction::TAKE},
-	{"grab", Interaction::TAKE},
-	{"open", Interaction::OPEN},
-	{"unlock", Interaction::UNLOCK},
-	{"l", Interaction::LOOK},
-	{"look", Interaction::LOOK},
-	{"h", Interaction::HELP},
-	{"help", Interaction::HELP},
-	{"use", Interaction::USE},
-	{"drop", Interaction::DROP},
-	{"attack", Interaction::ATTACK},
-	{"c", Interaction::CHARACTER},
-	{"character", Interaction::CHARACTER},
-	{"equip", Interaction::EQUIP}
-};
-
-const map<Game::Interaction, string> Game::helpStrings = {
-	{Interaction::INVENTORY, "Displays Inventory"},
-	{Interaction::TAKE, "Takes the specified item in the room"},
-	{Interaction::USE, "Use the specified item from the inventory"},
-	{Interaction::OPEN, "Opens the specified container/door"},
-	{Interaction::DROP, "Drop the specified item from the inventory into the room"},
-	{Interaction::UNLOCK, "Unlocks the specified container/door"},
-	{Interaction::ATTACK, "Attack the specified enemy in the room"},
-	{Interaction::LOOK, "Displays the contents of the room"},
-	{Interaction::CHARACTER, "Displays the player stats"},
-	{Interaction::EQUIP, "Equips the specified piece of equipment from the inventory"}
-};
 
 const string VERSION = "1.3.0";
 const int Game::MAX_ACTION_WORDS = 1;
@@ -214,10 +182,10 @@ void Game::helperDisplay()
 	cout << "\t-------------------------------------------\n";
 	for (string act : actionsUsed)
 	{
-		Interaction interaction = actions.at(act);
+		string helpStr = Interaction::getHelpText(act);
 
-		if(helpStrings.find(interaction) != helpStrings.end())
-			cout << "\t- " << act << ": " << helpStrings.at(interaction) << endl;
+		if(helpStr != "")
+			cout << "\t- " << act << ": " << helpStr << endl;
 	}
 	cout << "\t===========================================\n";
 }
@@ -305,36 +273,30 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 void Game::gameInteract()
 {
 	string inputStr = Utils::inputValidator();
-	Utils::ActionResult inputResult = Utils::actionChecker(actions, inputStr, MAX_ACTION_WORDS);
+	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
 
-	bool shouldUpdate = true;
-	bool addHelpText = true;
-
-	switch ((Game::Interaction)inputResult.interaction)
+	switch (inputResult.actionType)
 	{
-	case Interaction::QUIT:
+	case Interaction::ActionType::QUIT:
 	{
 		exit(0);
 	}
-	case Interaction::INVENTORY:
+	case Interaction::ActionType::INVENTORY:
 	{
 		player.displayInventory();
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::EQUIP:
+	case Interaction::ActionType::EQUIP:
 	{
 		player.equipWeapon(inputResult.objectName);
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::CHARACTER:
+	case Interaction::ActionType::CHARACTER:
 	{
 		player.displayStats();
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::TAKE:
+	case Interaction::ActionType::TAKE:
 	{
 		shared_ptr<Item> item = currentRoom->takeItem(inputResult.objectName);
 
@@ -347,16 +309,14 @@ void Game::gameInteract()
 			player.takeItem(item);
 		}
 
-		shouldUpdate = false;
-
 		break;
 	}
-	case Interaction::USE:
+	case Interaction::ActionType::USE:
 	{
 		player.useItem(inputResult.objectName);
 		break;
 	}
-	case Interaction::OPEN:
+	case Interaction::ActionType::OPEN:
 	{
 		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
 
@@ -364,11 +324,9 @@ void Game::gameInteract()
 			cout << "That is not a valid object to open." << endl;
 		else
 			openDoor(index);
-
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::DROP:
+	case Interaction::ActionType::DROP:
 	{
 		shared_ptr<Item>item = player.dropItem(inputResult.objectName);
 		if (item != nullptr)
@@ -381,7 +339,7 @@ void Game::gameInteract()
 		}
 		break;
 	}
-	case Interaction::UNLOCK:
+	case Interaction::ActionType::UNLOCK:
 	{
 		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
 
@@ -392,44 +350,37 @@ void Game::gameInteract()
 
 		break;
 	}
-	case Interaction::ATTACK:
+	case Interaction::ActionType::ATTACK:
 	{
 		Weapon::DamageResult damageResult = player.getDamage();
 
 		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage, damageResult.critical);
 
-		if (!foundEnemy)
-			shouldUpdate = false;
-
 		break;
 	}
-	case Interaction::LOOK:
+	case Interaction::ActionType::LOOK:
 	{
 		currentRoom->displayContents();
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::HELP:
+	case Interaction::ActionType::HELP:
 	{
 		helperDisplay();
-		addHelpText = false;
 		break;
 	}
-	case Interaction::ERROR:
+	case Interaction::ActionType::ERROR:
 	default:
 	{
-		addHelpText = false;
 		cout << "Sorry, that input is not recognized." << endl;
-		shouldUpdate = false;
 		break;
 	}
 	}
 
-	if (shouldUpdate)
+	if (inputResult.isActiveAction)
 		currentRoom->updateTurn(player);
 
 
-	if (addHelpText)
+	if (inputResult.actionType != Interaction::ActionType::ERROR)
 		actionsUsed.insert(inputResult.actionStr);
 
 	cout << endl;

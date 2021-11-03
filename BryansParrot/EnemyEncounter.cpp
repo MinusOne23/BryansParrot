@@ -3,15 +3,7 @@
 
 #include "EnemyEncounter.h"
 #include "Utils.h"
-
-const map<string, EnemyEncounter::EncounterAction> EnemyEncounter::encounterActions = {
-	{"kill", EnemyEncounter::EncounterAction::KILL},
-	{"attack", EnemyEncounter::EncounterAction::ATTACK},
-	{"study", EnemyEncounter::EncounterAction::STUDY},
-	{"retreat", EnemyEncounter::EncounterAction::RETREAT},
-	{"quit", EnemyEncounter::EncounterAction::QUIT},
-	{"q", EnemyEncounter::EncounterAction::QUIT}
-};
+#include "Interaction.h"
 
 const vector<string> EnemyEncounter::playerOptions = {
 	"Kill: Kills the enemy",
@@ -56,7 +48,7 @@ EnemyEncounter::EncounterState EnemyEncounter::begin()
 
 		input = Utils::inputValidator();
 
-		Utils::ActionResult inputResult = Utils::actionChecker(encounterActions, input);
+		Interaction::InteractionResult inputResult = Interaction::parseInput(input);
 
 		cout << inputResult.actionStr << endl;
 

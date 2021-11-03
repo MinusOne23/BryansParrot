@@ -33,25 +33,6 @@ class Game
 {
 private:
 
-	enum class Interaction
-	{
-		ERROR = -1,
-		QUIT,
-		INVENTORY,
-		TAKE,
-		USE,
-		OPEN,
-		DROP,
-		UNLOCK,
-		ATTACK,
-		LOOK,
-		CHARACTER,
-		EQUIP,
-		HELP
-	};
-
-	static const map<string, Interaction> actions;
-	static const map<Interaction, string> helpStrings;
 	set<string> actionsUsed;
 
 	enum class GameState
