@@ -96,10 +96,10 @@ Interaction::InteractionResult Interaction::parseInput(const string& input)
 
 			if (i < tokens.size())
 			{
-				result.objectName = tokens[i];
+				result.target = tokens[i];
 				for (int j = i + 1; j < tokens.size(); j++)
 				{
-					result.objectName += " " + tokens[j];
+					result.target += " " + tokens[j];
 				}
 			}
 

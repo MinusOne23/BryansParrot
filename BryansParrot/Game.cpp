@@ -14,7 +14,7 @@
 
 using namespace std;
 
-const string VERSION = "1.3.0";
+const string VERSION = "1.3.1";
 const int Game::MAX_ACTION_WORDS = 1;
 
 /// STARTS THE GAME:
@@ -259,12 +259,30 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	{
 	case Interaction::ActionType::ATTACK:
 	{
-		inputResult.succeeded = encounter.attackEnemy(player, inputResult.objectName);
+		inputResult.succeeded = encounter.attackEnemy(player, inputResult.target);
 		break;
+	}
+	case Interaction::ActionType::KILL:
+	{
+		inputResult.succeeded = encounter.killEnemy(inputResult.target);
+		break;
+	}
+	case Interaction::ActionType::STUDY:
+	{
+		inputResult.succeeded = encounter.studyEnemy(inputResult.target);
+		break;
+	}
+	case Interaction::ActionType::RETREAT:
+	{
+		currentRoom = encounter.getLastRoom();
+		currentRoom->displayContents();
+		return;
 	}
 	}
 
-	if (inputResult.succeeded && inputResult.isActiveAction)
+	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
+		currentRoom->completeEncounter();
+	else if (inputResult.succeeded && inputResult.isActiveAction)
 	{
 		cout << endl;
 		encounter.enemyTurn(player);
@@ -272,9 +290,6 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 
 		encounter.displayEnemies();
 	}
-
-	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
-		currentRoom->completeEncounter();
 }
 
 /// Game Loop: Takes in user input ant turns input into actions
@@ -323,7 +338,7 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::EQUIP:
 	{
-		inputResult.succeeded = player.equipWeapon(inputResult.objectName);
+		inputResult.succeeded = player.equipWeapon(inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::CHARACTER:
@@ -333,7 +348,7 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::TAKE:
 	{
-		shared_ptr<Item> item = currentRoom->takeItem(inputResult.objectName);
+		shared_ptr<Item> item = currentRoom->takeItem(inputResult.target);
 
 		if (item == nullptr)
 		{
@@ -349,12 +364,12 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::USE:
 	{
-		inputResult.succeeded = player.useItem(inputResult.objectName);
+		inputResult.succeeded = player.useItem(inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::OPEN:
 	{
-		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
+		Room::DoorIndex index = getDoorIndex(inputResult.target);
 
 		if (index == Room::DoorIndex::NONE)
 		{
@@ -368,7 +383,7 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::DROP:
 	{
-		shared_ptr<Item>item = player.dropItem(inputResult.objectName);
+		shared_ptr<Item>item = player.dropItem(inputResult.target);
 		if (item != nullptr)
 		{
 			currentRoom->addItem(item);
@@ -382,7 +397,7 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::UNLOCK:
 	{
-		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
+		Room::DoorIndex index = getDoorIndex(inputResult.target);
 
 		if (index == Room::DoorIndex::NONE)
 		{

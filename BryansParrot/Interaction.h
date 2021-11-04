@@ -85,7 +85,7 @@ public:
 	struct InteractionResult
 	{
 		ActionType actionType;
-		string objectName;
+		string target;
 		string actionStr;
 		bool isActiveAction;
 		bool succeeded;
