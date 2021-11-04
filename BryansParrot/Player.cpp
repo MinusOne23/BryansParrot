@@ -42,7 +42,7 @@ void Player::takeItem(shared_ptr<Item> item)
 }
 
 //uses an item from your inventory 
-void Player::useItem(string item)
+bool Player::useItem(string item)
 {
 	for (int i = 0; i < inventory.numItems(); i++)
 	{
@@ -56,11 +56,12 @@ void Player::useItem(string item)
 				inventory.remove(i);
 				cout << "Your health has been raised by " << potion->getPotionSize() << endl;
 			}
-			return ;
+			return true;
 		}
 	
 	}
 	cout << "Item is not in your Inventory" << endl;
+	return false;
 }
 
 shared_ptr<Item> Player::dropItem(string item)
@@ -112,7 +113,7 @@ void Player::displayInventory() const
 	cout << "\t===========================================\n";
 }
 
-void Player::equipWeapon(string weaponName)
+bool Player::equipWeapon(string weaponName)
 {
 	for (int i = 0; i < inventory.numItems(); i++)
 	{
@@ -124,9 +125,10 @@ void Player::equipWeapon(string weaponName)
 			inventory.remove(i);
 
 			cout << "You equipped " << weapon->getName() << "." << endl;
-			return;
+			return true;
 		}
 	}
 
 	cout << "That equipment is not in your inventory." << endl;
+	return false;
 }

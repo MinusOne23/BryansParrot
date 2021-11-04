@@ -32,13 +32,18 @@ public:
 	bool attackEnemy(const Player& player, const string& enemyName);
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
+	void enemyTurn(Player& player);
 
 	vector<shared_ptr<Item>> removeDrops();
 	void addDrop(shared_ptr<Item> item);
 
 	void addEnemy(Enemy enemy);
+	void setLastRoom(Room* room);
+	Room* getLastRoom();
 
 	EncounterState getCurrentState() const;
+
+	void displayEnemies() const;
 
 private:
 	static const set<Interaction::ActionType> useableActions;
@@ -49,6 +54,8 @@ private:
 	vector<Enemy> enemies;
 	vector<shared_ptr<Item>> drops;
 	EncounterState currentState;
+
+	Room* lastRoom;
 
 };
 

@@ -72,14 +72,14 @@ public:
 		OPEN,
 		DROP,
 		UNLOCK,
-		ATTACK,
 		LOOK,
 		CHARACTER,
 		EQUIP,
 		HELP,
-		RETREAT,
+		ATTACK,
+		KILL,
 		STUDY,
-		KILL
+		RETREAT
 	};
 
 	struct InteractionResult
@@ -88,6 +88,7 @@ public:
 		string objectName;
 		string actionStr;
 		bool isActiveAction;
+		bool succeeded;
 	};
 
 	static string getHelpText(string action);

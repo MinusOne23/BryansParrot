@@ -219,21 +219,19 @@ void Game::openDoor(Room::DoorIndex index)
 		return;
 	}
 
-	EnemyEncounter& encounter = nextRoom->nextEncounter();
+	EnemyEncounter& encounter = nextRoom->currentEncounter();
 
 	bool startEncounter = encounter.startEncounter();
 	
 	if (!startEncounter)
 	{
 		cout << "You have retreated back to the previous room" << endl;
+		return;
 	}
-	else
-	{
-		nextRoom->completeEncounter();
-		currentRoom = nextRoom;
 
-		currentRoom->displayContents();
-	}
+	encounter.setLastRoom(currentRoom);
+	encounter.displayEnemies();
+	currentRoom = nextRoom;
 }
 
 /// Door Index = Door Direction
@@ -251,6 +249,32 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 		return Room::DoorIndex::WEST_DOOR;
 
 	return Room::DoorIndex::NONE;
+}
+
+void Game::encounterInteract(Interaction::InteractionResult& inputResult)
+{
+	EnemyEncounter& encounter = currentRoom->currentEncounter();
+
+	switch (inputResult.actionType)
+	{
+	case Interaction::ActionType::ATTACK:
+	{
+		inputResult.succeeded = encounter.attackEnemy(player, inputResult.objectName);
+		break;
+	}
+	}
+
+	if (inputResult.succeeded && inputResult.isActiveAction)
+	{
+		cout << endl;
+		encounter.enemyTurn(player);
+		cout << endl;
+
+		encounter.displayEnemies();
+	}
+
+	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
+		currentRoom->completeEncounter();
 }
 
 /// Game Loop: Takes in user input ant turns input into actions
@@ -272,6 +296,20 @@ void Game::gameInteract()
 	string inputStr = Utils::inputValidator();
 	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
 
+	bool inEncounter = currentRoom->encounterCount() > 0;
+
+	if (inputResult.actionType == Interaction::ActionType::ERROR)
+	{
+		cout << "Sorry, that input is not recognized." << endl;
+		return;
+	}
+
+	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
+	{
+		cout << "Sorry you can't do that within an enemy encounter." << endl;
+		return;
+	}
+
 	switch (inputResult.actionType)
 	{
 	case Interaction::ActionType::QUIT:
@@ -285,7 +323,7 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::EQUIP:
 	{
-		player.equipWeapon(inputResult.objectName);
+		inputResult.succeeded = player.equipWeapon(inputResult.objectName);
 		break;
 	}
 	case Interaction::ActionType::CHARACTER:
@@ -300,6 +338,7 @@ void Game::gameInteract()
 		if (item == nullptr)
 		{
 			cout << "This item is not in the room." << endl;
+			inputResult.succeeded = false;
 		}
 		else
 		{
@@ -310,7 +349,7 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::USE:
 	{
-		player.useItem(inputResult.objectName);
+		inputResult.succeeded = player.useItem(inputResult.objectName);
 		break;
 	}
 	case Interaction::ActionType::OPEN:
@@ -318,9 +357,13 @@ void Game::gameInteract()
 		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
 
 		if (index == Room::DoorIndex::NONE)
+		{
 			cout << "That is not a valid object to open." << endl;
+			inputResult.succeeded = false;
+		}
 		else
 			openDoor(index);
+
 		break;
 	}
 	case Interaction::ActionType::DROP:
@@ -333,6 +376,7 @@ void Game::gameInteract()
 		else
 		{
 			cout << "Invalid item to drop" << endl;
+			inputResult.succeeded = false;
 		}
 		break;
 	}
@@ -341,7 +385,10 @@ void Game::gameInteract()
 		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
 
 		if (index == Room::DoorIndex::NONE)
+		{
 			cout << "That is not a valid object to unlock." << endl;
+			inputResult.succeeded = false;
+		}
 		else
 			currentRoom->unlockDoor(index, player);
 
@@ -357,17 +404,14 @@ void Game::gameInteract()
 		helperDisplay();
 		break;
 	}
-	case Interaction::ActionType::ERROR:
-	default:
+	}
+
+	if (inEncounter)
 	{
-		cout << "Sorry, that input is not recognized." << endl;
-		break;
-	}
+		encounterInteract(inputResult);
 	}
 
-
-	if (inputResult.actionType != Interaction::ActionType::ERROR)
-		actionsUsed.insert(inputResult.actionStr);
+	actionsUsed.insert(inputResult.actionStr);
 
 	cout << endl;
 };

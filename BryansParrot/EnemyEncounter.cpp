@@ -14,7 +14,8 @@ const set<Interaction::ActionType> EnemyEncounter::useableActions = {
 	Interaction::ActionType::HELP,
 	Interaction::ActionType::RETREAT,
 	Interaction::ActionType::STUDY,
-	Interaction::ActionType::KILL
+	Interaction::ActionType::KILL,
+	Interaction::ActionType::LOOK
 };
 
 const vector<string> EnemyEncounter::playerOptions = {
@@ -25,7 +26,7 @@ const vector<string> EnemyEncounter::playerOptions = {
 };
 
 EnemyEncounter::EnemyEncounter()
-	: currentState(EncounterState::NONE) {}
+	: currentState(EncounterState::NONE), lastRoom(nullptr) {}
 
 bool EnemyEncounter::canUseAction(Interaction::ActionType actionType)
 {
@@ -139,6 +140,33 @@ bool EnemyEncounter::studyEnemy(const string& enemyName) const
 	return true;
 }
 
+void EnemyEncounter::enemyTurn(Player& player)
+{
+	for (Enemy& enemy : enemies)
+	{
+		cout << "==============================================" << endl;
+		cout << enemy.getName() << "'s Turn" << endl;
+		cout << "==============================================" << endl;
+
+
+		Weapon::DamageResult damageResult = enemy.getDamage();
+		
+		if (damageResult.critical)
+		{
+			cout << "Critical Hit!" << endl << endl;
+		}
+
+		cout << enemy.getName() << " dealt " << damageResult.damage << " damage to " << player.getName() << endl;
+
+		player.damage(damageResult.damage);
+
+		cout << "==============================================" << endl;
+
+		if (player.isDead())
+			return;
+	}
+}
+
 vector<shared_ptr<Item>> EnemyEncounter::removeDrops()
 {
 	vector<shared_ptr<Item>> result = drops;
@@ -157,9 +185,29 @@ void EnemyEncounter::addEnemy(Enemy enemy)
 	enemies.push_back(enemy);
 }
 
+void EnemyEncounter::setLastRoom(Room* room)
+{
+	lastRoom = room;
+}
+
+Room* EnemyEncounter::getLastRoom()
+{
+	return lastRoom;
+}
+
 EnemyEncounter::EncounterState EnemyEncounter::getCurrentState() const
 {
 	return currentState;
+}
+
+void EnemyEncounter::displayEnemies() const
+{
+	cout << "Enemies:" << endl;
+
+	for (Enemy enemy : enemies)
+	{
+		cout << "\t" << enemy.getName() << " (" << enemy.getCurrentHealth() << " / " << enemy.getMaxHealth() << ")" << endl;
+	}
 }
 
 int EnemyEncounter::getEnemyIndex(const string& enemyName) const

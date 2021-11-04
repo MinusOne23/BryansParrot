@@ -17,10 +17,10 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"help", ActionType::HELP},
 	{"use", ActionType::USE},
 	{"drop", ActionType::DROP},
-	{"attack", ActionType::ATTACK},
 	{"c", ActionType::CHARACTER},
 	{"character", ActionType::CHARACTER},
 	{"equip", ActionType::EQUIP},
+	{"attack", ActionType::ATTACK},
 	{"retreat", ActionType::RETREAT},
 	{"study", ActionType::STUDY},
 	{"kill", ActionType::KILL}
@@ -107,6 +107,8 @@ Interaction::InteractionResult Interaction::parseInput(const string& input)
 
 			if (isActiveActions.find(result.actionType) != isActiveActions.end())
 				result.isActiveAction = isActiveActions.at(result.actionType);
+
+			result.succeeded = true;
 
 			return result;
 		}

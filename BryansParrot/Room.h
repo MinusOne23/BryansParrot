@@ -42,7 +42,7 @@ public:
 
 	inline shared_ptr<Door> getDoor(DoorIndex index) { return doors[(int)index]; }
 
-	EnemyEncounter& nextEncounter();
+	EnemyEncounter& currentEncounter();
 	void completeEncounter();
 
 	int encounterCount();

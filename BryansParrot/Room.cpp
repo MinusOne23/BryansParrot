@@ -12,6 +12,12 @@ using namespace std;
 //Displays Items / doors / and enemies in curent room
 void Room::displayContents() const
 {
+	if (encounters.size() > 0)
+	{
+		encounters[0].displayEnemies();
+		return;
+	}
+
 	if (doors[0] != nullptr)
 	{
 		cout << "\t===========================================\n";
@@ -161,7 +167,7 @@ void Room::unlockDoor(DoorIndex index, Player& player)
 	}
 }
 
-EnemyEncounter& Room::nextEncounter()
+EnemyEncounter& Room::currentEncounter()
 {
 	return encounters[0];
 }
