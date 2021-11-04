@@ -55,7 +55,7 @@ using namespace std;
 *	maps all action types to their designated help text
 * 
 * isActiveActions
-*	mapa all action types to whether or not they are an active action
+*	maps all action types to whether or not they are an active action
 * --------------------------------------------------------------------------------------
 */
 class Interaction

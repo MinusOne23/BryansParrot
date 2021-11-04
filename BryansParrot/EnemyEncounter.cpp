@@ -18,13 +18,6 @@ const set<Interaction::ActionType> EnemyEncounter::useableActions = {
 	Interaction::ActionType::LOOK
 };
 
-const vector<string> EnemyEncounter::playerOptions = {
-	"Kill: Kills the enemy",
-	"Attack: Damages the enemy based off weapon stats",
-	"Study: Displays the enemy stats",
-	"Retreat: Retreats to the previous room"
-};
-
 EnemyEncounter::EnemyEncounter()
 	: currentState(EncounterState::NONE), lastRoom(nullptr) {}
 
@@ -223,12 +216,4 @@ int EnemyEncounter::getEnemyIndex(const string& enemyName) const
 	}
 
 	return -1;
-}
-
-void EnemyEncounter::displayOptions() const
-{
-	for (string option : playerOptions)
-	{
-		cout << "\t - " << option << endl;
-	}
 }

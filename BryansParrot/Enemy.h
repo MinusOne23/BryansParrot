@@ -12,13 +12,12 @@
 using namespace std;
 
 /*
-* Abstract Item class that all items in the game will
-* inherit from
-*
-* getDisplay() -- function that returns what the item should
-* display to the user when in the inventory or in a room
-*
-* name -- the name of the item for shorthand display
+* --------------------------------------------------------------------------------------
+* Class Scope
+* --------------------------------------------------------------------------------------
+* Enemy class designed for players to be able to encounter in rooms and defeat. Will
+* also attack players in encounters. Inherits from the Character class
+* --------------------------------------------------------------------------------------
 */
 class Enemy : public Character
 {

@@ -15,7 +15,6 @@
 using namespace std;
 
 const string VERSION = "1.3.1";
-const int Game::MAX_ACTION_WORDS = 1;
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -64,12 +63,22 @@ void Game::start()
 ///				- ITEM_CLASS: Potion
 ///				- OBJ_NAME: sPotion
 /// 
-/// ADDING AN ENEMY TO A ROOM:
-///		-create enemy object
-///			Enemy ENEMY_NAME("DETAILED_NAME", INT MAX_HEALTH, INT MIN_DAMAGE, INT MAX_DAMAGE, FLOAT CRITICAL_CHANCE)
-///				EX: Enemy goblin("Goblin", 100, 5, 10, 0.1f);
-///		-add enemy to specific room
-///			ROOM_NAME.addEnemy(ENEMY_OBJ);
+/// CREATE NEW WEAPON
+///		- create weapon object
+///			Weapon [WEAPON_NAME]("[NAME]", baseDamage{min, max}, critChance, critDamage{min, max})
+/// 
+/// CREATE NEW ENEMY
+///		- create enemy object
+///			Enemy [ENEMY_NAME]("[NAME]", maxHealth, weapon)
+/// 
+/// CREATING AN ENEMYY ENCOUNTER
+///		- create enemy encounter object
+///			EnemyEncounter [ROOM_NAME]Encounter[ENCOUNTER_NUMBER]
+///				ex) controlRoomEncounter1
+///		- add enemies to the encounter
+///			encounter.addEnemy([ENEMY_NAME])
+///		- add encounter to the room
+///			controlRoom.addEnemyEncounter(controlRoomEncounter1)
 /// 
 /// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
 void Game::initializeGame()
@@ -79,6 +88,8 @@ void Game::initializeGame()
 	Weapon playerFists("Fists", { 10, 20 }, 0.2f, { 20, 30 });
 	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
 	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
+
+	Enemy goblin("Goblin", 100, goblinFists);
 
 	player = Player(100, playerFists);
 	gameState = GameState::PLAY;
@@ -108,11 +119,11 @@ void Game::initializeGame()
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
 
-	EnemyEncounter secondRoomEncounter;
-	secondRoomEncounter.addEnemy(Enemy("Goblin", 100, goblinFists));
+	EnemyEncounter secondRoomEncounter1;
+	secondRoomEncounter1.addEnemy(goblin);
 
 	//Add drops to specific Enemy Object 
-	secondRoomEncounter.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
+	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
 
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
@@ -122,7 +133,7 @@ void Game::initializeGame()
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
 	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, secondSouthDoor);
-	secondRoom.addEnemyEncounter(secondRoomEncounter);
+	secondRoom.addEnemyEncounter(secondRoomEncounter1);
 
 	//Room3: Initialization
 	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
