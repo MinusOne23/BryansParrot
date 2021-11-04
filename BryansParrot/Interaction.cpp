@@ -23,11 +23,11 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"equip", ActionType::EQUIP},
 	{"attack", ActionType::ATTACK},
 	{"retreat", ActionType::RETREAT},
-	{"study", ActionType::STUDY}
+	{"study", ActionType::STUDY},
+	{DEV_MODE, ActionType::ENABLE_DEV_MODE}
 };
 
- map<string, Interaction::DevActionType> Interaction::devactions = {
-	{DEV_MODE, DevActionType::ENABLE},
+ map<string, Interaction::DevActionType> Interaction::devActions = {
 	{"kill", DevActionType::KILL},
 	{"tp", DevActionType::TP}
 };
@@ -64,7 +64,6 @@ const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
 };
 
  map<Interaction::DevActionType, bool> Interaction::isActiveDevActions{
-	{DevActionType::ENABLE, false},
 	{DevActionType::KILL, true},
 	{DevActionType::TP, true},
 };
@@ -86,9 +85,15 @@ string Interaction::getHelpText(string action)
 	return "";
 }
 
-Interaction::InteractionResult Interaction::parseInput_Actions(const string& input)
+Interaction::InteractionResult Interaction::parseInput(const string& input, bool devMode)
 {
 	InteractionResult result;
+
+	if (devMode)
+		result = parseInputDev(input);
+	else
+		result.devActionType = DevActionType::ERROR;
+
 	vector<string> tokens = Utils::tokenize(input);
 
 	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
@@ -128,7 +133,7 @@ Interaction::InteractionResult Interaction::parseInput_Actions(const string& inp
 	return result;
 }
 
-Interaction::InteractionResult Interaction::parseInput_DevActions(const string& input)
+Interaction::InteractionResult Interaction::parseInputDev(const string& input)
 {
 	InteractionResult result;
 	vector<string> tokens = Utils::tokenize(input);
@@ -142,9 +147,9 @@ Interaction::InteractionResult Interaction::parseInput_DevActions(const string& 
 			devactionStr += " " + tokens[j];
 		}
 
-		if (devactions.find(devactionStr) != devactions.end())
+		if (devActions.find(devactionStr) != devActions.end())
 		{
-			result.devActionType = devactions.at(devactionStr);
+			result.devActionType = devActions.at(devactionStr);
 
 			if (i < tokens.size())
 			{
@@ -155,7 +160,7 @@ Interaction::InteractionResult Interaction::parseInput_DevActions(const string& 
 				}
 			}
 
-			result.devactionStr = Utils::strToLower(devactionStr);
+			result.actionStr = Utils::strToLower(devactionStr);
 
 			if (isActiveDevActions.find(result.devActionType) != isActiveDevActions.end())
 				result.isActiveDevAction = isActiveDevActions.at(result.devActionType);

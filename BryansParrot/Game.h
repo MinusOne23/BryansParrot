@@ -60,7 +60,7 @@ private:
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
 
-	bool dev_mode = false;
+	bool isDevMode = false;
 
 public:
 	void helperDisplay();

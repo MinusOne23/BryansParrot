@@ -14,7 +14,7 @@
 
 using namespace std;
 
-const string VERSION = "1.3.0";
+const string VERSION = "1.3.2";
 const int Game::MAX_ACTION_WORDS = 1;
 
 /// STARTS THE GAME:
@@ -255,7 +255,7 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 {
 	EnemyEncounter& encounter = currentRoom->currentEncounter();
-	if (dev_mode == true)
+	if (isDevMode == true)
 	{
 		switch (inputResult.devActionType)
 		{
@@ -306,16 +306,19 @@ void Game::gameInteract()
 {
 	string inputStr = Utils::inputValidator();
 
-	Interaction::InteractionResult inputResult = Interaction::parseInput_Actions(inputStr);
-
-	Interaction::InteractionResult inputResult_Dev = Interaction::parseInput_DevActions(inputStr);
+	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr, isDevMode);
 
 	bool inEncounter = currentRoom->encounterCount() > 0;
 
-	if (inputResult_Dev.devActionType == Interaction::DevActionType::ENABLE)
+	if (inputResult.actionType == Interaction::ActionType::ENABLE_DEV_MODE)
 	{
-		cout << "DevMode: Activated" << endl;
-		dev_mode = true;
+		isDevMode = !isDevMode;
+
+		if(isDevMode)
+			cout << "DevMode: Activated" << endl;
+		else
+			cout << "DevMode: Deactivated" << endl;
+
 		return;
 	}
 
@@ -327,7 +330,7 @@ void Game::gameInteract()
 
 	if (inEncounter)
 	{
-		if (dev_mode)
+		if (isDevMode)
 		{
 			if (!EnemyEncounter::canUseDevAction(inputResult.devActionType) && !EnemyEncounter::canUseAction(inputResult.actionType))
 			{
