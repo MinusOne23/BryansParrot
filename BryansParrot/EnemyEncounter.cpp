@@ -14,15 +14,12 @@ const set<Interaction::ActionType> EnemyEncounter::useableActions = {
 	Interaction::ActionType::HELP,
 	Interaction::ActionType::RETREAT,
 	Interaction::ActionType::STUDY,
-	Interaction::ActionType::KILL,
 	Interaction::ActionType::LOOK
 };
 
-const vector<string> EnemyEncounter::playerOptions = {
-	"Kill: Kills the enemy",
-	"Attack: Damages the enemy based off weapon stats",
-	"Study: Displays the enemy stats",
-	"Retreat: Retreats to the previous room"
+const set<Interaction::DevActionType> EnemyEncounter::useableDevActions = {
+	Interaction::DevActionType::KILL,
+	Interaction::DevActionType::TP
 };
 
 EnemyEncounter::EnemyEncounter()
@@ -31,6 +28,11 @@ EnemyEncounter::EnemyEncounter()
 bool EnemyEncounter::canUseAction(Interaction::ActionType actionType)
 {
 	return useableActions.find(actionType) != useableActions.end();
+}
+
+bool EnemyEncounter::canUseDevAction(Interaction::DevActionType devActionType)
+{
+	return useableDevActions.find(devActionType) != useableDevActions.end();
 }
 
 bool EnemyEncounter::startEncounter()
@@ -223,12 +225,4 @@ int EnemyEncounter::getEnemyIndex(const string& enemyName) const
 	}
 
 	return -1;
-}
-
-void EnemyEncounter::displayOptions() const
-{
-	for (string option : playerOptions)
-	{
-		cout << "\t - " << option << endl;
-	}
 }

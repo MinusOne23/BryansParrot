@@ -249,12 +249,23 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 		return Room::DoorIndex::WEST_DOOR;
 
 	return Room::DoorIndex::NONE;
-}
+}	
+
 
 void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 {
 	EnemyEncounter& encounter = currentRoom->currentEncounter();
-
+	if (dev_mode == true)
+	{
+		switch (inputResult.devActionType)
+		{
+		case Interaction::DevActionType::KILL:
+		{
+			inputResult.succeeded = encounter.killEnemy(inputResult.objectName);
+			break;
+		}
+		}
+	}
 	switch (inputResult.actionType)
 	{
 	case Interaction::ActionType::ATTACK:
@@ -294,22 +305,45 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 void Game::gameInteract()
 {
 	string inputStr = Utils::inputValidator();
-	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
+
+	Interaction::InteractionResult inputResult = Interaction::parseInput_Actions(inputStr);
+
+	Interaction::InteractionResult inputResult_Dev = Interaction::parseInput_DevActions(inputStr);
 
 	bool inEncounter = currentRoom->encounterCount() > 0;
 
-	if (inputResult.actionType == Interaction::ActionType::ERROR)
+	if (inputResult_Dev.devActionType == Interaction::DevActionType::ENABLE)
+	{
+		cout << "DevMode: Activated" << endl;
+		dev_mode = true;
+		return;
+	}
+
+	if (inputResult.actionType == Interaction::ActionType::ERROR && inputResult.devActionType == Interaction::DevActionType::ERROR)
 	{
 		cout << "Sorry, that input is not recognized." << endl;
 		return;
 	}
 
-	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
+	if (inEncounter)
 	{
-		cout << "Sorry you can't do that within an enemy encounter." << endl;
-		return;
+		if (dev_mode)
+		{
+			if (!EnemyEncounter::canUseDevAction(inputResult.devActionType) && !EnemyEncounter::canUseAction(inputResult.actionType))
+			{
+				cout << "Sorry you can't do that within an enemy encounter." << endl;
+				return;
+			}
+		}
+		else if (!EnemyEncounter::canUseAction(inputResult.actionType))
+		{
+			cout << "Sorry you can't do that within an enemy encounter." << endl;
+			return;
+		}
 	}
+	
 
+	//Actions
 	switch (inputResult.actionType)
 	{
 	case Interaction::ActionType::QUIT:

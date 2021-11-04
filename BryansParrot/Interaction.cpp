@@ -1,6 +1,7 @@
 #include "Interaction.h"
 #include "Utils.h"
 
+const string Interaction::DEV_MODE = "bryan";
 const int Interaction::MAX_ACTION_WORDS = 1;
 
 const map<string, Interaction::ActionType> Interaction::actions = {
@@ -22,8 +23,13 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"equip", ActionType::EQUIP},
 	{"attack", ActionType::ATTACK},
 	{"retreat", ActionType::RETREAT},
-	{"study", ActionType::STUDY},
-	{"kill", ActionType::KILL}
+	{"study", ActionType::STUDY}
+};
+
+ map<string, Interaction::DevActionType> Interaction::devactions = {
+	{DEV_MODE, DevActionType::ENABLE},
+	{"kill", DevActionType::KILL},
+	{"tp", DevActionType::TP}
 };
 
 const map<Interaction::ActionType, string> Interaction::helpStrings = {
@@ -38,8 +44,7 @@ const map<Interaction::ActionType, string> Interaction::helpStrings = {
 	{ActionType::CHARACTER, "Displays the player stats"},
 	{ActionType::EQUIP, "Equips the specified piece of equipment from the inventory"},
 	{ActionType::RETREAT, "Retreat from the current encounter"},
-	{ActionType::STUDY, "Display the enemy stats"},
-	{ActionType::KILL, "Kill the enemy"}
+	{ActionType::STUDY, "Display the enemy stats"}
 };
 
 const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
@@ -55,8 +60,13 @@ const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
 	{ActionType::EQUIP, true},
 	{ActionType::HELP, false},
 	{ActionType::RETREAT, true},
-	{ActionType::STUDY, true},
-	{ActionType::KILL, true}
+	{ActionType::STUDY, true}
+};
+
+ map<Interaction::DevActionType, bool> Interaction::isActiveDevActions{
+	{DevActionType::ENABLE, false},
+	{DevActionType::KILL, true},
+	{DevActionType::TP, true},
 };
 
 string Interaction::getHelpText(string action)
@@ -76,7 +86,7 @@ string Interaction::getHelpText(string action)
 	return "";
 }
 
-Interaction::InteractionResult Interaction::parseInput(const string& input)
+Interaction::InteractionResult Interaction::parseInput_Actions(const string& input)
 {
 	InteractionResult result;
 	vector<string> tokens = Utils::tokenize(input);
@@ -115,5 +125,47 @@ Interaction::InteractionResult Interaction::parseInput(const string& input)
 	}
 
 	result.actionType = ActionType::ERROR;
+	return result;
+}
+
+Interaction::InteractionResult Interaction::parseInput_DevActions(const string& input)
+{
+	InteractionResult result;
+	vector<string> tokens = Utils::tokenize(input);
+
+	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
+	{
+		string devactionStr = tokens[0];
+
+		for (int j = 1; j < i; j++)
+		{
+			devactionStr += " " + tokens[j];
+		}
+
+		if (devactions.find(devactionStr) != devactions.end())
+		{
+			result.devActionType = devactions.at(devactionStr);
+
+			if (i < tokens.size())
+			{
+				result.objectName = tokens[i];
+				for (int j = i + 1; j < tokens.size(); j++)
+				{
+					result.objectName += " " + tokens[j];
+				}
+			}
+
+			result.devactionStr = Utils::strToLower(devactionStr);
+
+			if (isActiveDevActions.find(result.devActionType) != isActiveDevActions.end())
+				result.isActiveDevAction = isActiveDevActions.at(result.devActionType);
+
+			result.succeeded = true;
+
+			return result;
+		}
+	}
+
+	result.devActionType = DevActionType::ERROR;
 	return result;
 }

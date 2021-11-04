@@ -24,9 +24,9 @@ public:
 
 	EnemyEncounter();
 
-	const static vector<string> playerOptions;
-
 	static bool canUseAction(Interaction::ActionType actionType);
+	static bool canUseDevAction(Interaction::DevActionType devActionType);
+
 
 	bool startEncounter();
 	bool attackEnemy(const Player& player, const string& enemyName);
@@ -48,8 +48,9 @@ public:
 private:
 	static const set<Interaction::ActionType> useableActions;
 
+	static const set<Interaction::DevActionType> useableDevActions;
+
 	int getEnemyIndex(const string& enemyName) const;
-	void displayOptions() const;
 
 	vector<Enemy> enemies;
 	vector<shared_ptr<Item>> drops;

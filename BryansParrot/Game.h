@@ -57,9 +57,10 @@ private:
 	void playerWin();
 	void promptReplay();
 	void encounterInteract(Interaction::InteractionResult& inputResult);
-
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
+
+	bool dev_mode = false;
 
 public:
 	void helperDisplay();
