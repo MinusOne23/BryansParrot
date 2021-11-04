@@ -40,6 +40,11 @@ void Character::equipWeapon(shared_ptr<Weapon> weapon)
 	equipment.mainWeapon = weapon;
 }
 
+void Character::drinkPotion(shared_ptr<Potion> potion)
+{
+	heal(potion->getPotionSize());
+}
+
 Weapon::DamageResult Character::getDamage() const
 {
 	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.getDamage()) : (equipment.mainWeapon->getDamage());

@@ -26,6 +26,10 @@ using namespace std;
 * remove(int index)
 *	removes the item at the specified index
 * 
+* find(string itemName)
+*	finds the item in the inventory with the given name and returns the index of the
+*	item. If not found, returns -1
+* 
 * operator[]
 *	faster way to access the items in the inventory by just using the hard brackets
 *
@@ -45,6 +49,7 @@ public:
 	void remove(shared_ptr<Item> item);
 	void remove(int index);
 	void display() const;
+	int find(string itemName);
 
 	shared_ptr<Item> operator[] (int i);
 	int numItems();

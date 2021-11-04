@@ -1,7 +1,7 @@
 #include "Interaction.h"
 #include "Utils.h"
 
-const int Interaction::MAX_ACTION_WORDS = 1;
+const int Interaction::MAX_ACTION_WORDS = 2;
 
 const map<string, Interaction::ActionType> Interaction::actions = {
 	{"q", ActionType::QUIT},
@@ -9,6 +9,7 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"inventory", ActionType::INVENTORY},
 	{"take", ActionType::TAKE},
 	{"grab", ActionType::TAKE},
+	{"pick up", ActionType::TAKE},
 	{"open", ActionType::OPEN},
 	{"unlock", ActionType::UNLOCK},
 	{"l", ActionType::LOOK},
@@ -16,6 +17,7 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"h", ActionType::HELP},
 	{"help", ActionType::HELP},
 	{"use", ActionType::USE},
+	{"drink", ActionType::DRINK},
 	{"drop", ActionType::DROP},
 	{"c", ActionType::CHARACTER},
 	{"character", ActionType::CHARACTER},
@@ -39,7 +41,8 @@ const map<Interaction::ActionType, string> Interaction::helpStrings = {
 	{ActionType::EQUIP, "Equips the specified piece of equipment from the inventory"},
 	{ActionType::RETREAT, "Retreat from the current encounter"},
 	{ActionType::STUDY, "Display the enemy stats"},
-	{ActionType::KILL, "Kill the enemy"}
+	{ActionType::KILL, "Kill the enemy"},
+	{ActionType::DRINK, "Drink the specified item from the player's inventory"}
 };
 
 const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
@@ -56,7 +59,8 @@ const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
 	{ActionType::HELP, false},
 	{ActionType::RETREAT, true},
 	{ActionType::STUDY, true},
-	{ActionType::KILL, true}
+	{ActionType::KILL, true},
+	{ActionType::DRINK, true}
 };
 
 string Interaction::getHelpText(string action)

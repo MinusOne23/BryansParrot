@@ -42,41 +42,47 @@ void Player::takeItem(shared_ptr<Item> item)
 }
 
 //uses an item from your inventory 
-bool Player::useItem(string item)
+bool Player::useItem(string itemName)
 {
-	for (int i = 0; i < inventory.numItems(); i++)
-	{
-		if (Utils::equalsCI(item,inventory[i]->getName()))
-		{
-			cout << "you used " << inventory[i]->getName() << "." << endl;
-			shared_ptr<Potion>potion = dynamic_pointer_cast<Potion>(inventory[i]);
-			if (potion != nullptr)
-			{
-				heal(potion->getPotionSize());
-				inventory.remove(i);
-				cout << "Your health has been raised by " << potion->getPotionSize() << endl;
-			}
-			return true;
-		}
+	int index = inventory.find(itemName);
 	
+	if (index == -1)
+	{
+		cout << "That item is not in your inventory." << endl;
+		return false;
 	}
-	cout << "Item is not in your Inventory" << endl;
+
+	shared_ptr<Potion> potion = dynamic_pointer_cast<Potion>(inventory[index]);
+	if (potion != nullptr)
+	{
+		inventory.remove(index);
+		drinkPotion(potion);
+		return true;
+	}
+
+	shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(inventory[index]);
+	if (weapon != nullptr)
+	{
+		inventory.remove(index);
+		equipWeapon(weapon);
+		return true;
+	}
+
+	cout << "You can not use that item." << endl;
 	return false;
 }
 
-shared_ptr<Item> Player::dropItem(string item)
+shared_ptr<Item> Player::dropItem(string itemName)
 {
-	for (int i = 0; i < inventory.numItems(); i++)
-	{
-		if (Utils::equalsCI(item, inventory[i]->getName()))
-		{
-			cout << "You dropped " << inventory[i]->getName() << endl;
-			shared_ptr<Item>item = inventory[i];
-			inventory.remove(i);
-			return item;
-		}
-	}
-	return nullptr;
+	int index = inventory.find(itemName);
+	
+	if (index == -1)
+		return nullptr;
+
+	cout << "You dropped " << inventory[index]->getName() << endl;
+	shared_ptr<Item>item = inventory[index];
+	inventory.remove(index);
+	return item;
 }
 
 void Player::removeItem(shared_ptr<Item> item)
@@ -113,22 +119,63 @@ void Player::displayInventory() const
 	cout << "\t===========================================\n";
 }
 
-bool Player::equipWeapon(string weaponName)
+bool Player::findAndDrink(string itemName)
 {
-	for (int i = 0; i < inventory.numItems(); i++)
+	int index = inventory.find(itemName);
+
+	if (index == -1)
 	{
-		shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(inventory[i]);
-
-		if (weapon != nullptr && Utils::equalsCI(weapon->getName(), weaponName))
-		{
-			equipment.mainWeapon = weapon;
-			inventory.remove(i);
-
-			cout << "You equipped " << weapon->getName() << "." << endl;
-			return true;
-		}
+		cout << "That item is not in your inventory." << endl;
+		return false;
 	}
 
-	cout << "That equipment is not in your inventory." << endl;
-	return false;
+	shared_ptr<Potion> potion = dynamic_pointer_cast<Potion>(inventory[index]);
+
+	if (potion != nullptr)
+	{
+		inventory.remove(index);
+		drinkPotion(potion);
+
+		return true;
+	}
+
+	cout << "You can not drink that item." << endl;
+}
+
+bool Player::findAndEquip(string itemName)
+{
+	int index = inventory.find(itemName);
+
+	if (index == -1)
+	{
+		cout << "That item is not in your inventory." << endl;
+		return false;
+	}
+
+	shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(inventory[index]);
+
+	if (weapon != nullptr)
+	{
+		inventory.remove(index);
+		equipWeapon(weapon);
+
+		return true;
+	}
+
+	cout << "You can not equip that item." << endl;
+}
+
+void Player::equipWeapon(shared_ptr<Weapon> weapon)
+{
+	Character::equipWeapon(weapon);
+
+	cout << "You equipped " << weapon->getName() << "." << endl;
+}
+
+void Player::drinkPotion(shared_ptr<Potion> potion)
+{
+	Character::drinkPotion(potion);
+
+	cout << "You drank " << potion->getName() << "." << endl;
+	cout << "Your health has been raised by " << potion->getPotionSize() << endl;
 }

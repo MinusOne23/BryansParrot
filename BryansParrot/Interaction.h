@@ -69,6 +69,7 @@ public:
 		INVENTORY,
 		TAKE,
 		USE,
+		DRINK,
 		OPEN,
 		DROP,
 		UNLOCK,

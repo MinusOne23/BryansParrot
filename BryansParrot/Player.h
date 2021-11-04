@@ -25,10 +25,10 @@ using namespace std;
 * takeItem(shared_ptr<Item> item)
 *	adds the given item to the player's inventory
 * 
-* useItem(string item)
+* useItem(string itemName)
 *	attempts to find and use the item with the given name, if not found returns false
 * 
-* dropItem(string item)
+* dropItem(string itemName)
 *	removes the item from the player's inventory and returns it
 * 
 * removeItem(shared_ptr<Item> item)
@@ -41,10 +41,14 @@ using namespace std;
 * displayInventory()
 *	calls the display() function on the player's inventory
 * 
-* equipWeapon(string weaponName)
+* findAndEquip(string itemName)
 *	attempts to find a weapon in the player's inventory with the given name and if
 *	found, sets the player's main weapon to the found weapon and returns true. If not
 *	found, returns false
+* 
+* findAndDrink(string itemName)
+*	attempts to find a potion and then use it to heal the player. If found, returns
+*	true, else false.
 *
 * --------------------------------------------------------------------------------------
 * Variables
@@ -61,12 +65,17 @@ public:
 	Player(int maxHealth, Weapon _baseWeapon);
 
 	void takeItem(shared_ptr<Item> item);
-	bool useItem(string item);
-	shared_ptr<Item> dropItem(string item);
+	bool useItem(string itemName);
+	shared_ptr<Item> dropItem(string itemName);
 	void removeItem(shared_ptr<Item> item);
 	vector<shared_ptr<Key>> findKeys(shared_ptr<Door> door);
 	void displayInventory() const;
-	bool equipWeapon(string weaponName);
+
+	bool findAndDrink(string itemName);
+	bool findAndEquip(string itemName);
+
+	virtual void equipWeapon(shared_ptr<Weapon> weapon);
+	virtual void drinkPotion(shared_ptr<Potion> potion);
 private:
 	Inventory inventory;
 };

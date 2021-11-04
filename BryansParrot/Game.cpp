@@ -311,10 +311,10 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 ///		CHARACTER -- displays the player's stats
 ///		TAKE -- adds key from room and adds to inventory
 ///		USE -- uses the item with its intended purpose
+///		DRINK -- drinks the specified item in player inventory
 ///		OPEN -- opens current rooms door and moves to next room
 ///		DROP -- drops item into current room
 ///		UNLOCK -- unlocks any locked door
-///		ATTACK -- kills enemy in room and drops key for player to pick up
 ///		LOOK -- displays what is in the room
 ///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
@@ -349,7 +349,7 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::EQUIP:
 	{
-		inputResult.succeeded = player.equipWeapon(inputResult.target);
+		inputResult.succeeded = player.findAndEquip(inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::CHARACTER:
@@ -376,6 +376,11 @@ void Game::gameInteract()
 	case Interaction::ActionType::USE:
 	{
 		inputResult.succeeded = player.useItem(inputResult.target);
+		break;
+	}
+	case Interaction::ActionType::DRINK:
+	{
+		inputResult.succeeded = player.findAndDrink(inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::OPEN:
