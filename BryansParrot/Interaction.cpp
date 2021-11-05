@@ -58,7 +58,7 @@ const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
 	{ActionType::EQUIP, true},
 	{ActionType::HELP, false},
 	{ActionType::RETREAT, true},
-	{ActionType::STUDY, true},
+	{ActionType::STUDY, false},
 	{ActionType::KILL, true},
 	{ActionType::DRINK, true}
 };
