@@ -72,6 +72,14 @@ void Game::start()
 ///			ROOM_NAME.addEnemy(ENEMY_OBJ);
 /// 
 /// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
+
+const map<string, int>roomString_to_roomIndex = {
+	{"first_room",0},
+	{"second_room",1},
+	{"third_room",2},
+	{"forth_room",3},
+};
+
 void Game::initializeGame()
 {
 	srand(time(NULL));
@@ -345,7 +353,33 @@ void Game::gameInteract()
 		}
 	}
 	
+	if (isDevMode)
+	{
+		switch (inputResult.devActionType)
+		{
+		case Interaction::DevActionType::TP:
+		{
 
+			int roomIndex;
+			Room* nextRoom;
+			string room_name = inputResult.objectName;
+			
+			if (roomString_to_roomIndex.find(room_name) != roomString_to_roomIndex.end())
+			{
+				cout << "Room Found" << endl;
+				roomIndex = roomString_to_roomIndex.find(room_name)->second;
+				nextRoom = &allRooms[roomIndex];
+				//To Do: if next Room is an encounter room, display enter encounter or not
+				currentRoom = nextRoom;
+				currentRoom->displayContents();
+			}
+			else {
+				cout << "Room Not Found" << endl;
+			}
+			break;
+		}
+		}
+	}
 	//Actions
 	switch (inputResult.actionType)
 	{

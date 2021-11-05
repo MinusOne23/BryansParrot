@@ -60,6 +60,8 @@ private:
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
 
+	const map<string, int>roomString_to_roomIndex;
+
 	bool isDevMode = false;
 
 public:
