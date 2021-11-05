@@ -324,12 +324,6 @@ void Game::gameInteract()
 
 	bool inEncounter = currentRoom->encounterCount() > 0;
 
-	if (inputResult.actionType == Interaction::ActionType::ERROR)
-	{
-		cout << "Sorry, that input is not recognized." << endl;
-		return;
-	}
-
 	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
 	{
 		cout << "Sorry you can't do that within an enemy encounter." << endl;
@@ -434,6 +428,19 @@ void Game::gameInteract()
 	{
 		helperDisplay();
 		break;
+	}
+	case Interaction::ActionType::ERROR:
+	{
+		cout << "Sorry, that input is not recognized." << endl;
+		return;
+	}
+	default:
+	{
+		if (!inEncounter && EnemyEncounter::canUseAction(inputResult.actionType))
+		{
+			cout << "Sorry, you can not do that right now." << endl;
+			return;
+		}
 	}
 	}
 
