@@ -25,6 +25,11 @@ string Character::getName() const
 	return name;
 }
 
+Character::Equipment Character::getEquipment() const
+{
+	return equipment;
+}
+
 void Character::damage(int amt)
 {
 	health.removeHealth(amt);
@@ -45,9 +50,14 @@ void Character::drinkPotion(shared_ptr<Potion> potion)
 	heal(potion->getPotionSize());
 }
 
-Weapon::DamageResult Character::getDamage() const
+Weapon::DamageResult Character::calcLightDmg() const
 {
-	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.getDamage()) : (equipment.mainWeapon->getDamage());
+	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.calcLightDmg()) : (equipment.mainWeapon->calcLightDmg());
+}
+
+Weapon::DamageResult Character::calcHeavyDmg() const
+{
+	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.calcHeavyDmg()) : (equipment.mainWeapon->calcHeavyDmg());
 }
 
 int Character::getCurrentHealth() const

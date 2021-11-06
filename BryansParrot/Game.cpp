@@ -11,6 +11,7 @@
 #include "EnemyEncounter.h"
 #include "Utils.h"
 #include "Interaction.h"
+#include "Weapon.h"
 
 using namespace std;
 
@@ -84,10 +85,9 @@ void Game::start()
 void Game::initializeGame()
 {
 	srand(time(NULL));
-
-	Weapon playerFists("Fists", { 10, 20 }, 0.2f, { 20, 30 });
-	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
-	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
+	Weapon playerFists("Fists", { 10, 20, 0.9f}, { 15, 25, 0.6f}, 0.2f, 1.5f); // Name - Light: Min/Max/Acceracy -Heavy: Min/Max/Acceracy, critchance, critMulti
+	Weapon goblinFists("Goblin Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
+	Weapon ironSword("Sword", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
 
 	Enemy goblin("Goblin", 100, goblinFists);
 
@@ -270,6 +270,13 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	{
 	case Interaction::ActionType::ATTACK:
 	{
+		player.getEquipment();
+		/*cout << "Attack Types:" << endl;
+		cout << "=============" << endl;
+		cout << "1 = Light Attack: " << damage.min << endl;
+		cout << "2 = Heavy Attack: " << damage.max << endl;*/
+
+
 		inputResult.succeeded = encounter.attackEnemy(player, inputResult.target);
 		break;
 	}

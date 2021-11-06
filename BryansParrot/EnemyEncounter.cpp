@@ -61,7 +61,7 @@ bool EnemyEncounter::attackEnemy(const Player& player, const string& enemyName)
 
 	Enemy& enemy = enemies[index];
 
-	Weapon::DamageResult damageResult = player.getDamage();
+	Weapon::DamageResult damageResult = player.calcLightDmg();
 
 	if (damageResult.critical)
 		cout << "Critical Hit!" << endl;
@@ -142,7 +142,7 @@ void EnemyEncounter::enemyTurn(Player& player)
 		cout << "==============================================" << endl;
 
 
-		Weapon::DamageResult damageResult = enemy.getDamage();
+		Weapon::DamageResult damageResult = enemy.calcLightDmg();
 		
 		if (damageResult.critical)
 		{

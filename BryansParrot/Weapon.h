@@ -53,28 +53,34 @@ public:
 	{
 		int min;
 		int max;
+		float acc;
 	};
 
 	struct DamageResult
 	{
 		bool critical;
 		int damage;
+		bool isHit;
 	};
 
-	Weapon(string _name, Damage _baseDamage, float _critChance, Damage _critDamage);
+	Weapon(string _name, Damage _lightDmg, Damage _heavyDmg, float _critChance, float _critMulti);
 
-	Damage getBaseDamage() const;
 	float getCritChance() const;
-	Damage getCritDamage() const;
+	DamageResult calcLightDmg() const;
+	DamageResult calcHeavyDmg() const;
 
-	DamageResult getDamage() const;
+	Damage getLightDmg()const;
+	Damage getHeavyDmg()const;
+	//DamageResult getDamage(Damage damage) const;
 
 	virtual string getDisplay() const;
 
 private:
-	Damage baseDamage;
+	DamageResult getDamage(Damage damage) const;
+	Damage lightDmg; 
+	Damage heavyDmg;  
 	float critChance;
-	Damage critDamage;
+	float critMulti;
 };
 
 #endif // WEAPON_H
