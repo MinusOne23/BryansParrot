@@ -17,6 +17,13 @@ using namespace std;
 const string VERSION = "1.3.2";
 const int Game::MAX_ACTION_WORDS = 1;
 
+const map<string, int> Game::roomString_to_roomIndex = {
+	{"first_room",0},
+	{"second_room",1},
+	{"third_room",2},
+	{"forth_room",3}
+};
+
 /// STARTS THE GAME:
 /// Game will continue untill:
 ///		-Player is Dead
@@ -72,13 +79,6 @@ void Game::start()
 ///			ROOM_NAME.addEnemy(ENEMY_OBJ);
 /// 
 /// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
-
-const map<string, int>roomString_to_roomIndex = {
-	{"first_room",0},
-	{"second_room",1},
-	{"third_room",2},
-	{"forth_room",3},
-};
 
 void Game::initializeGame()
 {
@@ -219,27 +219,7 @@ void Game::openDoor(Room::DoorIndex index)
 	}
 
 	Room* nextRoom = &door->getNextRoom();
-
-	if (nextRoom->encounterCount() == 0)
-	{
-		currentRoom = nextRoom;
-		currentRoom->displayContents();
-		return;
-	}
-
-	EnemyEncounter& encounter = nextRoom->currentEncounter();
-
-	bool startEncounter = encounter.startEncounter();
-	
-	if (!startEncounter)
-	{
-		cout << "You have retreated back to the previous room" << endl;
-		return;
-	}
-
-	encounter.setLastRoom(currentRoom);
-	encounter.displayEnemies();
-	currentRoom = nextRoom;
+	enterNewRoom(nextRoom);
 }
 
 /// Door Index = Door Direction
@@ -294,6 +274,30 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 
 	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
 		currentRoom->completeEncounter();
+}
+
+void Game::enterNewRoom(Room* nextRoom)
+{
+	if (nextRoom->encounterCount() == 0)
+	{
+		currentRoom = nextRoom;
+		currentRoom->displayContents();
+		return;
+	}
+
+	EnemyEncounter& encounter = nextRoom->currentEncounter();
+
+	bool startEncounter = encounter.startEncounter();
+
+	if (!startEncounter)
+	{
+		cout << "You have retreated back to the previous room" << endl;
+		return;
+	}
+
+	encounter.setLastRoom(currentRoom);
+	encounter.displayEnemies();
+	currentRoom = nextRoom;
 }
 
 /// Game Loop: Takes in user input ant turns input into actions
@@ -363,15 +367,15 @@ void Game::gameInteract()
 			int roomIndex;
 			Room* nextRoom;
 			string room_name = inputResult.objectName;
-			
+
+
 			if (roomString_to_roomIndex.find(room_name) != roomString_to_roomIndex.end())
 			{
 				cout << "Room Found" << endl;
 				roomIndex = roomString_to_roomIndex.find(room_name)->second;
 				nextRoom = &allRooms[roomIndex];
 				//To Do: if next Room is an encounter room, display enter encounter or not
-				currentRoom = nextRoom;
-				currentRoom->displayContents();
+				enterNewRoom(nextRoom);
 			}
 			else {
 				cout << "Room Not Found" << endl;

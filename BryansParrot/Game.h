@@ -57,10 +57,11 @@ private:
 	void playerWin();
 	void promptReplay();
 	void encounterInteract(Interaction::InteractionResult& inputResult);
+	void enterNewRoom(Room* nextRoom);
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
 
-	const map<string, int>roomString_to_roomIndex;
+	static const map<string, int> roomString_to_roomIndex;
 
 	bool isDevMode = false;
 
