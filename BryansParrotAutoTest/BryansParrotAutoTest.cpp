@@ -13,6 +13,8 @@
 #include "..\BryansParrot\Room.cpp"
 #include "..\BryansParrot\Utils.cpp"
 #include "..\BryansParrot\Weapon.cpp"
+#include "..\BryansParrot\Interaction.cpp"
+#include "..\BryansParrot\EnemyEncounter.cpp"
 
 
 

@@ -119,9 +119,9 @@ private:
 	void helperDisplay();
 	void gameInteract();
 
+public:
 	// Unit Test methods
 	void initializeGameTest();
-public:
 	void start();
 };
 
