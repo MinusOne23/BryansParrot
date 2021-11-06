@@ -1,22 +1,33 @@
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
 #include "Weapon.h"
 
-
-Weapon::Weapon(string _name, Damage _lightDmg, Damage _heavyDmg, float _critChance, float _critMulti)
-	: Item{ _name }, lightDmg(_lightDmg), heavyDmg(_heavyDmg), critChance(_critChance), critMulti(_critMulti){}
+Weapon::Weapon(string _name, Damage _lightDmg, Damage _heavyDmg, float _critChance, float _critMult)
+	: Item{ _name }, lightDmg(_lightDmg), heavyDmg(_heavyDmg), critChance(_critChance), critMult(_critMult){}
 
 float Weapon::getCritChance() const
 {
 	return critChance;
 }
 
-Weapon::DamageResult Weapon::calcLightDmg() const
+float Weapon::getCritMult() const
 {
-	return getDamage(lightDmg);
+	return critMult;
 }
 
-Weapon::DamageResult Weapon::calcHeavyDmg() const
+Weapon::DamageResult Weapon::calcDamage(AttackType attackType) const
 {
-	return getDamage(heavyDmg);
+	switch (attackType)
+	{
+	case AttackType::LIGHT:
+		return getDamage(lightDmg);
+	case AttackType::HEAVY:
+		return getDamage(heavyDmg);
+	}
+
+	return DamageResult();
 }
 
 Weapon::Damage Weapon::getLightDmg() const
@@ -41,10 +52,10 @@ Weapon::DamageResult Weapon::getDamage(Damage damage) const
 	int critNum = rand() % 1000;
 	result.critical = critNum <= 1000 * critChance;
 
-	//Damage damage = result.critical ? critDamage : baseDamage;
-	result.damage = (damage.max - damage.min + 1) + damage.min;
+	result.damage = rand() % (damage.max - damage.min + 1) + damage.min;
+
 	if (result.critical)
-		result.damage *= critMulti;
+		result.damage *= critMult;
 
 	return result;
 }
@@ -52,4 +63,12 @@ Weapon::DamageResult Weapon::getDamage(Damage damage) const
 string Weapon::getDisplay() const
 {
 	return name;
+}
+
+string Weapon::Damage::display()
+{
+	stringstream stream;
+	stream << min << "-" << max << " " << fixed << setprecision(2) << acc * 100 << "% Accurracy";
+
+	return stream.str();
 }

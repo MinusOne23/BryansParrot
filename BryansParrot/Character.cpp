@@ -2,6 +2,7 @@
 #include <time.h>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 #include "Character.h"
 
@@ -30,6 +31,11 @@ Character::Equipment Character::getEquipment() const
 	return equipment;
 }
 
+Weapon Character::getActiveWeapon() const
+{
+	return equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
+}
+
 void Character::damage(int amt)
 {
 	health.removeHealth(amt);
@@ -50,14 +56,18 @@ void Character::drinkPotion(shared_ptr<Potion> potion)
 	heal(potion->getPotionSize());
 }
 
-Weapon::DamageResult Character::calcLightDmg() const
+Weapon::DamageResult Character::calcDamage(Weapon::AttackType attackType) const
 {
-	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.calcLightDmg()) : (equipment.mainWeapon->calcLightDmg());
+	return getActiveWeapon().calcDamage(attackType);
 }
 
-Weapon::DamageResult Character::calcHeavyDmg() const
+string Character::healthDisplay() const
 {
-	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.calcHeavyDmg()) : (equipment.mainWeapon->calcHeavyDmg());
+	stringstream ss;
+
+	ss << "(" << health.getCurrentHealth() << " / " << health.getMaxHealth() << ")";
+
+	return ss.str();
 }
 
 int Character::getCurrentHealth() const
@@ -77,20 +87,17 @@ bool Character::isDead() const
 
 void Character::displayStats() const
 {
-	Weapon mainWeapon = equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
-
-	Weapon::Damage base = mainWeapon.getBaseDamage();
-	float critChance = mainWeapon.getCritChance();
-	Weapon::Damage critDamage = mainWeapon.getCritDamage();
+	Weapon activeWeapon = getActiveWeapon();
 
 	cout << "\t===========================================\n";
 	cout << "\t " << name << " Stats:" << endl;
 	cout << "\t-------------------------------------------\n";
-	cout << "\t Health: " << health.getCurrentHealth() << " / " << health.getMaxHealth() << endl;
+	cout << "\t Health: " << healthDisplay() << endl;
 	cout << "\t Equipment: " << endl;
-	cout << "\t    MainWeapon: " << mainWeapon.getName() << endl;
-	cout << "\t       Base Damage: " << base.min << "-" << base.max << endl;
-	cout << "\t       Crit Chance: " << fixed << setprecision(2) << critChance * 100 << "%" << endl;
-	cout << "\t       Crit Damage: " << critDamage.min << "-" << critDamage.max << endl;
+	cout << "\t    MainWeapon: " << activeWeapon.getName() << endl;
+	cout << "\t       Light Damage: " << activeWeapon.getLightDmg().display() << endl;
+	cout << "\t       Heavy Damage: " << activeWeapon.getHeavyDmg().display() << endl;
+	cout << "\t       Crit Chance: " << fixed << setprecision(2) << activeWeapon.getCritChance() * 100 << "%" << endl;
+	cout << "\t       Crit Multiplier: " << fixed << setprecision(2) << activeWeapon.getCritMult() << "x" << endl;
 	cout << "\t===========================================\n";
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <memory>
+#include <iomanip>
 
 #include "Game.h"
 #include "Door.h"
@@ -86,8 +87,8 @@ void Game::initializeGame()
 {
 	srand(time(NULL));
 	Weapon playerFists("Fists", { 10, 20, 0.9f}, { 15, 25, 0.6f}, 0.2f, 1.5f); // Name - Light: Min/Max/Acceracy -Heavy: Min/Max/Acceracy, critchance, critMulti
-	Weapon goblinFists("Goblin Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
-	Weapon ironSword("Sword", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
+	Weapon goblinFists("Goblin Fists", { 5, 10, 0.9f }, { 12, 18, 0.6f }, 0.1f, 1.5f);
+	Weapon sword("Sword", { 20, 30, 0.95f }, { 35, 50, 0.7f }, 0.25f, 1.65f);
 
 	Enemy goblin("Goblin", 100, goblinFists);
 
@@ -128,7 +129,7 @@ void Game::initializeGame()
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
 	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
-	firstRoom.addItem(make_shared<Weapon>(ironSword));
+	firstRoom.addItem(make_shared<Weapon>(sword));
 
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
@@ -270,14 +271,62 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	{
 	case Interaction::ActionType::ATTACK:
 	{
-		player.getEquipment();
-		/*cout << "Attack Types:" << endl;
+		if (!encounter.enemyExists(inputResult.target))
+		{
+			cout << "That enemy does not exist" << endl;
+			inputResult.succeeded = false;
+			break;
+		}
+
+		Weapon activeWeapon = player.getActiveWeapon();
+		Weapon::Damage lightDmg = activeWeapon.getLightDmg();
+		Weapon::Damage heavyDmg = activeWeapon.getHeavyDmg();
+
+		cout << "Attack Types:" << endl;
 		cout << "=============" << endl;
-		cout << "1 = Light Attack: " << damage.min << endl;
-		cout << "2 = Heavy Attack: " << damage.max << endl;*/
+		cout << "0 = Cancel Attack: " << endl;
+		cout << "1 = Light Attack: " << lightDmg.display() << endl;
+		cout << "2 = Heavy Attack: " << heavyDmg.display() << endl;
 
+		int choice = -1;
+		Weapon::AttackType attackType;
 
-		inputResult.succeeded = encounter.attackEnemy(player, inputResult.target);
+		bool valid = false;
+		while (!valid)
+		{
+			string input = Utils::inputValidator();
+
+			if (Utils::isNumber(input))
+			{
+				choice = stoi(input);
+
+				if (choice == 0)
+				{
+					valid = true;
+				}
+				if (choice > 0 && choice <= (int)Weapon::AttackType::HEAVY)
+				{
+					attackType = (Weapon::AttackType)choice;
+					valid = true;
+				}
+			}
+
+			if (!valid)
+			{
+				cout << "Invalid input" << endl;
+			}
+		}
+
+		if (choice == 0)
+		{
+			cout << "You've canceled your Attack" << endl;
+			inputResult.succeeded = false;
+		}
+		else
+		{
+			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
+		}
+
 		break;
 	}
 	case Interaction::ActionType::KILL:
@@ -307,6 +356,9 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		cout << endl;
 
 		encounter.displayEnemies();
+
+		cout << endl;
+		cout << "Player Health: " << player.healthDisplay() << endl;
 	}
 }
 

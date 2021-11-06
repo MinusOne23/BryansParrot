@@ -39,6 +39,7 @@ public:
 	static string inputValidator();
 	static bool equalsCI(string a, string b);
 	static string strToLower(string str);
+	static bool isNumber(const string& str);
 
 private:
 	Utils();

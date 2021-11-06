@@ -46,7 +46,7 @@ bool EnemyEncounter::startEncounter()
 	return true;
 }
 
-bool EnemyEncounter::attackEnemy(const Player& player, const string& enemyName)
+bool EnemyEncounter::attackEnemy(const Player& player, Weapon::AttackType attackType, const string& enemyName)
 {
 	if (currentState != EncounterState::ACTIVE)
 		return false;
@@ -59,30 +59,43 @@ bool EnemyEncounter::attackEnemy(const Player& player, const string& enemyName)
 		return false;
 	}
 
+	cout << "==============================================" << endl;
+	cout << player.getName() << "'s Turn" << endl;
+	cout << "==============================================" << endl;
+
 	Enemy& enemy = enemies[index];
 
-	Weapon::DamageResult damageResult = player.calcLightDmg();
+	Weapon::DamageResult damageResult = player.calcDamage(attackType);
 
-	if (damageResult.critical)
-		cout << "Critical Hit!" << endl;
-
-	enemy.damage(damageResult.damage);
-
-	if (enemy.isDead())
+	if (!damageResult.isHit)
 	{
-		cout << "You killed " << enemy.getName() << endl;
-
-		enemies.erase(enemies.begin() + index);
-
-		if (enemies.size() == 0)
-		{
-			currentState = EncounterState::WIN;
-		}
+		cout << "Your attack missed!" << endl;
 	}
 	else
 	{
-		cout << "You dealt " << damageResult.damage << " damage to " << enemy.getName() << endl;
+		if (damageResult.critical)
+			cout << "Critical Hit!" << endl;
+
+		enemy.damage(damageResult.damage);
+
+		if (enemy.isDead())
+		{
+			cout << "You killed " << enemy.getName() << endl;
+
+			enemies.erase(enemies.begin() + index);
+
+			if (enemies.size() == 0)
+			{
+				currentState = EncounterState::WIN;
+			}
+		}
+		else
+		{
+			cout << "You dealt " << damageResult.damage << " damage to " << enemy.getName() << endl;
+		}
 	}
+
+	cout << "==============================================" << endl;
 
 	return true;
 }
@@ -133,6 +146,11 @@ bool EnemyEncounter::studyEnemy(const string& enemyName) const
 	return true;
 }
 
+bool EnemyEncounter::enemyExists(const string& enemyName) const
+{
+	return getEnemyIndex(enemyName) != -1;
+}
+
 void EnemyEncounter::enemyTurn(Player& player)
 {
 	for (Enemy& enemy : enemies)
@@ -142,16 +160,35 @@ void EnemyEncounter::enemyTurn(Player& player)
 		cout << "==============================================" << endl;
 
 
-		Weapon::DamageResult damageResult = enemy.calcLightDmg();
-		
-		if (damageResult.critical)
+		Weapon::AttackType type = (Weapon::AttackType)(rand() % 2 + 1);
+
+		Weapon::DamageResult damageResult = enemy.calcDamage(type);
+
+		switch (type)
 		{
-			cout << "Critical Hit!" << endl << endl;
+		case Weapon::AttackType::LIGHT:
+			cout << enemy.getName() << " used a light attack!" << endl;
+			break;
+		case Weapon::AttackType::HEAVY:
+			cout << enemy.getName() << " used a heavy attack!" << endl;
+			break;
 		}
+		
+		if (!damageResult.isHit)
+		{
+			cout << enemy.getName() << "'s attack missed!" << endl;
+		}
+		else
+		{
+			if (damageResult.critical)
+			{
+				cout << "Critical Hit!" << endl;
+			}
 
-		cout << enemy.getName() << " dealt " << damageResult.damage << " damage to " << player.getName() << endl;
+			cout << enemy.getName() << " dealt " << damageResult.damage << " damage to " << player.getName() << endl;
 
-		player.damage(damageResult.damage);
+			player.damage(damageResult.damage);
+		}
 
 		cout << "==============================================" << endl;
 
@@ -199,7 +236,7 @@ void EnemyEncounter::displayEnemies() const
 
 	for (Enemy enemy : enemies)
 	{
-		cout << "\t" << enemy.getName() << " (" << enemy.getCurrentHealth() << " / " << enemy.getMaxHealth() << ")" << endl;
+		cout << "\t" << enemy.getName() << " " << enemy.healthDisplay() << endl;
 	}
 }
 
