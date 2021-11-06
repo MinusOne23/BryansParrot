@@ -7,33 +7,14 @@
 #include "Door.h"
 #include "Player.h"
 #include "Room.h"
-#include "Utils.h"
 #include "Potion.h"
+#include "EnemyEncounter.h"
+#include "Utils.h"
+#include "Interaction.h"
 
 using namespace std;
 
-const map<string, Game::ActionResult> Game::actions = {
-	{"q", {Interaction::QUIT, ""}},
-	{"i", {Interaction::INVENTORY, "Displays Inventory"}},
-	{"inventory", {Interaction::INVENTORY, "Displays Inventory"}},
-	{"take", {Interaction::TAKE, "Takes the specified item in the room"}},
-	{"grab", {Interaction::TAKE, "Takes the specified item in the room"}},
-	{"open", {Interaction::OPEN, "Opens the specified container/door"}},
-	{"unlock", {Interaction::UNLOCK, "unlocks the specified container/door"}},
-	{"l", {Interaction::LOOK, "Displays the contents of the room"}},
-	{"look", {Interaction::LOOK, "Displays the contents of the room"}},
-	{"h", {Interaction::HELP, ""}},
-	{"help", {Interaction::HELP, ""}},
-	{"use", {Interaction::USE, "Use the specified item from the inventory"}},
-	{"drop", {Interaction::DROP, "Drop the specified item from the inventory into the room"}},
-	{"attack", {Interaction::ATTACK, "Attack the specified enemy in the room"}},
-	{"c", {Interaction::CHARACTER, "Displays the player stats"}},
-	{"character", {Interaction::CHARACTER, "Displays the player stats"}},
-	{"equip", {Interaction::EQUIP, "Equips the specified piece of equipment from the inventory"}}
-};
-
-const string VERSION = "1.3.0";
-const int Game::MAX_ACTION_WORDS = 1;
+const string VERSION = "1.3.1";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -86,12 +67,22 @@ void Game::initializeGameTest() {
 ///				- ITEM_CLASS: Potion
 ///				- OBJ_NAME: sPotion
 /// 
-/// ADDING AN ENEMY TO A ROOM:
-///		-create enemy object
-///			Enemy ENEMY_NAME("DETAILED_NAME", INT MAX_HEALTH, INT MIN_DAMAGE, INT MAX_DAMAGE, FLOAT CRITICAL_CHANCE)
-///				EX: Enemy goblin("Goblin", 100, 5, 10, 0.1f);
-///		-add enemy to specific room
-///			ROOM_NAME.addEnemy(ENEMY_OBJ);
+/// CREATE NEW WEAPON
+///		- create weapon object
+///			Weapon [WEAPON_NAME]("[NAME]", baseDamage{min, max}, critChance, critDamage{min, max})
+/// 
+/// CREATE NEW ENEMY
+///		- create enemy object
+///			Enemy [ENEMY_NAME]("[NAME]", maxHealth, weapon)
+/// 
+/// CREATING AN ENEMYY ENCOUNTER
+///		- create enemy encounter object
+///			EnemyEncounter [ROOM_NAME]Encounter[ENCOUNTER_NUMBER]
+///				ex) controlRoomEncounter1
+///		- add enemies to the encounter
+///			encounter.addEnemy([ENEMY_NAME])
+///		- add encounter to the room
+///			controlRoom.addEnemyEncounter(controlRoomEncounter1)
 /// 
 /// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
 void Game::initializeGame()
@@ -101,6 +92,8 @@ void Game::initializeGame()
 	Weapon playerFists("Fists", { 10, 20 }, 0.2f, { 20, 30 });
 	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
 	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
+
+	Enemy goblin("Goblin", 100, goblinFists);
 
 	player = Player(100, playerFists);
 	gameState = GameState::PLAY;
@@ -130,10 +123,11 @@ void Game::initializeGame()
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
 
-	Enemy goblin("Goblin", 100, goblinFists);
+	EnemyEncounter secondRoomEncounter1;
+	secondRoomEncounter1.addEnemy(goblin);
 
 	//Add drops to specific Enemy Object 
-	goblin.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
+	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
 
 	//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
@@ -143,60 +137,18 @@ void Game::initializeGame()
 	//Room 2: Initialization
 	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
 	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, secondSouthDoor);
-	secondRoom.addEnemy(goblin);
+	secondRoom.addEnemyEncounter(secondRoomEncounter1);
 
 	//Room3: Initialization
 	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
 	thirdRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, thirdSouthDoor);
 	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
 
-
-
 	//Current Room player is in. Will change when player enters new room
 	currentRoom = &firstRoom;
 
 	//When player enters winRoom, game is over
 	winRoom = &forthRoom;
-}
-
-/// Converts the player user input to the enum action + object the action is taking on
-/// Inputs: User input string 
-/// Returns: specific Interactions Enum, target object string, and action string
-Game::InputCheckerResult Game::enumInputChecker(string inputStr)
-{
-	InputCheckerResult result;
-	vector<string> tokens = Utils::tokenize(inputStr);
-
-	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
-	{
-		string actionStr = tokens[0];
-
-		for (int j = 1; j < i; j++)
-		{
-			actionStr += " " + tokens[j];
-		}
-
-		if (actions.find(actionStr) != actions.end())
-		{
-			result.interaction = actions.at(actionStr).interaction;
-
-			if (i < tokens.size())
-			{
-				result.objectName = tokens[i];
-				for (int j = i + 1; j < tokens.size(); j++)
-				{
-					result.objectName += " " + tokens[j];
-				}
-			}
-
-			result.actionStr = Utils::strToLower(actionStr);
-
-			return result;
-		}
-	}
-
-	result.interaction = Interaction::ERROR;
-	return result;
 }
 
 /// PlayerDied(): Health reaches 0
@@ -246,7 +198,10 @@ void Game::helperDisplay()
 	cout << "\t-------------------------------------------\n";
 	for (string act : actionsUsed)
 	{
-		cout << "\t- " << act << ": " << actions.at(act).helpStr << endl;
+		string helpStr = Interaction::getHelpText(act);
+
+		if(helpStr != "")
+			cout << "\t- " << act << ": " << helpStr << endl;
 	}
 	cout << "\t===========================================\n";
 }
@@ -259,19 +214,39 @@ void Game::openDoor(Room::DoorIndex index)
 	shared_ptr<Door> door = currentRoom->getDoor(index);
 
 	if (door == nullptr)
-		cout << "There is no door in this direction." << endl;
-	else
 	{
-		if (door->isLocked())
-			cout << "This door is locked and can not be opend yet." << endl;
-		else
-		{
-			cout << "You opened the door and went to the next room" << endl;
-			currentRoom = &door->getNextRoom();
-
-			currentRoom->displayContents();
-		}
+		cout << "There is no door in this direction." << endl;
+		return;
 	}
+
+	if (door->isLocked())
+	{
+		cout << "This door is locked and can not be opend yet." << endl;
+		return;
+	}
+
+	Room* nextRoom = &door->getNextRoom();
+
+	if (nextRoom->encounterCount() == 0)
+	{
+		currentRoom = nextRoom;
+		currentRoom->displayContents();
+		return;
+	}
+
+	EnemyEncounter& encounter = nextRoom->currentEncounter();
+
+	bool startEncounter = encounter.startEncounter();
+	
+	if (!startEncounter)
+	{
+		cout << "You have retreated back to the previous room" << endl;
+		return;
+	}
+
+	encounter.setLastRoom(currentRoom);
+	encounter.displayEnemies();
+	currentRoom = nextRoom;
 }
 
 /// Door Index = Door Direction
@@ -291,6 +266,47 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 	return Room::DoorIndex::NONE;
 }
 
+void Game::encounterInteract(Interaction::InteractionResult& inputResult)
+{
+	EnemyEncounter& encounter = currentRoom->currentEncounter();
+
+	switch (inputResult.actionType)
+	{
+	case Interaction::ActionType::ATTACK:
+	{
+		inputResult.succeeded = encounter.attackEnemy(player, inputResult.target);
+		break;
+	}
+	case Interaction::ActionType::KILL:
+	{
+		inputResult.succeeded = encounter.killEnemy(inputResult.target);
+		break;
+	}
+	case Interaction::ActionType::STUDY:
+	{
+		inputResult.succeeded = encounter.studyEnemy(inputResult.target);
+		break;
+	}
+	case Interaction::ActionType::RETREAT:
+	{
+		currentRoom = encounter.getLastRoom();
+		currentRoom->displayContents();
+		return;
+	}
+	}
+
+	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
+		currentRoom->completeEncounter();
+	else if (inputResult.succeeded && inputResult.isActiveAction)
+	{
+		cout << endl;
+		encounter.enemyTurn(player);
+		cout << endl;
+
+		encounter.displayEnemies();
+	}
+}
+
 /// Game Loop: Takes in user input ant turns input into actions
 /// Calls different functions for Interaction enums
 ///		QUIT -- exits program
@@ -299,82 +315,89 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 ///		CHARACTER -- displays the player's stats
 ///		TAKE -- adds key from room and adds to inventory
 ///		USE -- uses the item with its intended purpose
+///		DRINK -- drinks the specified item in player inventory
 ///		OPEN -- opens current rooms door and moves to next room
 ///		DROP -- drops item into current room
 ///		UNLOCK -- unlocks any locked door
-///		ATTACK -- kills enemy in room and drops key for player to pick up
 ///		LOOK -- displays what is in the room
 ///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
-	Interaction input;
 	string inputStr = Utils::inputValidator();
-	InputCheckerResult inputResult = enumInputChecker(inputStr);
+	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
 
-	bool shouldUpdate = true;
-	bool addHelpText = true;
+	bool inEncounter = currentRoom->encounterCount() > 0;
 
-	switch (inputResult.interaction)
+	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
 	{
-	case Interaction::QUIT:
+		cout << "Sorry you can't do that within an enemy encounter." << endl;
+		return;
+	}
+
+	switch (inputResult.actionType)
+	{
+	case Interaction::ActionType::QUIT:
 	{
 		exit(0);
 	}
-	case Interaction::INVENTORY:
+	case Interaction::ActionType::INVENTORY:
 	{
 		player.displayInventory();
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::EQUIP:
+	case Interaction::ActionType::EQUIP:
 	{
-		player.equipWeapon(inputResult.objectName);
-		shouldUpdate = false;
+		inputResult.succeeded = player.findAndEquip(inputResult.target);
 		break;
 	}
-	case Interaction::CHARACTER:
+	case Interaction::ActionType::CHARACTER:
 	{
 		player.displayStats();
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::TAKE:
+	case Interaction::ActionType::TAKE:
 	{
-		shared_ptr<Item> item = currentRoom->takeItem(inputResult.objectName);
+		shared_ptr<Item> item = currentRoom->takeItem(inputResult.target);
 
 		if (item == nullptr)
 		{
 			cout << "This item is not in the room." << endl;
+			inputResult.succeeded = false;
 		}
 		else
 		{
 			player.takeItem(item);
 		}
 
-		shouldUpdate = false;
-
 		break;
 	}
-	case Interaction::USE:
+	case Interaction::ActionType::USE:
 	{
-		player.useItem(inputResult.objectName);
+		inputResult.succeeded = player.useItem(inputResult.target);
 		break;
 	}
-	case Interaction::OPEN:
+	case Interaction::ActionType::DRINK:
 	{
-		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
+		inputResult.succeeded = player.findAndDrink(inputResult.target);
+		break;
+	}
+	case Interaction::ActionType::OPEN:
+	{
+		Room::DoorIndex index = getDoorIndex(inputResult.target);
 
 		if (index == Room::DoorIndex::NONE)
+		{
 			cout << "That is not a valid object to open." << endl;
+			inputResult.succeeded = false;
+		}
 		else
 			openDoor(index);
 
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::DROP:
+	case Interaction::ActionType::DROP:
 	{
-		shared_ptr<Item>item = player.dropItem(inputResult.objectName);
+		shared_ptr<Item>item = player.dropItem(inputResult.target);
 		if (item != nullptr)
 		{
 			currentRoom->addItem(item);
@@ -382,59 +405,55 @@ void Game::gameInteract()
 		else
 		{
 			cout << "Invalid item to drop" << endl;
+			inputResult.succeeded = false;
 		}
 		break;
 	}
-	case Interaction::UNLOCK:
+	case Interaction::ActionType::UNLOCK:
 	{
-		Room::DoorIndex index = getDoorIndex(inputResult.objectName);
+		Room::DoorIndex index = getDoorIndex(inputResult.target);
 
 		if (index == Room::DoorIndex::NONE)
+		{
 			cout << "That is not a valid object to unlock." << endl;
+			inputResult.succeeded = false;
+		}
 		else
 			currentRoom->unlockDoor(index, player);
 
 		break;
 	}
-	case Interaction::ATTACK:
-	{
-		Weapon::DamageResult damageResult = player.getDamage();
-
-		bool foundEnemy = currentRoom->attack(inputResult.objectName, damageResult.damage, damageResult.critical);
-
-		if (!foundEnemy)
-			shouldUpdate = false;
-
-		break;
-	}
-	case Interaction::LOOK:
+	case Interaction::ActionType::LOOK:
 	{
 		currentRoom->displayContents();
-		shouldUpdate = false;
 		break;
 	}
-	case Interaction::HELP:
+	case Interaction::ActionType::HELP:
 	{
 		helperDisplay();
-		addHelpText = false;
 		break;
 	}
-	case Interaction::ERROR:
+	case Interaction::ActionType::ERROR:
+	{
+		cout << "Sorry, that input is not recognized." << endl;
+		return;
+	}
 	default:
 	{
-		addHelpText = false;
-		cout << "Sorry, that input is not recognized." << endl;
-		shouldUpdate = false;
-		break;
+		if (!inEncounter && EnemyEncounter::canUseAction(inputResult.actionType))
+		{
+			cout << "Sorry, you can not do that right now." << endl;
+			return;
+		}
 	}
 	}
 
-	if (shouldUpdate)
-		currentRoom->updateTurn(player);
+	if (inEncounter)
+	{
+		encounterInteract(inputResult);
+	}
 
-
-	if (addHelpText)
-		actionsUsed.insert(inputResult.actionStr);
+	actionsUsed.insert(inputResult.actionStr);
 
 	cout << endl;
 };

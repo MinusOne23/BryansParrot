@@ -6,10 +6,25 @@
 #include "Door.h"
 
 /*
-* Key class that inherits from the Item class that allows
-* players to unlock locks on doors
+* --------------------------------------------------------------------------------------
+* Class Scope
+* --------------------------------------------------------------------------------------
+* Key class which can either be a generalized key to open up general locks, or can be
+* designated to a specific door to only be able to open that lock
+*
+* --------------------------------------------------------------------------------------
+* Methods
+* -------------------------------------------------------------------------------------
+* getDisplay()
+*	returns the name of the key as its display
+*
+* --------------------------------------------------------------------------------------
+* Variables
+* --------------------------------------------------------------------------------------
+* door
+*	the door that the key is designated to. If null then the key is a general key
 * 
-* door -- the door that this key is able to unlock
+* --------------------------------------------------------------------------------------
 */
 class Key : public Item
 {

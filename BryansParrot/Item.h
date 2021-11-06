@@ -7,26 +7,33 @@
 using namespace std;
 
 /*
-* Abstract Item class that all items in the game will
-* inherit from
-* 
-* getDisplay() -- function that returns what the item should
-* display to the user when in the inventory or in a room
-* 
-* name -- the name of the item for shorthand display
+* --------------------------------------------------------------------------------------
+* Class Scope
+* --------------------------------------------------------------------------------------
+* Abstract Item class to be inherited by all types of items in the game. Holds the name
+* of the item which will be how the player interacts with it
+*
+* --------------------------------------------------------------------------------------
+* Methods
+* --------------------------------------------------------------------------------------
+* getDisplay()
+*	gets the actual display string for the item which will be how it is displayed in
+*	a room and an inventory - must be implemented by every child class
+*
+* --------------------------------------------------------------------------------------
+* Variables
+* --------------------------------------------------------------------------------------
+* name
+*	the name of the item - how players will refer to it in game
+* --------------------------------------------------------------------------------------
 */
 class Item
 {
 public:
-	enum class WorldItems
-	{
-		POTION,
-		KEY
-	};
 
-	inline string getName() const { return name; } // gets name if item
+	inline string getName() const { return name; }
 
-	virtual string getDisplay() const = 0; //displays item in room
+	virtual string getDisplay() const = 0;
 
 protected:
 	Item(string _name) : name(_name) {};

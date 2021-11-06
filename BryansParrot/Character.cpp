@@ -40,6 +40,11 @@ void Character::equipWeapon(shared_ptr<Weapon> weapon)
 	equipment.mainWeapon = weapon;
 }
 
+void Character::drinkPotion(shared_ptr<Potion> potion)
+{
+	heal(potion->getPotionSize());
+}
+
 Weapon::DamageResult Character::getDamage() const
 {
 	return equipment.mainWeapon == nullptr ? (equipment.baseWeapon.getDamage()) : (equipment.mainWeapon->getDamage());
@@ -60,7 +65,7 @@ bool Character::isDead() const
 	return health.getCurrentHealth() <= 0;
 }
 
-void Character::displayStats()
+void Character::displayStats() const
 {
 	Weapon mainWeapon = equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
 

@@ -9,9 +9,36 @@
 using namespace std;
 
 /*
-*Inventory class to hold items of a player 
+* --------------------------------------------------------------------------------------
+* Class Scope
+* --------------------------------------------------------------------------------------
+* Inventory class that holds a list of items currently in the player's possession
+*
+* --------------------------------------------------------------------------------------
+* Methods
+* --------------------------------------------------------------------------------------
+* display()
+*	displays the inventory to the user on the console
 * 
-* addItem -- Adds the item to the inventory and holds it
+* numItems()
+*	returns the size of the items vector
+* 
+* remove(int index)
+*	removes the item at the specified index
+* 
+* find(string itemName)
+*	finds the item in the inventory with the given name and returns the index of the
+*	item. If not found, returns -1
+* 
+* operator[]
+*	faster way to access the items in the inventory by just using the hard brackets
+*
+* --------------------------------------------------------------------------------------
+* Variables
+* --------------------------------------------------------------------------------------
+* items
+*	list of all the items currently in the inventory
+* --------------------------------------------------------------------------------------
 */
 class Inventory {
 private:
@@ -22,6 +49,7 @@ public:
 	void remove(shared_ptr<Item> item);
 	void remove(int index);
 	void display() const;
+	int find(string itemName);
 
 	shared_ptr<Item> operator[] (int i);
 	int numItems();
