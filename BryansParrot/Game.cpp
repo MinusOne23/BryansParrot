@@ -45,6 +45,50 @@ void Game::start()
 
 }
 
+void Game::initializeGameTest() {
+	initializeGame();
+}
+
+/// HOW TO CREATE NEW ROOM:
+///		-Add Room() to the allRooms array
+///		- create the new room object linking it to the index of the room you added in addRooms
+///			Room& [ROOMNAME] = allRooms[INDEX]
+/// 
+///	ADDING A DOOR TO A ROOM:
+///		-shared_ptr<Door>DOOR_NAME(new Door(NEXT ROOM, LOCKS AMOUNT)); 
+///			DOOR_NAME: firstNorthDoor
+///			NEXT_ROOM: secondRoom
+///			LOCKS: INT <-If no locks then only have Next Room in ( )
+/// 
+///		-ROOM_OBJ.setDoor(Room::DoorIndex::[CARDNAL_DIRECTION_DOOR, DOOR_NAME_FORM_ABOVE);
+/// 
+/// ADDING ITEMS TO A ROOM:
+///		-create object for item
+///			Potion sPotion
+///		-add item to specific room
+///			ROOM_OBJ.addItem(make_shared<ITEM_CLASS>(OBJ_NAME))
+///				- ITEM_CLASS: Potion
+///				- OBJ_NAME: sPotion
+/// 
+/// CREATE NEW WEAPON
+///		- create weapon object
+///			Weapon [WEAPON_NAME]("[NAME]", baseDamage{min, max}, critChance, critDamage{min, max})
+/// 
+/// CREATE NEW ENEMY
+///		- create enemy object
+///			Enemy [ENEMY_NAME]("[NAME]", maxHealth, weapon)
+/// 
+/// CREATING AN ENEMYY ENCOUNTER
+///		- create enemy encounter object
+///			EnemyEncounter [ROOM_NAME]Encounter[ENCOUNTER_NUMBER]
+///				ex) controlRoomEncounter1
+///		- add enemies to the encounter
+///			encounter.addEnemy([ENEMY_NAME])
+///		- add encounter to the room
+///			controlRoom.addEnemyEncounter(controlRoomEncounter1)
+/// 
+/// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
+
 void Game::initializeGame()
 {
 	srand(time(NULL));

@@ -120,6 +120,8 @@ private:
 	void gameInteract();
 
 public:
+	// Unit Test methods
+	void initializeGameTest();
 	void start();
 };
 
