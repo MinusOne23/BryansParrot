@@ -38,6 +38,8 @@ using namespace std;
 *	name - character's name
 *	equipment - holds character equipment that is currently equipped
 */
+
+
 class Character
 {
 protected:
@@ -60,13 +62,18 @@ public:
 	int getMaxHealth() const;
 	bool isDead() const;
 	string getName() const;
+	Equipment getEquipment()const;
+	Weapon getActiveWeapon() const;
 
 	virtual void damage(int amt);
 	virtual void heal(int amt);
 	virtual void equipWeapon(shared_ptr<Weapon> weapon);
 	virtual void drinkPotion(shared_ptr<Potion> potion);
-	virtual Weapon::DamageResult getDamage() const;
+	virtual Weapon::DamageResult calcDamage(Weapon::AttackType attackType) const;
 
+	string healthDisplay() const;
+
+	
 	void displayStats() const;
 };
 
