@@ -151,9 +151,11 @@ void Game::openDoor(Room::DoorIndex index)
 	if (!startEncounter)
 	{
 		cout << "You have retreated back to the previous room" << endl;
+		currentRoom->displayContents();
 		return;
 	}
-
+	//cout << flush;
+	//system("CLS");
 	encounter.setLastRoom(currentRoom);
 	encounter.displayEnemies();
 	currentRoom = nextRoom;
@@ -195,11 +197,13 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		Weapon::Damage lightDmg = activeWeapon.getLightDmg();
 		Weapon::Damage heavyDmg = activeWeapon.getHeavyDmg();
 
-		cout << "Attack Types:" << endl;
-		cout << "=============" << endl;
-		cout << "0 = Cancel Attack: " << endl;
-		cout << "1 = Light Attack: " << lightDmg.display() << endl;
-		cout << "2 = Heavy Attack: " << heavyDmg.display() << endl;
+		cout << "\t===========================================\n";
+		cout << "\t\tAttack Types:" << endl;
+		cout << "\t------------------------------------------\n";
+		cout << "\t - 0 = Cancel Attack: " << endl;
+		cout << "\t - 1 = Light Attack: " << lightDmg.display() << endl;
+		cout << "\t - 2 = Heavy Attack: " << heavyDmg.display() << endl;
+		cout << "\t===========================================\n";
 
 		int choice = -1;
 		Weapon::AttackType attackType;
@@ -219,6 +223,8 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 				}
 				if (choice > 0 && choice <= (int)Weapon::AttackType::HEAVY)
 				{
+					//cout << flush;
+					system("CLS");
 					attackType = (Weapon::AttackType)choice;
 					valid = true;
 				}
@@ -239,7 +245,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		{
 			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
 		}
-
+	
 		break;
 	}
 	case Interaction::ActionType::KILL:
@@ -271,7 +277,8 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		encounter.displayEnemies();
 
 		cout << endl;
-		cout << "Player Health: " << player.healthDisplay() << endl;
+		cout << "\tPlayer Health: " << player.healthDisplay() << endl;
+		cout << "\t===========================================";
 	}
 }
 
@@ -360,7 +367,6 @@ void Game::gameInteract()
 		}
 		else
 			openDoor(index);
-
 		break;
 	}
 	case Interaction::ActionType::DROP:
