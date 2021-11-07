@@ -2,12 +2,7 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
-#include <string>
-
 #include "Item.h"
-
-using namespace std;
-
 /*
 * --------------------------------------------------------------------------------------
 * Class Scope
@@ -54,46 +49,32 @@ class Weapon : public Item
 {
 public:
 
-	enum class AttackType
-	{
-		LIGHT = 1,
-		HEAVY = 2
-	};
-
 	struct Damage
 	{
-		int min = 0;
-		int max = 0;
-		float acc = 0.0f;
-
-		string display();
+		int min;
+		int max;
 	};
 
 	struct DamageResult
 	{
-		bool critical = false;
-		int damage = 0;
-		bool isHit = false;
+		bool critical;
+		int damage;
 	};
 
-	Weapon(string _name, Damage _lightDmg, Damage _heavyDmg, float _critChance, float _critMult);
+	Weapon(string _name, Damage _baseDamage, float _critChance, Damage _critDamage);
 
+	Damage getBaseDamage() const;
 	float getCritChance() const;
-	float getCritMult() const;
+	Damage getCritDamage() const;
 
-	DamageResult calcDamage(AttackType attackType) const;
-
-	Damage getLightDmg()const;
-	Damage getHeavyDmg()const;
+	DamageResult getDamage() const;
 
 	virtual string getDisplay() const;
 
 private:
-	DamageResult getDamage(Damage damage) const;
-	Damage lightDmg; 
-	Damage heavyDmg;  
+	Damage baseDamage;
 	float critChance;
-	float critMult;
+	Damage critDamage;
 };
 
 #endif // WEAPON_H

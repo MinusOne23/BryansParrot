@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <memory>
-#include <iomanip>
 
 #include "Game.h"
 #include "Door.h"
@@ -12,12 +11,10 @@
 #include "EnemyEncounter.h"
 #include "Utils.h"
 #include "Interaction.h"
-#include "Weapon.h"
-#include "DungeonBuilder.h"
 
 using namespace std;
 
-const string VERSION = "1.3.3";
+const string VERSION = "1.3.1";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -49,20 +46,109 @@ void Game::initializeGameTest() {
 	initializeGame();
 }
 
+/// HOW TO CREATE NEW ROOM:
+///		-Add Room() to the allRooms array
+///		- create the new room object linking it to the index of the room you added in addRooms
+///			Room& [ROOMNAME] = allRooms[INDEX]
+/// 
+///	ADDING A DOOR TO A ROOM:
+///		-shared_ptr<Door>DOOR_NAME(new Door(NEXT ROOM, LOCKS AMOUNT)); 
+///			DOOR_NAME: firstNorthDoor
+///			NEXT_ROOM: secondRoom
+///			LOCKS: INT <-If no locks then only have Next Room in ( )
+/// 
+///		-ROOM_OBJ.setDoor(Room::DoorIndex::[CARDNAL_DIRECTION_DOOR, DOOR_NAME_FORM_ABOVE);
+/// 
+/// ADDING ITEMS TO A ROOM:
+///		-create object for item
+///			Potion sPotion
+///		-add item to specific room
+///			ROOM_OBJ.addItem(make_shared<ITEM_CLASS>(OBJ_NAME))
+///				- ITEM_CLASS: Potion
+///				- OBJ_NAME: sPotion
+/// 
+/// CREATE NEW WEAPON
+///		- create weapon object
+///			Weapon [WEAPON_NAME]("[NAME]", baseDamage{min, max}, critChance, critDamage{min, max})
+/// 
+/// CREATE NEW ENEMY
+///		- create enemy object
+///			Enemy [ENEMY_NAME]("[NAME]", maxHealth, weapon)
+/// 
+/// CREATING AN ENEMYY ENCOUNTER
+///		- create enemy encounter object
+///			EnemyEncounter [ROOM_NAME]Encounter[ENCOUNTER_NUMBER]
+///				ex) controlRoomEncounter1
+///		- add enemies to the encounter
+///			encounter.addEnemy([ENEMY_NAME])
+///		- add encounter to the room
+///			controlRoom.addEnemyEncounter(controlRoomEncounter1)
+/// 
+/// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
 void Game::initializeGame()
 {
 	srand(time(NULL));
-	Weapon playerFists("Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
+
+	Weapon playerFists("Fists", { 10, 20 }, 0.2f, { 20, 30 });
+	Weapon goblinFists("Goblin Fists", { 5, 10 }, 0.1f, { 10, 20 });
+	Weapon ironSword("Sword", { 15, 30 }, 0.25f, { 35, 45 });
+
+	Enemy goblin("Goblin", 100, goblinFists);
+
 	player = Player(100, playerFists);
 	gameState = GameState::PLAY;
 
-	allRooms = DungeonBuilder::buildDungeon();
+	allRooms = {
+		Room(),
+		Room(),
+		Room(),
+		Room()
+	};
+
+	//Create room object that will set it to array of all all rooms
+	Room& firstRoom = allRooms[0];
+	Room& secondRoom = allRooms[1];
+	Room& thirdRoom = allRooms[2];
+	Room& forthRoom = allRooms[3];
+
+	//create new doors that will be added to doors vector
+	shared_ptr<Door> firstNorthDoor(new Door(secondRoom));
+	shared_ptr<Door> secondNorthDoor(new Door(thirdRoom, 2));
+	shared_ptr<Door> secondSouthDoor(new Door(firstRoom));
+	shared_ptr<Door> thirdNorthDoor(new Door(forthRoom));
+	shared_ptr<Door> thirdSouthDoor(new Door(secondRoom));
+
+	//create new items that will be added to Inventory
+	Potion sPotion("Small Potion", 25);
+	Potion mPotion("Medium Potion", 50);
+	Potion lPotion("Large Potion", 100);
+
+	EnemyEncounter secondRoomEncounter1;
+	secondRoomEncounter1.addEnemy(goblin);
+
+	//Add drops to specific Enemy Object 
+	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
+
+	//Room 1: Initialization
+	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
+	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
+	firstRoom.addItem(make_shared<Weapon>(ironSword));
+
+	//Room 2: Initialization
+	secondRoom.setDoor(Room::DoorIndex::NORTH_DOOR, secondNorthDoor);
+	secondRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, secondSouthDoor);
+	secondRoom.addEnemyEncounter(secondRoomEncounter1);
+
+	//Room3: Initialization
+	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
+	thirdRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, thirdSouthDoor);
+	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
 
 	//Current Room player is in. Will change when player enters new room
-	currentRoom = &allRooms[0];
+	currentRoom = &firstRoom;
 
 	//When player enters winRoom, game is over
-	winRoom = &allRooms[allRooms.size() - 1];
+	winRoom = &forthRoom;
 }
 
 /// PlayerDied(): Health reaches 0
@@ -155,11 +241,9 @@ void Game::openDoor(Room::DoorIndex index)
 	if (!startEncounter)
 	{
 		cout << "You have retreated back to the previous room" << endl;
-		currentRoom->displayContents();
 		return;
 	}
-	//cout << flush;
-	//system("CLS");
+
 	encounter.setLastRoom(currentRoom);
 	encounter.displayEnemies();
 	currentRoom = nextRoom;
@@ -190,66 +274,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	{
 	case Interaction::ActionType::ATTACK:
 	{
-		if (!encounter.enemyExists(inputResult.target))
-		{
-			cout << "That enemy does not exist" << endl;
-			inputResult.succeeded = false;
-			break;
-		}
-
-		Weapon activeWeapon = player.getActiveWeapon();
-		Weapon::Damage lightDmg = activeWeapon.getLightDmg();
-		Weapon::Damage heavyDmg = activeWeapon.getHeavyDmg();
-
-		cout << "\t===========================================\n";
-		cout << "\t\tAttack Types:" << endl;
-		cout << "\t------------------------------------------\n";
-		cout << "\t - 0 = Cancel Attack: " << endl;
-		cout << "\t - 1 = Light Attack: " << lightDmg.display() << endl;
-		cout << "\t - 2 = Heavy Attack: " << heavyDmg.display() << endl;
-		cout << "\t===========================================\n";
-
-		int choice = -1;
-		Weapon::AttackType attackType;
-
-		bool valid = false;
-		while (!valid)
-		{
-			string input = Utils::inputValidator();
-
-			if (Utils::isNumber(input))
-			{
-				choice = stoi(input);
-
-				if (choice == 0)
-				{
-					valid = true;
-				}
-				if (choice > 0 && choice <= (int)Weapon::AttackType::HEAVY)
-				{
-					//cout << flush;
-					system("CLS");
-					attackType = (Weapon::AttackType)choice;
-					valid = true;
-				}
-			}
-
-			if (!valid)
-			{
-				cout << "Invalid input" << endl;
-			}
-		}
-
-		if (choice == 0)
-		{
-			cout << "You've canceled your Attack" << endl;
-			inputResult.succeeded = false;
-		}
-		else
-		{
-			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
-		}
-	
+		inputResult.succeeded = encounter.attackEnemy(player, inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::KILL:
@@ -279,10 +304,6 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		cout << endl;
 
 		encounter.displayEnemies();
-
-		cout << endl;
-		cout << "\tPlayer Health: " << player.healthDisplay() << endl;
-		cout << "\t===========================================";
 	}
 }
 
@@ -371,6 +392,7 @@ void Game::gameInteract()
 		}
 		else
 			openDoor(index);
+
 		break;
 	}
 	case Interaction::ActionType::DROP:

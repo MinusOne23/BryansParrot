@@ -1,21 +1,20 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "Game.cpp"
-#include "Player.cpp"
-#include "Character.cpp"
-#include "Door.cpp"
-#include "Enemy.cpp"
-#include "Health.cpp"
-#include "Inventory.cpp"
-#include "Key.cpp"
-#include "Main.cpp"
-#include "Potion.cpp"
-#include "Room.cpp"
-#include "Utils.cpp"
-#include "Weapon.cpp"
-#include "Interaction.cpp"
-#include "EnemyEncounter.cpp"
-#include "DungeonBuilder.cpp"
+#include "..\BryansParrot\Game.cpp"
+#include "..\BryansParrot\Player.cpp"
+#include "..\BryansParrot\Character.cpp"
+#include "..\BryansParrot\Door.cpp"
+#include "..\BryansParrot\Enemy.cpp"
+#include "..\BryansParrot\Health.cpp"
+#include "..\BryansParrot\Inventory.cpp"
+#include "..\BryansParrot\Key.cpp"
+#include "..\BryansParrot\Main.cpp"
+#include "..\BryansParrot\Potion.cpp"
+#include "..\BryansParrot\Room.cpp"
+#include "..\BryansParrot\Utils.cpp"
+#include "..\BryansParrot\Weapon.cpp"
+#include "..\BryansParrot\Interaction.cpp"
+#include "..\BryansParrot\EnemyEncounter.cpp"
 
 
 
@@ -36,7 +35,7 @@ namespace BryansParrotAutoTest
 			const std::string TROLL_WEAPON = "Troll Fists";
 			const int TROLL_HEALTH = 100;
 
-			Weapon trollFists(TROLL_WEAPON, {5, 10}, {10, 20}, 0.1f, 1.5f);
+			Weapon trollFists(TROLL_WEAPON, {5, 10}, 0.1f, {10, 20});
 			Enemy troll(TROLL_NAME, TROLL_HEALTH, trollFists);
 
 			// Verify can retrieve stored character name
@@ -58,7 +57,7 @@ namespace BryansParrotAutoTest
 			const int HEALTH1 = -50;
 
  
-			Weapon enemyWeapon(ENEMY_NAME, { 5, 10 }, { 10, 20 }, 0.1f, 1.5f);
+			Weapon enemyWeapon(ENEMY_NAME, { 5, 10 }, 0.1f, { 10, 20 });
 			Enemy enemy(ENEMY_NAME, ENEMY_HEALTH, enemyWeapon);
 
 			// Now verify health

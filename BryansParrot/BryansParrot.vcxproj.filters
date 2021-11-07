@@ -16,7 +16,6 @@
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="EnemyEncounter.cpp" />
     <ClCompile Include="Interaction.cpp" />
-    <ClCompile Include="DungeonBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
@@ -34,6 +33,5 @@
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="EnemyEncounter.h" />
     <ClInclude Include="Interaction.h" />
-    <ClInclude Include="DungeonBuilder.h" />
   </ItemGroup>
 </Project>

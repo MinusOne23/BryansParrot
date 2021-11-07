@@ -49,14 +49,3 @@ string Utils::strToLower(string str)
 	transform(str.begin(), str.end(), str.begin(), tolower);
 	return str;
 }
-
-bool Utils::isNumber(const string& str)
-{
-	for (char const& c : str)
-	{
-		if (!isdigit(c))
-			return false;
-	}
-
-	return true;
-}

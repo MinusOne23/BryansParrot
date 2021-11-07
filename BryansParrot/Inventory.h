@@ -3,7 +3,6 @@
 #define INVENTORY_H
 
 #include <vector>
-#include <memory>
 
 #include "Item.h"
 
