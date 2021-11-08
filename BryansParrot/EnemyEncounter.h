@@ -94,6 +94,8 @@ public:
 	EnemyEncounter();
 
 	static bool canUseAction(Interaction::ActionType actionType);
+	static bool canUseDevAction(Interaction::DevActionType devActionType);
+
 
 	bool startEncounter();
 	bool attackEnemy(const Player& player, Weapon::AttackType attackType, const string& enemyName);
@@ -116,6 +118,8 @@ public:
 private:
 	int getEnemyIndex(const string& enemyName) const;
 	static const set<Interaction::ActionType> useableActions;
+
+	static const set<Interaction::DevActionType> useableDevActions;
 
 
 	vector<Enemy> enemies;

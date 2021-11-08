@@ -17,7 +17,14 @@
 
 using namespace std;
 
-const string VERSION = "1.3.3";
+const string VERSION = "1.3.4";
+
+const map<string, int> Game::roomNameToIndex = {
+	{"first_room",0},
+	{"second_room",1},
+	{"third_room",2},
+	{"forth_room",3}
+};
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -114,7 +121,7 @@ void Game::helperDisplay()
 	{
 		string helpStr = Interaction::getHelpText(act);
 
-		if(helpStr != "")
+		if (helpStr != "")
 			cout << "\t- " << act << ": " << helpStr << endl;
 	}
 	cout << "\t===========================================\n";
@@ -140,29 +147,7 @@ void Game::openDoor(Room::DoorIndex index)
 	}
 
 	Room* nextRoom = &door->getNextRoom();
-
-	if (nextRoom->encounterCount() == 0)
-	{
-		currentRoom = nextRoom;
-		currentRoom->displayContents();
-		return;
-	}
-
-	EnemyEncounter& encounter = nextRoom->currentEncounter();
-
-	bool startEncounter = encounter.startEncounter();
-	
-	if (!startEncounter)
-	{
-		cout << "You have retreated back to the previous room" << endl;
-		currentRoom->displayContents();
-		return;
-	}
-	//cout << flush;
-	//system("CLS");
-	encounter.setLastRoom(currentRoom);
-	encounter.displayEnemies();
-	currentRoom = nextRoom;
+	enterNewRoom(nextRoom);
 }
 
 /// Door Index = Door Direction
@@ -182,10 +167,21 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 	return Room::DoorIndex::NONE;
 }
 
+
 void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 {
 	EnemyEncounter& encounter = currentRoom->currentEncounter();
-
+	if (isDevMode == true)
+	{
+		switch (inputResult.devActionType)
+		{
+		case Interaction::DevActionType::KILL:
+		{
+			inputResult.succeeded = encounter.killEnemy(inputResult.target);
+			break;
+		}
+		}
+	}
 	switch (inputResult.actionType)
 	{
 	case Interaction::ActionType::ATTACK:
@@ -249,12 +245,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		{
 			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
 		}
-	
-		break;
-	}
-	case Interaction::ActionType::KILL:
-	{
-		inputResult.succeeded = encounter.killEnemy(inputResult.target);
+
 		break;
 	}
 	case Interaction::ActionType::STUDY:
@@ -286,6 +277,31 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	}
 }
 
+void Game::enterNewRoom(Room* nextRoom)
+{
+	if (nextRoom->encounterCount() == 0)
+	{
+		currentRoom = nextRoom;
+		currentRoom->displayContents();
+		return;
+	}
+
+	EnemyEncounter& encounter = nextRoom->currentEncounter();
+
+	bool startEncounter = encounter.startEncounter();
+
+	if (!startEncounter)
+	{
+		cout << "You have retreated back to the previous room" << endl;
+		currentRoom->displayContents();
+		return;
+	}
+
+	encounter.setLastRoom(currentRoom);
+	encounter.displayEnemies();
+	currentRoom = nextRoom;
+}
+
 /// Game Loop: Takes in user input ant turns input into actions
 /// Calls different functions for Interaction enums
 ///		QUIT -- exits program
@@ -303,21 +319,81 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 void Game::gameInteract()
 {
 	string inputStr = Utils::inputValidator();
-	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
+
+	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr, isDevMode);
 
 	bool inEncounter = currentRoom->encounterCount() > 0;
 
-	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
+	if (inEncounter)
 	{
-		cout << "Sorry you can't do that within an enemy encounter." << endl;
-		return;
+		if (isDevMode)
+		{
+			if (!EnemyEncounter::canUseDevAction(inputResult.devActionType) && !EnemyEncounter::canUseAction(inputResult.actionType))
+			{
+				cout << "Sorry you can't do that within an enemy encounter." << endl;
+				return;
+			}
+		}
+		else if (!EnemyEncounter::canUseAction(inputResult.actionType))
+		{
+			cout << "Sorry you can't do that within an enemy encounter." << endl;
+			return;
+		}
 	}
 
+	if (isDevMode)
+	{
+		switch (inputResult.devActionType)
+		{
+		case Interaction::DevActionType::TP:
+		{
+
+			int roomIndex;
+			Room* nextRoom;
+			string room_name = inputResult.target;
+
+			if (roomNameToIndex.find(room_name) != roomNameToIndex.end())
+			{
+				cout << "Room Found" << endl;
+
+				roomIndex = roomNameToIndex.find(room_name)->second;
+				nextRoom = &allRooms[roomIndex];
+				//To Do: if next Room is an encounter room, display enter encounter or not
+				enterNewRoom(nextRoom);
+				return;
+			}
+			else {
+				cout << "Room Not Found" << endl;
+			}
+			break;
+		}
+		default:
+		{
+			if (!inEncounter && EnemyEncounter::canUseDevAction(inputResult.devActionType))
+			{
+				cout << "Sorry, you can not do that right now." << endl;
+				return;
+			}
+		}
+		}
+	}
+	//Actions
 	switch (inputResult.actionType)
 	{
 	case Interaction::ActionType::QUIT:
 	{
 		exit(0);
+	}
+	case Interaction::ActionType::ENABLE_DEV_MODE:
+	{
+		isDevMode = !isDevMode;
+
+		if (isDevMode)
+			cout << "DevMode: Activated" << endl;
+		else
+			cout << "DevMode: Deactivated" << endl;
+
+		return;
 	}
 	case Interaction::ActionType::INVENTORY:
 	{
@@ -413,8 +489,11 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::ERROR:
 	{
-		cout << "Sorry, that input is not recognized." << endl;
-		return;
+		if (!isDevMode)
+		{
+			cout << "Sorry, that input is not recognized." << endl;
+			return;
+		}
 	}
 	default:
 	{

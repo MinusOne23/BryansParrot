@@ -112,10 +112,15 @@ private:
 	void playerWin();
 	void promptReplay();
 	void encounterInteract(Interaction::InteractionResult& inputResult);
-
+	void enterNewRoom(Room* nextRoom);
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
 
+	static const map<string, int> roomNameToIndex;
+
+	bool isDevMode = false;
+
+public:
 	void helperDisplay();
 	void gameInteract();
 
