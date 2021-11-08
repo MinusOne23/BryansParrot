@@ -367,6 +367,14 @@ void Game::gameInteract()
 			}
 			break;
 		}
+		default:
+		{
+			if (!inEncounter && EnemyEncounter::canUseDevAction(inputResult.devActionType))
+			{
+				cout << "Sorry, you can not do that right now." << endl;
+				return;
+			}
+		}
 		}
 	}
 	//Actions
