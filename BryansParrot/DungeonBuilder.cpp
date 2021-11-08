@@ -42,8 +42,12 @@
 vector<Room> DungeonBuilder::buildDungeon()
 {
 	// Name - Light: Min/Max/Acceracy -Heavy: Min/Max/Acceracy, critchance, critMulti
-	Weapon goblinFists("Goblin Fists", { 5, 10, 0.9f }, { 12, 18, 0.6f }, 0.1f, 1.5f);
-	Weapon sword("Sword", { 20, 30, 0.95f }, { 35, 50, 0.7f }, 0.25f, 1.65f);
+	Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
+	goblinFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+
+	Weapon sword("Sword", 0.25f, 1.65f);
+	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
 
 	Enemy goblin("Goblin", 100, goblinFists);
 

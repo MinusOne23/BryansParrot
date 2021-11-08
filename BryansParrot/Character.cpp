@@ -56,9 +56,9 @@ void Character::drinkPotion(shared_ptr<Potion> potion)
 	heal(potion->getPotionSize());
 }
 
-Weapon::DamageResult Character::calcDamage(Weapon::AttackType attackType) const
+AttackMove::DamageResult Character::calcDamage(string attackName) const
 {
-	return getActiveWeapon().calcDamage(attackType);
+	return getActiveWeapon().getDamage(attackName);
 }
 
 string Character::healthDisplay() const
@@ -95,8 +95,7 @@ void Character::displayStats() const
 	cout << "\t Health: " << healthDisplay() << endl;
 	cout << "\t Equipment: " << endl;
 	cout << "\t    MainWeapon: " << activeWeapon.getName() << endl;
-	cout << "\t       Light Damage: " << activeWeapon.getLightDmg().display() << endl;
-	cout << "\t       Heavy Damage: " << activeWeapon.getHeavyDmg().display() << endl;
+	activeWeapon.displayAttacks("\t       ");
 	cout << "\t       Crit Chance: " << fixed << setprecision(2) << activeWeapon.getCritChance() * 100 << "%" << endl;
 	cout << "\t       Crit Multiplier: " << fixed << setprecision(2) << activeWeapon.getCritMult() << "x" << endl;
 	cout << "\t===========================================\n";

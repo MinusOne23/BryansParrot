@@ -52,7 +52,10 @@ void Game::initializeGameTest() {
 void Game::initializeGame()
 {
 	srand(time(NULL));
-	Weapon playerFists("Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
+
+	Weapon playerFists("Fists", 0.2f, 1.5f);
+	playerFists.addAttackMove(AttackMove("Punch", 10, 15, 1, 0.9f));
+
 	player = Player(100, playerFists);
 	gameState = GameState::PLAY;
 
@@ -198,56 +201,31 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		}
 
 		Weapon activeWeapon = player.getActiveWeapon();
-		Weapon::Damage lightDmg = activeWeapon.getLightDmg();
-		Weapon::Damage heavyDmg = activeWeapon.getHeavyDmg();
 
 		cout << "\t===========================================\n";
 		cout << "\t\tAttack Types:" << endl;
 		cout << "\t------------------------------------------\n";
-		cout << "\t - 0 = Cancel Attack: " << endl;
-		cout << "\t - 1 = Light Attack: " << lightDmg.display() << endl;
-		cout << "\t - 2 = Heavy Attack: " << heavyDmg.display() << endl;
+
+		activeWeapon.displayAttacks("\t - ");
+
+		cout << "\t - Cancel" << endl;
 		cout << "\t===========================================\n";
 
-		int choice = -1;
-		Weapon::AttackType attackType;
+		string input = Utils::inputValidator();
 
-		bool valid = false;
-		while (!valid)
+		while (!Utils::equalsCI(input, "cancel") && !activeWeapon.hasAttackMove(input))
 		{
-			string input = Utils::inputValidator();
-
-			if (Utils::isNumber(input))
-			{
-				choice = stoi(input);
-
-				if (choice == 0)
-				{
-					valid = true;
-				}
-				if (choice > 0 && choice <= (int)Weapon::AttackType::HEAVY)
-				{
-					//cout << flush;
-					system("CLS");
-					attackType = (Weapon::AttackType)choice;
-					valid = true;
-				}
-			}
-
-			if (!valid)
-			{
-				cout << "Invalid input" << endl;
-			}
+			cout << "That move does not exist" << endl;
 		}
 
-		if (choice == 0)
+		if (Utils::equalsCI(input, "cancel"))
 		{
 			cout << "You've canceled your Attack" << endl;
 			inputResult.succeeded = false;
 		}
 		else
 		{
-			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
+			inputResult.succeeded = encounter.attackEnemy(player, input, inputResult.target);
 		}
 	
 		break;
@@ -281,8 +259,9 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		encounter.displayEnemies();
 
 		cout << endl;
+		cout << "\t==============================================" << endl;
 		cout << "\tPlayer Health: " << player.healthDisplay() << endl;
-		cout << "\t===========================================";
+		cout << "\t==============================================" << endl;
 	}
 }
 

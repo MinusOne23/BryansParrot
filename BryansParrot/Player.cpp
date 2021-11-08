@@ -27,7 +27,7 @@ using namespace std;
 
 // Stats for the player constructor
 Player::Player()
-	: Character{ Health(100), "Player", Weapon("Fists", {10, 20, 0.9f}, {15, 25, 0.6f}, 0.2f, 1.5f) } {}
+	: Character{ Health(100), "Player", Weapon("None", 0.0f, 0.0f) } {}
 
 Player::Player(int maxHealth, Weapon _baseWeapon)
 	: Character{ Health(maxHealth), "Player", _baseWeapon } {}

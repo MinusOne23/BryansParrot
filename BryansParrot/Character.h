@@ -3,6 +3,7 @@
 #define CHARACTER_H
 
 #include <string>
+#include <memory>
 
 #include "Health.h"
 #include "Weapon.h"
@@ -69,7 +70,7 @@ public:
 	virtual void heal(int amt);
 	virtual void equipWeapon(shared_ptr<Weapon> weapon);
 	virtual void drinkPotion(shared_ptr<Potion> potion);
-	virtual Weapon::DamageResult calcDamage(Weapon::AttackType attackType) const;
+	virtual AttackMove::DamageResult calcDamage(string attackName) const;
 
 	string healthDisplay() const;
 

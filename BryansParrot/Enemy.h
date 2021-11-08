@@ -3,10 +3,7 @@
 #define ENEMY_H
 
 #include <string>
-#include <vector>
-#include <memory>
 
-#include "Item.h"
 #include "Character.h"
 
 using namespace std;
@@ -23,6 +20,8 @@ class Enemy : public Character
 {
 public:
 	Enemy(string _name, int maxHealth, Weapon _baseWeapon);
+
+	string getRandomAttack() const;
 };
 
 #endif // Enemy_H
