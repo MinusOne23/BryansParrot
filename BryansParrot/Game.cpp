@@ -52,8 +52,8 @@ void Game::initializeGameTest() {
 void Game::initializeGame()
 {
 	srand(time(NULL));
-	Weapon playerFists("Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
-	player = Player(100, playerFists);
+	Weapon playerFists("Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f); // Name,Light min/max/acc Damage,Heavy min/max/acc Damage,crit chance, crit multi
+	player = Player(100, playerFists); // Player starting Health(100) + Starting weapon(playerFists)
 	gameState = GameState::PLAY;
 
 	allRooms = DungeonBuilder::buildDungeon();

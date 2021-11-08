@@ -128,7 +128,6 @@ private:
 	vector<EnemyEncounter> encounters;
 
 	void displayDoor(DoorIndex index) const;
-
 	void displayItems() const;
 	void displayDoors() const;
 };

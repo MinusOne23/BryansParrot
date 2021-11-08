@@ -18,15 +18,12 @@ void Room::displayContents() const
 		return;
 	}
 
-	if (doors[0] != nullptr)
-	{
-		cout << "\t===========================================\n";
-		cout << "\t         Inside the room you see:          \n";
-		cout << "\t-------------------------------------------\n";
-		displayItems();
-		displayDoors();
-		cout << "\t===========================================\n";
-	};
+	cout << "\t===========================================\n";
+	cout << "\t         Inside the room you see:          \n";
+	cout << "\t-------------------------------------------\n";
+	displayItems();
+	displayDoors();
+	cout << "\t===========================================\n";
 }
 
 //adds a new item to items vector
@@ -43,6 +40,7 @@ void Room::addItems(vector<shared_ptr<Item>> newItems)
 		addItem(newItems[i]);
 	}
 }
+
 
 //creates a new door with a index coresponding to direction
 void Room::setDoor(DoorIndex index, shared_ptr<Door> newDoor)
@@ -110,7 +108,6 @@ void Room::displayDoor(DoorIndex index) const
 		cout << "\t - A " << direction << " Door." << endl;
 	}
 }
-
 // IF there is a key in the items vector of the room. 
 // Then erase that key from the room and return the key to be added to
 // the players inventory
