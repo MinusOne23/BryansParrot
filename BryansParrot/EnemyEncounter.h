@@ -121,8 +121,6 @@ private:
 
 	static const set<Interaction::DevActionType> useableDevActions;
 
-	int getEnemyIndex(const string& enemyName) const;
-
 
 	vector<Enemy> enemies;
 	vector<shared_ptr<Item>> drops;

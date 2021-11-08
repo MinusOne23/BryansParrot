@@ -177,7 +177,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		{
 		case Interaction::DevActionType::KILL:
 		{
-			inputResult.succeeded = encounter.killEnemy(inputResult.objectName);
+			inputResult.succeeded = encounter.killEnemy(inputResult.target);
 			break;
 		}
 		}
@@ -246,11 +246,6 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
 		}
 	
-		break;
-	}
-	case Interaction::ActionType::KILL:
-	{
-		inputResult.succeeded = encounter.killEnemy(inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::STUDY:
@@ -367,7 +362,7 @@ void Game::gameInteract()
 
 			int roomIndex;
 			Room* nextRoom;
-			string room_name = inputResult.objectName;
+			string room_name = inputResult.target;
 
 			if (roomNameToIndex.find(room_name) != roomNameToIndex.end())
 			{
@@ -487,8 +482,11 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::ERROR:
 	{
-		cout << "Sorry, that input is not recognized." << endl;
-		return;
+		if (!isDevMode)
+		{
+			cout << "Sorry, that input is not recognized." << endl;
+			return;
+		}
 	}
 	default:
 	{

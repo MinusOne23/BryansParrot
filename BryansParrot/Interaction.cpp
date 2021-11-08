@@ -47,7 +47,6 @@ const map<Interaction::ActionType, string> Interaction::helpStrings = {
 	{ActionType::EQUIP, "Equips the specified piece of equipment from the inventory"},
 	{ActionType::RETREAT, "Retreat from the current encounter"},
 	{ActionType::STUDY, "Display the enemy stats"},
-	{ActionType::KILL, "Kill the enemy"},
 	{ActionType::DRINK, "Drink the specified item from the player's inventory"}
 };
 
@@ -65,7 +64,6 @@ const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
 	{ActionType::HELP, false},
 	{ActionType::RETREAT, true},
 	{ActionType::STUDY, false},
-	{ActionType::KILL, true},
 	{ActionType::DRINK, true}
 };
 
@@ -159,10 +157,10 @@ Interaction::InteractionResult Interaction::parseInputDev(const string& input)
 
 			if (i < tokens.size())
 			{
-				result.objectName = tokens[i];
+				result.target = tokens[i];
 				for (int j = i + 1; j < tokens.size(); j++)
 				{
-					result.objectName += " " + tokens[j];
+					result.target += " " + tokens[j];
 				}
 			}
 
