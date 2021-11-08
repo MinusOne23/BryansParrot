@@ -121,7 +121,7 @@ void Game::helperDisplay()
 	{
 		string helpStr = Interaction::getHelpText(act);
 
-		if(helpStr != "")
+		if (helpStr != "")
 			cout << "\t- " << act << ": " << helpStr << endl;
 	}
 	cout << "\t===========================================\n";
@@ -165,7 +165,7 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 		return Room::DoorIndex::WEST_DOOR;
 
 	return Room::DoorIndex::NONE;
-}	
+}
 
 
 void Game::encounterInteract(Interaction::InteractionResult& inputResult)
@@ -245,7 +245,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		{
 			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
 		}
-	
+
 		break;
 	}
 	case Interaction::ActionType::STUDY:
@@ -293,7 +293,7 @@ void Game::enterNewRoom(Room* nextRoom)
 	if (!startEncounter)
 	{
 		cout << "You have retreated back to the previous room" << endl;
-    currentRoom->displayContents();
+		currentRoom->displayContents();
 		return;
 	}
 
@@ -323,18 +323,6 @@ void Game::gameInteract()
 	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr, isDevMode);
 
 	bool inEncounter = currentRoom->encounterCount() > 0;
-  
-  if (inputResult.actionType == Interaction::ActionType::ENABLE_DEV_MODE)
-	{
-		isDevMode = !isDevMode;
-
-		if(isDevMode)
-			cout << "DevMode: Activated" << endl;
-		else
-			cout << "DevMode: Deactivated" << endl;
-
-		return;
-	}
 
 	if (inEncounter)
 	{
@@ -352,7 +340,7 @@ void Game::gameInteract()
 			return;
 		}
 	}
-	
+
 	if (isDevMode)
 	{
 		switch (inputResult.devActionType)
@@ -387,6 +375,17 @@ void Game::gameInteract()
 	case Interaction::ActionType::QUIT:
 	{
 		exit(0);
+	}
+	case Interaction::ActionType::ENABLE_DEV_MODE:
+	{
+		isDevMode = !isDevMode;
+
+		if (isDevMode)
+			cout << "DevMode: Activated" << endl;
+		else
+			cout << "DevMode: Deactivated" << endl;
+
+		return;
 	}
 	case Interaction::ActionType::INVENTORY:
 	{
