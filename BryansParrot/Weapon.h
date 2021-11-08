@@ -2,63 +2,98 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
+#include <string>
+
 #include "Item.h"
 
+using namespace std;
+
 /*
+* --------------------------------------------------------------------------------------
+* Class Scope
+* --------------------------------------------------------------------------------------
 * Weapon class that can be owned by any character within the game to increase damage
 * during combat
+*
+* --------------------------------------------------------------------------------------
+* Enums and Structures
+* --------------------------------------------------------------------------------------
+* Damage
+*	holds the minimum and maximum values for a range of damage
 * 
-* structures:
-*	Damage - holds the minimum and maximum values for a range of damage
-*	DamageResult - used as result for get damage function to return the amount of
-*		damage and whether or not it was a critical hit
+* DamageResult
+*	used as result for get damage function to return the amount of damage and whether 
+*	or not it was a critical hit
+*
+* --------------------------------------------------------------------------------------
+* Methods
+* --------------------------------------------------------------------------------------
+*
+* getDamage()
+*	produces a randomized amount of damage for the weapon evenly distributed based off
+*	of first the critChance, and if a critical hit the damage is randomized based off 
+*	critDamage, otherwise based off baseDamage
 * 
-* methods:
-*	getBaseDamage() - returns baseDamage structure
-*	getCritChance() - returns critChance value
-*	getCritDamage() - returns critDamage structure
+* getDisplay()
+*	returns the weapon name as its display
+*
+* --------------------------------------------------------------------------------------
+* Variables
+* --------------------------------------------------------------------------------------
+* baseDamage
+*	structure outlining weapon damage range for a noncritical hit
 * 
-*	getDamage() - produces a randomized amount of damage for the weapon evenly
-*		distributed based off of first the critChance, and if a critical hit
-*		the damage is randomized based off critDamage, otherwise based off
-*		baseDamage
-*	getDisplay() - returns the weapon name as its display for inventory and rooms
+* critChance
+*	float for the percent chance the weapon will have a critical hit
 * 
-* member variables:
-*	baseDamage - structure outlining weapon damage range for a noncritical hit
-*	critChance - float for the percent chance the weapon will have a critical hit
-*	critDamage - structure outlining weapon damage range for a critical hit
+* critDamage
+*	structure outlining weapon damage range for a critical hit
+* --------------------------------------------------------------------------------------
 */
 class Weapon : public Item
 {
 public:
 
+	enum class AttackType
+	{
+		LIGHT = 1,
+		HEAVY = 2
+	};
+
 	struct Damage
 	{
-		int min;
-		int max;
+		int min = 0;
+		int max = 0;
+		float acc = 0.0f;
+
+		string display();
 	};
 
 	struct DamageResult
 	{
-		bool critical;
-		int damage;
+		bool critical = false;
+		int damage = 0;
+		bool isHit = false;
 	};
 
-	Weapon(string _name, Damage _baseDamage, float _critChance, Damage _critDamage);
+	Weapon(string _name, Damage _lightDmg, Damage _heavyDmg, float _critChance, float _critMult);
 
-	Damage getBaseDamage() const;
 	float getCritChance() const;
-	Damage getCritDamage() const;
+	float getCritMult() const;
 
-	DamageResult getDamage() const;
+	DamageResult calcDamage(AttackType attackType) const;
+
+	Damage getLightDmg()const;
+	Damage getHeavyDmg()const;
 
 	virtual string getDisplay() const;
 
 private:
-	Damage baseDamage;
+	DamageResult getDamage(Damage damage) const;
+	Damage lightDmg; 
+	Damage heavyDmg;  
 	float critChance;
-	Damage critDamage;
+	float critMult;
 };
 
 #endif // WEAPON_H

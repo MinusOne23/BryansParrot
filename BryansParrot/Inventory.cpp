@@ -2,6 +2,7 @@
 
 #include "Inventory.h"
 #include "Key.h"
+#include "Utils.h"
 
 using namespace std;
 
@@ -36,6 +37,17 @@ void Inventory::display() const
 	{
 		cout <<"\t - " << items[i]->getDisplay() << endl;
 	}
+}
+
+int Inventory::find(string itemName)
+{
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (Utils::equalsCI(items[i]->getName(), itemName))
+			return i;
+	}
+
+	return -1;
 }
 
 shared_ptr<Item> Inventory::operator[](int i)

@@ -6,6 +6,7 @@
 
 #include "Health.h"
 #include "Weapon.h"
+#include "Potion.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ using namespace std;
 *	heal(int amt) - increases the character health by amt
 *	equipWeapon(shared_ptr<Weapon> weapon) - sets the mainWeapon in the equipment
 *		to weapon
+*	drinkPotion(shared_ptr<Potion> potion) - heals the character by the potion amount
 *	getDamage() - uses the mainWeapon getDamage() method to return a randomized
 *		amount of damage using the character stats
 *	displayStats() - displays the stats of the character to the console
@@ -36,6 +38,8 @@ using namespace std;
 *	name - character's name
 *	equipment - holds character equipment that is currently equipped
 */
+
+
 class Character
 {
 protected:
@@ -58,12 +62,18 @@ public:
 	int getMaxHealth() const;
 	bool isDead() const;
 	string getName() const;
+	Equipment getEquipment()const;
+	Weapon getActiveWeapon() const;
 
 	virtual void damage(int amt);
 	virtual void heal(int amt);
 	virtual void equipWeapon(shared_ptr<Weapon> weapon);
-	virtual Weapon::DamageResult getDamage() const;
+	virtual void drinkPotion(shared_ptr<Potion> potion);
+	virtual Weapon::DamageResult calcDamage(Weapon::AttackType attackType) const;
 
+	string healthDisplay() const;
+
+	
 	void displayStats() const;
 };
 

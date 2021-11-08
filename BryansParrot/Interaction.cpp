@@ -1,8 +1,8 @@
 #include "Interaction.h"
 #include "Utils.h"
 
+const int Interaction::MAX_ACTION_WORDS = 2;
 const string Interaction::DEV_MODE = "bryan";
-const int Interaction::MAX_ACTION_WORDS = 1;
 
 const map<string, Interaction::ActionType> Interaction::actions = {
 	{"q", ActionType::QUIT},
@@ -10,6 +10,7 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"inventory", ActionType::INVENTORY},
 	{"take", ActionType::TAKE},
 	{"grab", ActionType::TAKE},
+	{"pick up", ActionType::TAKE},
 	{"open", ActionType::OPEN},
 	{"unlock", ActionType::UNLOCK},
 	{"l", ActionType::LOOK},
@@ -17,6 +18,7 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"h", ActionType::HELP},
 	{"help", ActionType::HELP},
 	{"use", ActionType::USE},
+	{"drink", ActionType::DRINK},
 	{"drop", ActionType::DROP},
 	{"c", ActionType::CHARACTER},
 	{"character", ActionType::CHARACTER},
@@ -44,7 +46,9 @@ const map<Interaction::ActionType, string> Interaction::helpStrings = {
 	{ActionType::CHARACTER, "Displays the player stats"},
 	{ActionType::EQUIP, "Equips the specified piece of equipment from the inventory"},
 	{ActionType::RETREAT, "Retreat from the current encounter"},
-	{ActionType::STUDY, "Display the enemy stats"}
+	{ActionType::STUDY, "Display the enemy stats"},
+	{ActionType::KILL, "Kill the enemy"},
+	{ActionType::DRINK, "Drink the specified item from the player's inventory"}
 };
 
 const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
@@ -60,12 +64,14 @@ const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
 	{ActionType::EQUIP, true},
 	{ActionType::HELP, false},
 	{ActionType::RETREAT, true},
-	{ActionType::STUDY, true}
+	{ActionType::STUDY, false},
+	{ActionType::KILL, true},
+	{ActionType::DRINK, true}
 };
 
  map<Interaction::DevActionType, bool> Interaction::isActiveDevActions{
 	{DevActionType::KILL, true},
-	{DevActionType::TP, true},
+	{DevActionType::TP, true}
 };
 
 string Interaction::getHelpText(string action)
@@ -111,10 +117,10 @@ Interaction::InteractionResult Interaction::parseInput(const string& input, bool
 
 			if (i < tokens.size())
 			{
-				result.objectName = tokens[i];
+				result.target = tokens[i];
 				for (int j = i + 1; j < tokens.size(); j++)
 				{
-					result.objectName += " " + tokens[j];
+					result.target += " " + tokens[j];
 				}
 			}
 

@@ -15,35 +15,90 @@
 
 using namespace std;
 
-/// GAME CLASS
-/// -DEFINES ACTION ENUMS
-/// -Used to interact with all rooms
-/// -Game loops untill player dies or enters the winning room
-/// 
-/// INITIALIZE_GAME: Creates all rooms filled with items and enemies
-/// ENUM_INPUT_CHECKER: Converst uiser input into an action
-/// PLAYER_DIED: PLayer health reaches 0 - ends game
-/// PLAYER_WIN: PLayer enters winning room - ends game
-/// PROMPT_REPLAY: Game is over and asks to play game again
-/// OPEN_DOOR: Player enters new room
-/// START: Starts game and checks untill PLayer dies or player wins
-/// GAME_INTERACT: Game loops and performs actions
+/*
+* --------------------------------------------------------------------------------------
+* Class Scope
+* --------------------------------------------------------------------------------------
+* Game class that initalizes all objects in the game and handles all player interaction
+*
+* --------------------------------------------------------------------------------------
+* Enums and Structures
+* --------------------------------------------------------------------------------------
+* GameState
+*	current state of the game based around the player's status
+*
+* --------------------------------------------------------------------------------------
+* Methods
+* --------------------------------------------------------------------------------------
+* initializeGame()
+*	initializes all rooms for the game and all objects held within those rooms
+* 
+* playerWin()
+*	handles logic for when the player wins - prompts for if the player wants to replay
+*	the game or quit
+* 
+* playerDied()
+*	handles logic for when the player dies - prompts for if the player wants to replay
+*	the game or quit
+* 
+* promptReplay()
+*	prompts the player if they want to replay the game or quit
+* 
+* encounterInteract(InteractionResult inputResult)
+*	handles all interactions when the player is in an enemy encounter
+* 
+* openDoor(DoorIndex index)
+*	handles the logic for opening the door of the current room specified by index
+* 
+* getDoorIndex(string doorName)
+*	returns the index of the door specified by doorName, if doesn't exist returns
+*	DoorIndex::NONE
+* 
+* helperDisplay()
+*	displays helper text for all discovered commands within the actionsUsed vector
+* 
+* gameInteract()
+*	handles all player interaction with the room and all player input
+* 
+* start()
+*	starts the game and handles the game loop
+* 
+* --------------------------------------------------------------------------------------
+* Variables
+* --------------------------------------------------------------------------------------
+* actionsUsed
+*	list of all actions the player has already used and discovered
+* 
+* gameState
+*	the current state of the game
+* 
+* player
+*	the player object for the current game
+* 
+* allRooms
+*	the list of all the rooms within the game
+* 
+* currentRoom
+*	the currentRoom that the player is in
+* 
+* winRoom
+*	the room that once reached signals that the player has won the gamme
+* --------------------------------------------------------------------------------------
+*/
 
 class Game
 {
 private:
 
-	set<string> actionsUsed;
 
 	enum class GameState
 	{
-		PLAY,
-		WIN,
-		DIED
+		PLAY,	// Keep Playing
+		WIN,	// Player won
+		DIED	// Player died
 	};
 
-	static const int MAX_ACTION_WORDS;
-
+	set<string> actionsUsed;
 	GameState gameState;
 	Player player;
 
@@ -67,8 +122,12 @@ private:
 
 public:
 	void helperDisplay();
-	void start();
 	void gameInteract();
+
+public:
+	// Unit Test methods
+	void initializeGameTest();
+	void start();
 };
 
 #endif // GAME_H
