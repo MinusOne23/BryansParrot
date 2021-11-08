@@ -21,6 +21,7 @@ public:
 	AttackMove(string _name, int _minDamage, int _maxDamage, int _stamina, float _accuracy);
 	
 	string getName() const;
+	int getStamina() const;
 
 	DamageResult getDamage(float critChance, float critMult) const;
 	

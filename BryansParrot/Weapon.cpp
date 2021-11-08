@@ -28,12 +28,15 @@ void Weapon::addAttackMove(AttackMove newMove)
 	attackMoves.insert({ Utils::strToLower(newMove.getName()), newMove });
 }
 
-vector<string> Weapon::getMoveNames() const
+vector<string> Weapon::getMoveNames(int maxStamina) const
 {
 	vector<string> names;
 
 	for (map<string, AttackMove>::const_iterator it = attackMoves.begin(); it != attackMoves.end(); it++)
-		names.push_back(it->first);
+	{
+		if(maxStamina < 0 || it->second.getStamina() <= maxStamina)
+			names.push_back(it->first);
+	}
 
 	return names;
 }

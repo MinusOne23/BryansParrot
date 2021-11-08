@@ -63,7 +63,7 @@ public:
 
 	void addAttackMove(AttackMove newMove);
 
-	vector<string> getMoveNames() const;
+	vector<string> getMoveNames(int maxStamina = -1) const;
 	float getCritChance() const;
 	float getCritMult() const;
 

@@ -176,6 +176,8 @@ void Room::completeEncounter()
 	
 	vector<shared_ptr<Item>> drops = encounters[0].removeDrops();
 
+	cout << "You've completed the encounter!" << endl;
+
 	if (drops.size() > 0)
 	{
 		cout << "\t===========================================\n";
@@ -193,6 +195,11 @@ void Room::completeEncounter()
 	}
 
 	encounters.erase(encounters.begin());
+
+	if (encounters.size() == 0)
+	{
+		displayContents();
+	}
 }
 
 int Room::encounterCount()

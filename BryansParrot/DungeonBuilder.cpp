@@ -51,7 +51,7 @@ vector<Room> DungeonBuilder::buildDungeon()
 	sword.speedBoost = 2;
 	sword.staminaBoost = 2;
 
-	Enemy goblin("Goblin", 100, 5, 1, goblinFists);
+	Enemy goblin("Goblin", 100, 5, 2, goblinFists);
 
 	vector<Room> allRooms = {
 		Room(),

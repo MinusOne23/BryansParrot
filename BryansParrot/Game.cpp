@@ -166,8 +166,8 @@ void Game::openDoor(Room::DoorIndex index)
 		return;
 	}
 
+	system("CLS");
 	encounter.setLastRoom(currentRoom);
-
 	encounter.displaySummary(player);
 
 	currentRoom = nextRoom;
@@ -231,6 +231,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		}
 		else
 		{
+			system("CLS");
 			inputResult.succeeded = encounter.attackEnemy(player, input, inputResult.target);
 		}
 	
@@ -254,6 +255,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	}
 	case Interaction::ActionType::END_TURN:
 	{
+		system("CLS");
 		cout << endl;
 		encounter.enemyTurn(player);
 		cout << endl;

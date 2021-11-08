@@ -85,6 +85,7 @@ bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const
 	player.useStamina(damageResult.staminaUsed);
 	enemy.damage(damageResult.damage);
 
+	displayTurnStart(player);
 	displayAttack(player, enemy, damageResult);
 
 	if (enemy.isDead())
@@ -151,15 +152,35 @@ bool EnemyEncounter::enemyExists(const string& enemyName) const
 
 void EnemyEncounter::enemyTurn(Player& player)
 {
-	for (Enemy& enemy : enemies)
+	for (int i = 0; i < enemies.size(); i++)
 	{
-		AttackMove::DamageResult damageResult = enemy.calcDamage(enemy.getRandomAttack());
-		player.damage(damageResult.damage);
+		Enemy& enemy = enemies[i];
+		enemy.refreshStamina();
 
-		displayAttack(enemy, player, damageResult);
+		string attack = enemy.getRandomAttack();
 
-		if (player.isDead())
-			return;
+		displayTurnStart(enemy);
+
+		while (attack != "")
+		{
+			AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
+			player.damage(damageResult.damage);
+
+			enemy.useStamina(damageResult.staminaUsed);
+			attack = enemy.getRandomAttack();
+
+			displayAttack(enemy, player, damageResult);
+
+			if (player.isDead())
+				return;
+		}
+
+		if (i != enemies.size() - 1)
+		{
+			cout << endl;
+			system("pause");
+			system("CLS");
+		}
 	}
 }
 
@@ -250,12 +271,15 @@ int EnemyEncounter::getEnemyIndex(const string& enemyName) const
 	return -1;
 }
 
-void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult)
+void EnemyEncounter::displayTurnStart(const Character& curChar) const
 {
 	cout << "\t==============================================" << endl;
-	cout << "\t        " << attacker.getName() << "'s Turn" << endl;
+	cout << "\t        " << curChar.getName() << "'s Turn" << endl;
 	cout << "\t----------------------------------------------" << endl;
+}
 
+void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const
+{
 	cout << "\t\t" << attacker.getName() << " used " << damageResult.attackName << "!" << endl;
 
 	if (!damageResult.isHit)
@@ -272,9 +296,17 @@ void EnemyEncounter::displayAttack(const Character& attacker, const Character& t
 		cout << "\t\t" << attacker.getName() << " dealt " << damageResult.damage << " damage to " << target.getName() << endl;
 	}
 
+	cout << "\t\tStamina used: " << damageResult.staminaUsed << endl;
+	cout << "\t\tStamina remaining: " << attacker.getCurrentStamina() << endl;
+	cout << endl;
+
 	if (target.isDead())
 	{
 		cout << "\t\t" << target.getName() << " died!" << endl;
+	}
+	else
+	{
+		cout << "\t\t" << target.getName() << " Health: " << target.healthDisplay() << endl;
 	}
 
 	cout << "\t==============================================" << endl;

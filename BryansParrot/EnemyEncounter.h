@@ -118,7 +118,8 @@ public:
 private:
 	int getEnemyIndex(const string& enemyName) const;
 	static const set<Interaction::ActionType> useableActions;
-	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult);
+	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const;
+	void displayTurnStart(const Character& curChar) const;
 
 
 	const static vector<string> playerOptions;

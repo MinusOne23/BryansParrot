@@ -11,6 +11,11 @@ string AttackMove::getName() const
 	return name;
 }
 
+int AttackMove::getStamina() const
+{
+	return stamina;
+}
+
 string AttackMove::display() const
 {
 	stringstream ss;
