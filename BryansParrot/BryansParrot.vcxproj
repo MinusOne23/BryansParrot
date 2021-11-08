@@ -164,6 +164,7 @@
     <ClInclude Include="DungeonBuilder.h" />
     <ClInclude Include="EnemyEncounter.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Equippable.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="Interaction.h" />

@@ -37,5 +37,6 @@
     <ClInclude Include="Interaction.h" />
     <ClInclude Include="DungeonBuilder.h" />
     <ClInclude Include="AttackMove.h" />
+    <ClInclude Include="Equippable.h" />
   </ItemGroup>
 </Project>

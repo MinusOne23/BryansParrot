@@ -12,6 +12,7 @@ public:
 	struct DamageResult
 	{
 		string attackName = "NULL ATTACK";
+		int staminaUsed = 0;
 		bool isCritical = false;
 		bool isHit = false;
 		int damage = 0;

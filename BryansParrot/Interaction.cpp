@@ -24,6 +24,7 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"equip", ActionType::EQUIP},
 	{"attack", ActionType::ATTACK},
 	{"retreat", ActionType::RETREAT},
+	{"end turn", ActionType::END_TURN},
 	{"study", ActionType::STUDY},
 	{"kill", ActionType::KILL}
 };
@@ -43,24 +44,6 @@ const map<Interaction::ActionType, string> Interaction::helpStrings = {
 	{ActionType::STUDY, "Display the enemy stats"},
 	{ActionType::KILL, "Kill the enemy"},
 	{ActionType::DRINK, "Drink the specified item from the player's inventory"}
-};
-
-const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
-	{ActionType::INVENTORY, false},
-	{ActionType::TAKE, true},
-	{ActionType::USE, true},
-	{ActionType::OPEN, true},
-	{ActionType::DROP, true},
-	{ActionType::UNLOCK, true},
-	{ActionType::ATTACK, true},
-	{ActionType::LOOK, false},
-	{ActionType::CHARACTER, false},
-	{ActionType::EQUIP, true},
-	{ActionType::HELP, false},
-	{ActionType::RETREAT, true},
-	{ActionType::STUDY, false},
-	{ActionType::KILL, true},
-	{ActionType::DRINK, true}
 };
 
 string Interaction::getHelpText(string action)
@@ -108,9 +91,6 @@ Interaction::InteractionResult Interaction::parseInput(const string& input)
 			}
 
 			result.actionStr = Utils::strToLower(actionStr);
-
-			if (isActiveActions.find(result.actionType) != isActiveActions.end())
-				result.isActiveAction = isActiveActions.at(result.actionType);
 
 			result.succeeded = true;
 

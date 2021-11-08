@@ -16,7 +16,16 @@ const set<Interaction::ActionType> EnemyEncounter::useableActions = {
 	Interaction::ActionType::RETREAT,
 	Interaction::ActionType::STUDY,
 	Interaction::ActionType::KILL,
-	Interaction::ActionType::LOOK
+	Interaction::ActionType::LOOK,
+	Interaction::ActionType::ERROR,
+	Interaction::ActionType::END_TURN
+};
+
+const vector<string> EnemyEncounter::playerOptions = {
+	"Attack [Enemy Name]",
+	"Study [Enemy Name]",
+	"End Turn",
+	"Retreat"
 };
 
 EnemyEncounter::EnemyEncounter()
@@ -52,7 +61,7 @@ bool EnemyEncounter::startEncounter()
 	return true;
 }
 
-bool EnemyEncounter::attackEnemy(const Player& player, string attackName, const string& enemyName)
+bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const string& enemyName)
 {
 	if (currentState != EncounterState::ACTIVE)
 		return false;
@@ -67,11 +76,25 @@ bool EnemyEncounter::attackEnemy(const Player& player, string attackName, const 
 
 	Enemy& enemy = enemies[index];
 	AttackMove::DamageResult damageResult = player.calcDamage(attackName);
+	if (player.getCurrentStamina() < damageResult.staminaUsed)
+	{
+		cout << "You do not have enough stamina" << endl;
+		return false;
+	}
+
+	player.useStamina(damageResult.staminaUsed);
 	enemy.damage(damageResult.damage);
 
 	displayAttack(player, enemy, damageResult);
 
+	if (enemy.isDead())
+	{
+		enemies.erase(enemies.begin() + index);
 
+		if (enemies.size() == 0)
+			currentState = EncounterState::WIN;
+	}
+		
 	return true;
 }
 
@@ -130,7 +153,6 @@ void EnemyEncounter::enemyTurn(Player& player)
 {
 	for (Enemy& enemy : enemies)
 	{
-		//TODO randomize enemy attack - 1h15m - 7:50
 		AttackMove::DamageResult damageResult = enemy.calcDamage(enemy.getRandomAttack());
 		player.damage(damageResult.damage);
 
@@ -187,6 +209,32 @@ void EnemyEncounter::displayEnemies() const
 	cout << "\t==============================================" << endl;
 }
 
+void EnemyEncounter::displayPlayerOptions() const
+{
+	cout << "\t==============================================\n";
+	cout << "\t\t\Options:" << endl;
+	cout << "\t----------------------------------------------\n";
+
+	for (string option : playerOptions)
+	{
+		cout << "\t - " << option << endl;
+	}
+	cout << "\t==============================================" << endl;
+}
+
+void EnemyEncounter::displaySummary(const Player& player) const
+{
+	displayEnemies();
+
+	cout << endl;
+	cout << "\t==============================================" << endl;
+	cout << "\tPlayer Health: " << player.healthDisplay() << endl;
+	cout << "\tPlayer Stamina: " << player.getCurrentStamina() << endl;
+	cout << "\t==============================================" << endl;
+
+	displayPlayerOptions();
+}
+
 int EnemyEncounter::getEnemyIndex(const string& enemyName) const
 {
 	for (int i = 0; i < enemies.size(); i++)
@@ -222,6 +270,11 @@ void EnemyEncounter::displayAttack(const Character& attacker, const Character& t
 		}
 
 		cout << "\t\t" << attacker.getName() << " dealt " << damageResult.damage << " damage to " << target.getName() << endl;
+	}
+
+	if (target.isDead())
+	{
+		cout << "\t\t" << target.getName() << " died!" << endl;
 	}
 
 	cout << "\t==============================================" << endl;

@@ -23,6 +23,8 @@ string AttackMove::display() const
 AttackMove::DamageResult AttackMove::getDamage(float critChance, float critMult) const
 {
 	DamageResult result;
+	result.attackName = name;
+	result.staminaUsed = stamina;
 
 	int hitNum = rand() % 1000;
 	result.isHit = hitNum <= 1000 * accuracy;
@@ -38,7 +40,6 @@ AttackMove::DamageResult AttackMove::getDamage(float critChance, float critMult)
 	if (result.isCritical)
 		result.damage *= critMult;
 
-	result.attackName = name;
 
 	return result;
 }

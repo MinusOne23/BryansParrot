@@ -53,14 +53,25 @@ protected:
 
 	Health health;
 	string name;
+	int baseSpeed;
+	int baseStamina;
 	Equipment equipment;
+
+	int curStamina = 0;
 
 public:
 
-	Character(Health _health, string _name, Weapon _baseWeapon);
+	Character(Health _health, string _name, int _baseSpeed, int _baseStamina, Weapon _baseWeapon);
 
 	int getCurrentHealth() const;
 	int getMaxHealth() const;
+	int getMaxStamina() const;
+	int getSpeed() const;
+
+	int getCurrentStamina() const;
+	void refreshStamina();
+	void useStamina(int amt);
+
 	bool isDead() const;
 	string getName() const;
 	Equipment getEquipment()const;

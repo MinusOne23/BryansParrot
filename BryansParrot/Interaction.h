@@ -80,7 +80,8 @@ public:
 		ATTACK,
 		KILL,
 		STUDY,
-		RETREAT
+		RETREAT,
+		END_TURN
 	};
 
 	struct InteractionResult
@@ -88,7 +89,6 @@ public:
 		ActionType actionType;
 		string target;
 		string actionStr;
-		bool isActiveAction;
 		bool succeeded;
 	};
 
@@ -101,7 +101,6 @@ private:
 	Interaction();
 	static const map<string, ActionType> actions;
 	static const map<ActionType, string> helpStrings;
-	static const map<ActionType, bool> isActiveActions;
 };
 
 #endif // INTERACTION_H

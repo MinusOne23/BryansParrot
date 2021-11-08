@@ -96,7 +96,7 @@ public:
 	static bool canUseAction(Interaction::ActionType actionType);
 
 	bool startEncounter();
-	bool attackEnemy(const Player& player, string attackName, const string& enemyName);
+	bool attackEnemy(Player& player, const string& attackName, const string& enemyName);
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
 	bool enemyExists(const string& enemyName) const;
@@ -112,12 +112,16 @@ public:
 	EncounterState getCurrentState() const;
 
 	void displayEnemies() const;
+	void displayPlayerOptions() const;
+	void displaySummary(const Player& player) const;
 
 private:
 	int getEnemyIndex(const string& enemyName) const;
 	static const set<Interaction::ActionType> useableActions;
 	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult);
 
+
+	const static vector<string> playerOptions;
 
 	vector<Enemy> enemies;
 	vector<shared_ptr<Item>> drops;

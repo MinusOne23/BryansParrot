@@ -19,7 +19,7 @@ using namespace std;
 class Enemy : public Character
 {
 public:
-	Enemy(string _name, int maxHealth, Weapon _baseWeapon);
+	Enemy(string _name, int maxHealth, int _baseSpeed, int _baseStamina, Weapon _baseWeapon);
 
 	string getRandomAttack() const;
 };

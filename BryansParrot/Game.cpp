@@ -56,7 +56,8 @@ void Game::initializeGame()
 	Weapon playerFists("Fists", 0.2f, 1.5f);
 	playerFists.addAttackMove(AttackMove("Punch", 10, 15, 1, 0.9f));
 
-	player = Player(100, playerFists);
+	player = Player(100, 10, 1, playerFists);
+	player.refreshStamina();
 	gameState = GameState::PLAY;
 
 	allRooms = DungeonBuilder::buildDungeon();
@@ -161,10 +162,11 @@ void Game::openDoor(Room::DoorIndex index)
 		currentRoom->displayContents();
 		return;
 	}
-	//cout << flush;
-	//system("CLS");
+
 	encounter.setLastRoom(currentRoom);
-	encounter.displayEnemies();
+
+	encounter.displaySummary(player);
+
 	currentRoom = nextRoom;
 }
 
@@ -216,6 +218,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		while (!Utils::equalsCI(input, "cancel") && !activeWeapon.hasAttackMove(input))
 		{
 			cout << "That move does not exist" << endl;
+			input = Utils::inputValidator();
 		}
 
 		if (Utils::equalsCI(input, "cancel"))
@@ -246,22 +249,22 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		currentRoom->displayContents();
 		return;
 	}
-	}
-
-	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
-		currentRoom->completeEncounter();
-	else if (inputResult.succeeded && inputResult.isActiveAction)
+	case Interaction::ActionType::END_TURN:
 	{
 		cout << endl;
 		encounter.enemyTurn(player);
 		cout << endl;
 
-		encounter.displayEnemies();
+		player.refreshStamina();
+	}
+	}
 
-		cout << endl;
-		cout << "\t==============================================" << endl;
-		cout << "\tPlayer Health: " << player.healthDisplay() << endl;
-		cout << "\t==============================================" << endl;
+	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
+		currentRoom->completeEncounter();
+
+	if (inputResult.succeeded && encounter.getCurrentState() == EnemyEncounter::EncounterState::ACTIVE)
+	{
+		encounter.displaySummary(player);
 	}
 }
 
@@ -288,7 +291,7 @@ void Game::gameInteract()
 
 	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
 	{
-		cout << "Sorry you can't do that within an enemy encounter." << endl;
+		cout << "Sorry you can't do that in an enemy encounter" << endl;
 		return;
 	}
 
@@ -397,7 +400,7 @@ void Game::gameInteract()
 	}
 	default:
 	{
-		if (!inEncounter && EnemyEncounter::canUseAction(inputResult.actionType))
+		if (!inEncounter)
 		{
 			cout << "Sorry, you can not do that right now." << endl;
 			return;

@@ -8,6 +8,7 @@
 
 #include "Item.h"
 #include "AttackMove.h"
+#include "Equippable.h"
 
 using namespace std;
 
@@ -51,7 +52,7 @@ using namespace std;
 *	structure outlining weapon damage range for a critical hit
 * --------------------------------------------------------------------------------------
 */
-class Weapon : public Item
+class Weapon : public Item, public Equippable
 {
 public:
 	Weapon(string _name, float _critChance, float _critMult);
