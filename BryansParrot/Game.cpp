@@ -148,7 +148,10 @@ void Game::openDoor(Room::DoorIndex index)
 	if (nextRoom->encounterCount() == 0)
 	{
 		currentRoom = nextRoom;
-		currentRoom->displayContents();
+
+		if(currentRoom != winRoom)
+			currentRoom->displayContents();
+
 		return;
 	}
 
@@ -264,6 +267,8 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 
 	if (inputResult.succeeded && encounter.getCurrentState() == EnemyEncounter::EncounterState::ACTIVE)
 	{
+		system("pause");
+		system("CLS");
 		encounter.displaySummary(player);
 	}
 }

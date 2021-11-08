@@ -18,15 +18,12 @@ void Room::displayContents() const
 		return;
 	}
 
-	if (doors[0] != nullptr)
-	{
-		cout << "\t===========================================\n";
-		cout << "\t         Inside the room you see:          \n";
-		cout << "\t-------------------------------------------\n";
-		displayItems();
-		displayDoors();
-		cout << "\t===========================================\n";
-	};
+	cout << "\t===========================================\n";
+	cout << "\t         Inside the room you see:          \n";
+	cout << "\t-------------------------------------------\n";
+	displayItems();
+	displayDoors();
+	cout << "\t===========================================\n";
 }
 
 //adds a new item to items vector

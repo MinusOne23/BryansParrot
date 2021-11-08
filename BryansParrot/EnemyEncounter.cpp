@@ -228,8 +228,8 @@ void EnemyEncounter::displaySummary(const Player& player) const
 
 	cout << endl;
 	cout << "\t==============================================" << endl;
-	cout << "\tPlayer Health: " << player.healthDisplay() << endl;
-	cout << "\tPlayer Stamina: " << player.getCurrentStamina() << endl;
+	cout << "\t - Player Health: " << player.healthDisplay() << endl;
+	cout << "\t - Player Stamina: " << player.getCurrentStamina() << endl;
 	cout << "\t==============================================" << endl;
 
 	displayPlayerOptions();
