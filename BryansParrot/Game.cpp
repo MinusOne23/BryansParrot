@@ -17,7 +17,7 @@ using namespace std;
 const string VERSION = "1.3.2";
 const int Game::MAX_ACTION_WORDS = 1;
 
-const map<string, int> Game::roomString_to_roomIndex = {
+const map<string, int> Game::roomNameToIndex = {
 	{"first_room",0},
 	{"second_room",1},
 	{"third_room",2},
@@ -368,14 +368,15 @@ void Game::gameInteract()
 			Room* nextRoom;
 			string room_name = inputResult.objectName;
 
-
-			if (roomString_to_roomIndex.find(room_name) != roomString_to_roomIndex.end())
+			if (roomNameToIndex.find(room_name) != roomNameToIndex.end())
 			{
 				cout << "Room Found" << endl;
-				roomIndex = roomString_to_roomIndex.find(room_name)->second;
+
+				roomIndex = roomNameToIndex.find(room_name)->second;
 				nextRoom = &allRooms[roomIndex];
 				//To Do: if next Room is an encounter room, display enter encounter or not
 				enterNewRoom(nextRoom);
+				return;
 			}
 			else {
 				cout << "Room Not Found" << endl;
