@@ -78,30 +78,44 @@ public:
 		EQUIP,
 		HELP,
 		ATTACK,
-		KILL,
 		STUDY,
-		RETREAT
+		RETREAT,
+		ENABLE_DEV_MODE
+	};
+
+	enum class DevActionType
+	{
+		ERROR = -1,
+		KILL,
+		TP
 	};
 
 	struct InteractionResult
 	{
+		DevActionType devActionType;
 		ActionType actionType;
 		string target;
 		string actionStr;
 		bool isActiveAction;
+		bool isActiveDevAction;
 		bool succeeded;
 	};
-
 	static string getHelpText(string action);
-	static InteractionResult parseInput(const string& input);
+	static InteractionResult parseInput(const string& input, bool devMode = false);
 
 private:
 	static const int MAX_ACTION_WORDS;
 
 	Interaction();
+	static InteractionResult parseInputDev(const string& input);
+
+	//To Do: Use secretcommand in map instead of "bryan" for security
+	static const string DEV_MODE;
 	static const map<string, ActionType> actions;
+	static  map<string, DevActionType> devActions;
 	static const map<ActionType, string> helpStrings;
 	static const map<ActionType, bool> isActiveActions;
+	static  map<DevActionType, bool> isActiveDevActions;
 };
 
 #endif // INTERACTION_H

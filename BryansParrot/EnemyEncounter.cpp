@@ -14,8 +14,13 @@ const set<Interaction::ActionType> EnemyEncounter::useableActions = {
 	Interaction::ActionType::HELP,
 	Interaction::ActionType::RETREAT,
 	Interaction::ActionType::STUDY,
-	Interaction::ActionType::KILL,
 	Interaction::ActionType::LOOK
+};
+
+
+const set<Interaction::DevActionType> EnemyEncounter::useableDevActions = {
+	Interaction::DevActionType::KILL,
+	Interaction::DevActionType::TP
 };
 
 EnemyEncounter::EnemyEncounter()
@@ -24,6 +29,11 @@ EnemyEncounter::EnemyEncounter()
 bool EnemyEncounter::canUseAction(Interaction::ActionType actionType)
 {
 	return useableActions.find(actionType) != useableActions.end();
+}
+
+bool EnemyEncounter::canUseDevAction(Interaction::DevActionType devActionType)
+{
+	return useableDevActions.find(devActionType) != useableDevActions.end();
 }
 
 bool EnemyEncounter::startEncounter()
