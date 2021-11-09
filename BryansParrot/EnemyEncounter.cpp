@@ -111,11 +111,9 @@ bool EnemyEncounter::attackEnemy(const Player& player, Weapon::AttackType attack
 bool EnemyEncounter::dodgeEnemy(const Player& player, const string& enemyName)
 {
 	int dodgechance = rand() % 1000;
-	int dodgenum =1000 * player.getDodgeChance();
-	cout << dodgechance << endl;
-	cout << dodgenum << endl;
-	cout << player.getDodgeChance() << endl;
-	if (dodgechance >= dodgenum) {
+	int dodgenum = 1000 * player.getDodgeChance();
+
+	if (dodgenum >= dodgechance) {
 		return true;
 	}
 	else {
@@ -190,8 +188,8 @@ void EnemyEncounter::enemyTurn(Player& player, bool dodge)
 		if (dodge == true)
 			damageResult.damage = 0;
 
-		cout << "Dodge: " << dodge << endl;
-		cout << "Damage: " << damageResult.damage << endl;
+		player.damage(damageResult.damage);
+
 		switch (type)
 		{
 		case Weapon::AttackType::LIGHT:
