@@ -9,12 +9,13 @@ const set<Interaction::ActionType> EnemyEncounter::useableActions = {
 	Interaction::ActionType::INVENTORY,
 	Interaction::ActionType::USE,
 	Interaction::ActionType::ATTACK,
+	Interaction::ActionType::DODGE,
 	Interaction::ActionType::CHARACTER,
 	Interaction::ActionType::EQUIP,
 	Interaction::ActionType::HELP,
 	Interaction::ActionType::RETREAT,
 	Interaction::ActionType::STUDY,
-	Interaction::ActionType::KILL,
+	//Interaction::ActionType::KILL,
 	Interaction::ActionType::LOOK
 };
 
@@ -105,6 +106,23 @@ bool EnemyEncounter::attackEnemy(const Player& player, Weapon::AttackType attack
 	cout << "\t==============================================" << endl;
 
 	return true;
+}
+
+bool EnemyEncounter::dodgeEnemy(const Player& player, const string& enemyName)
+{
+	int dodgechance = rand() % 1000;
+	int dodgenum =1000 * player.getDodgeChance();
+	cout << dodgechance << endl;
+	cout << dodgenum << endl;
+	cout << player.getDodgeChance() << endl;
+	if (dodgechance >= dodgenum) {
+		//cout << "You Sucessfully Dodged!" << endl;
+		return true;
+	}
+	else {
+		//cout << "Your dodge Failed!" << endl;
+		return false;
+	}
 }
 
 bool EnemyEncounter::killEnemy(const string& enemyName)

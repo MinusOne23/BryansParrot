@@ -45,7 +45,8 @@ vector<Room> DungeonBuilder::buildDungeon()
 	Weapon goblinFists("Goblin Fists", { 5, 10, 0.9f }, { 12, 18, 0.6f }, 0.1f, 1.5f);
 	Weapon sword("Sword", { 20, 30, 0.95f }, { 35, 50, 0.7f }, 0.25f, 1.65f);
 
-	Enemy goblin("Goblin", 100, goblinFists);
+				//Name	  health   wepon     dodge
+	Enemy goblin("Goblin", 100, goblinFists, 0.50f);
 
 	vector<Room> allRooms = {
 		Room(),

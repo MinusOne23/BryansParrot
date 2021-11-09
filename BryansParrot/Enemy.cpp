@@ -5,5 +5,5 @@
 #include <iostream>
 using namespace std;
 
-Enemy::Enemy(string _name, int maxHealth, Weapon _baseWeapon)
-	: Character{ Health(maxHealth), _name, _baseWeapon } {}
+Enemy::Enemy(string _name, int maxHealth, Weapon _baseWeapon, float _dodgeChance)
+	: Character{ Health(maxHealth), _name, _baseWeapon, _dodgeChance } {}

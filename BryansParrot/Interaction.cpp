@@ -23,9 +23,10 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"character", ActionType::CHARACTER},
 	{"equip", ActionType::EQUIP},
 	{"attack", ActionType::ATTACK},
+	{"dodge", ActionType::DODGE},
 	{"retreat", ActionType::RETREAT},
-	{"study", ActionType::STUDY},
-	{"kill", ActionType::KILL}
+	{"study", ActionType::STUDY}
+	//{"kill", ActionType::KILL}
 };
 
 const map<Interaction::ActionType, string> Interaction::helpStrings = {
@@ -36,12 +37,13 @@ const map<Interaction::ActionType, string> Interaction::helpStrings = {
 	{ActionType::DROP, "Drop the specified item from the inventory into the room"},
 	{ActionType::UNLOCK, "Unlocks the specified container/door"},
 	{ActionType::ATTACK, "Attack the specified enemy in the room"},
+	{ActionType::DODGE, "Attempt to dodge enemy attack awarding you with free turn"},
 	{ActionType::LOOK, "Displays the contents of the room"},
 	{ActionType::CHARACTER, "Displays the player stats"},
 	{ActionType::EQUIP, "Equips the specified piece of equipment from the inventory"},
 	{ActionType::RETREAT, "Retreat from the current encounter"},
 	{ActionType::STUDY, "Display the enemy stats"},
-	{ActionType::KILL, "Kill the enemy"},
+	//{ActionType::KILL, "Kill the enemy"},
 	{ActionType::DRINK, "Drink the specified item from the player's inventory"}
 };
 
@@ -53,13 +55,14 @@ const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
 	{ActionType::DROP, true},
 	{ActionType::UNLOCK, true},
 	{ActionType::ATTACK, true},
+	{ActionType::DODGE, true},
 	{ActionType::LOOK, false},
 	{ActionType::CHARACTER, false},
 	{ActionType::EQUIP, true},
 	{ActionType::HELP, false},
 	{ActionType::RETREAT, true},
 	{ActionType::STUDY, false},
-	{ActionType::KILL, true},
+	//{ActionType::KILL, true},
 	{ActionType::DRINK, true}
 };
 

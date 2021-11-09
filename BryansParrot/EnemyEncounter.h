@@ -97,6 +97,7 @@ public:
 
 	bool startEncounter();
 	bool attackEnemy(const Player& player, Weapon::AttackType attackType, const string& enemyName);
+	bool dodgeEnemy(const Player& player, const string& enemyName);
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
 	bool enemyExists(const string& enemyName) const;

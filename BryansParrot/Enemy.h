@@ -22,7 +22,7 @@ using namespace std;
 class Enemy : public Character
 {
 public:
-	Enemy(string _name, int maxHealth, Weapon _baseWeapon);
+	Enemy(string _name, int maxHealth, Weapon _baseWeapon, float _dodgeChance);
 };
 
 #endif // Enemy_H

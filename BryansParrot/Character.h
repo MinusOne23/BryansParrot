@@ -53,13 +53,15 @@ protected:
 	Health health;
 	string name;
 	Equipment equipment;
+	float dodge;
 
 public:
 
-	Character(Health _health, string _name, Weapon _baseWeapon);
+	Character(Health _health, string _name, Weapon _baseWeapon, float _dodgeChance);
 
 	int getCurrentHealth() const;
 	int getMaxHealth() const;
+	float getDodgeChance() const;
 	bool isDead() const;
 	string getName() const;
 	Equipment getEquipment()const;

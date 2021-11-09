@@ -78,7 +78,8 @@ public:
 		EQUIP,
 		HELP,
 		ATTACK,
-		KILL,
+		DODGE,
+		//KILL,
 		STUDY,
 		RETREAT
 	};

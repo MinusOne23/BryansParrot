@@ -53,7 +53,7 @@ void Game::initializeGame()
 {
 	srand(time(NULL));
 	Weapon playerFists("Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f);
-	player = Player(100, playerFists);
+	player = Player(100, playerFists, 0.75f);
 	gameState = GameState::PLAY;
 
 	allRooms = DungeonBuilder::buildDungeon();
@@ -184,8 +184,8 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 
 void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 {
+	bool dodge = false;
 	EnemyEncounter& encounter = currentRoom->currentEncounter();
-
 	switch (inputResult.actionType)
 	{
 	case Interaction::ActionType::ATTACK:
@@ -249,12 +249,19 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		{
 			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
 		}
-	
+
 		break;
 	}
-	case Interaction::ActionType::KILL:
+	case Interaction::ActionType::DODGE:
 	{
-		inputResult.succeeded = encounter.killEnemy(inputResult.target);
+		inputResult.succeeded = encounter.dodgeEnemy(player, inputResult.target);
+		if (inputResult.succeeded) {
+			dodge = true;
+		}
+		else {
+			dodge = false;
+			cout << "Your Dodge Failed!" << endl;
+		}
 		break;
 	}
 	case Interaction::ActionType::STUDY:
@@ -269,7 +276,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		return;
 	}
 	}
-
+	cout << "You Sucessfully Dodged!" << endl;
 	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
 		currentRoom->completeEncounter();
 	else if (inputResult.succeeded && inputResult.isActiveAction)

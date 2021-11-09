@@ -18,8 +18,8 @@ using namespace std;
 /// IS_DEAD: Player health reaches 0
 /// GET_DAMAGE: Adds up damage health and returns
 /// DISPLAY_STATS: Displays Current/Max Health, min/max damage, and Crit chance percentage
-Character::Character(Health _health, string _name, Weapon _baseWeapon)
-	: health(_health), name(_name), equipment{_baseWeapon} {}
+Character::Character(Health _health, string _name, Weapon _baseWeapon, float _dodgeChance)
+	: health(_health), name(_name), equipment{_baseWeapon}, dodge(_dodgeChance) {}
 
 string Character::getName() const
 {
@@ -78,6 +78,11 @@ int Character::getCurrentHealth() const
 int Character::getMaxHealth() const
 {
 	return health.getMaxHealth();
+}
+
+float Character::getDodgeChance() const
+{
+	return dodge;
 }
 
 bool Character::isDead() const
