@@ -109,21 +109,6 @@ void Game::promptReplay()
 	}
 }
 
-void Game::helperDisplay()
-{
-	cout << "\t===========================================\n";
-	cout << "\t\t\tKnownCommands\n";
-	cout << "\t-------------------------------------------\n";
-	for (string act : actionsUsed)
-	{
-		string helpStr = Interaction::getHelpText(act);
-
-		if(helpStr != "")
-			cout << "\t- " << act << ": " << helpStr << endl;
-	}
-	cout << "\t===========================================\n";
-}
-
 /// Opens door in room specified by direction
 ///Input: DOOR DIRECTOM
 ///Updates: NEW ROOM
@@ -157,7 +142,7 @@ void Game::openDoor(Room::DoorIndex index)
 
 	EnemyEncounter& encounter = nextRoom->currentEncounter();
 
-	bool startEncounter = encounter.startEncounter();
+	bool startEncounter = encounter.startEncounter(player);
 	
 	if (!startEncounter)
 	{
@@ -231,7 +216,6 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		}
 		else
 		{
-			system("CLS");
 			inputResult.succeeded = encounter.attackEnemy(player, input, inputResult.target);
 		}
 	
@@ -255,9 +239,8 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	}
 	case Interaction::ActionType::END_TURN:
 	{
-		system("CLS");
 		cout << endl;
-		encounter.enemyTurn(player);
+		encounter.startTurns(player);
 		cout << endl;
 
 		player.refreshStamina();
@@ -267,7 +250,7 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
 		currentRoom->completeEncounter();
 
-	if (inputResult.succeeded && encounter.getCurrentState() == EnemyEncounter::EncounterState::ACTIVE)
+	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::ACTIVE)
 	{
 		system("pause");
 		system("CLS");
@@ -291,38 +274,32 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 ///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
-	string inputStr = Utils::inputValidator();
-	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
+	Interaction::InteractionResult inputResult = Interaction::universalInput(player);
 
 	bool inEncounter = currentRoom->encounterCount() > 0;
 
-	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
+	// Check if can use the action in current conditions
+	bool validAction = true;
+	if (inEncounter)
 	{
-		cout << "Sorry you can't do that in an enemy encounter" << endl;
+		if (!Interaction::canUseInEncounter(inputResult.actionType))
+		{
+			validAction = false;
+		}
+	}
+	else if (!Interaction::canUseInRoom(inputResult.actionType))
+	{
+		validAction = false;
+	}
+
+	if (!validAction)
+	{
+		cout << "Sorry you can't do that right now" << endl;
 		return;
 	}
 
 	switch (inputResult.actionType)
 	{
-	case Interaction::ActionType::QUIT:
-	{
-		exit(0);
-	}
-	case Interaction::ActionType::INVENTORY:
-	{
-		player.displayInventory();
-		break;
-	}
-	case Interaction::ActionType::EQUIP:
-	{
-		inputResult.succeeded = player.findAndEquip(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::CHARACTER:
-	{
-		player.displayStats();
-		break;
-	}
 	case Interaction::ActionType::TAKE:
 	{
 		shared_ptr<Item> item = currentRoom->takeItem(inputResult.target);
@@ -337,16 +314,6 @@ void Game::gameInteract()
 			player.takeItem(item);
 		}
 
-		break;
-	}
-	case Interaction::ActionType::USE:
-	{
-		inputResult.succeeded = player.useItem(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::DRINK:
-	{
-		inputResult.succeeded = player.findAndDrink(inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::OPEN:
@@ -395,23 +362,9 @@ void Game::gameInteract()
 		currentRoom->displayContents();
 		break;
 	}
-	case Interaction::ActionType::HELP:
-	{
-		helperDisplay();
-		break;
-	}
 	case Interaction::ActionType::ERROR:
 	{
-		cout << "Sorry, that input is not recognized." << endl;
 		return;
-	}
-	default:
-	{
-		if (!inEncounter)
-		{
-			cout << "Sorry, you can not do that right now." << endl;
-			return;
-		}
 	}
 	}
 
@@ -419,8 +372,4 @@ void Game::gameInteract()
 	{
 		encounterInteract(inputResult);
 	}
-
-	actionsUsed.insert(inputResult.actionStr);
-
-	cout << endl;
 };

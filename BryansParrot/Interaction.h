@@ -4,6 +4,9 @@
 
 #include <string>
 #include <map>
+#include <set>
+
+#include "Player.h"
 
 using namespace std;
 
@@ -84,6 +87,7 @@ public:
 		END_TURN
 	};
 
+
 	struct InteractionResult
 	{
 		ActionType actionType;
@@ -93,14 +97,20 @@ public:
 	};
 
 	static string getHelpText(string action);
+	static InteractionResult universalInput(Player& player);
 	static InteractionResult parseInput(const string& input);
+	static bool canUseInRoom(ActionType type);
+	static bool canUseInEncounter(ActionType type);
+
+	static void addActionUsed(string actionStr);
 
 private:
 	static const int MAX_ACTION_WORDS;
+	static const map<string, ActionType> actions;
+	static set<string> actionsUsed;
 
 	Interaction();
-	static const map<string, ActionType> actions;
-	static const map<ActionType, string> helpStrings;
+	static void helperDisplay();
 };
 
 #endif // INTERACTION_H

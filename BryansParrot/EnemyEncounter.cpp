@@ -5,22 +5,6 @@
 #include "AttackMove.h"
 #include "Utils.h"
 
-const set<Interaction::ActionType> EnemyEncounter::useableActions = {
-	Interaction::ActionType::QUIT,
-	Interaction::ActionType::INVENTORY,
-	Interaction::ActionType::USE,
-	Interaction::ActionType::ATTACK,
-	Interaction::ActionType::CHARACTER,
-	Interaction::ActionType::EQUIP,
-	Interaction::ActionType::HELP,
-	Interaction::ActionType::RETREAT,
-	Interaction::ActionType::STUDY,
-	Interaction::ActionType::KILL,
-	Interaction::ActionType::LOOK,
-	Interaction::ActionType::ERROR,
-	Interaction::ActionType::END_TURN
-};
-
 const vector<string> EnemyEncounter::playerOptions = {
 	"Attack [Enemy Name]",
 	"Study [Enemy Name]",
@@ -31,12 +15,7 @@ const vector<string> EnemyEncounter::playerOptions = {
 EnemyEncounter::EnemyEncounter()
 	: currentState(EncounterState::NONE), lastRoom(nullptr) {}
 
-bool EnemyEncounter::canUseAction(Interaction::ActionType actionType)
-{
-	return useableActions.find(actionType) != useableActions.end();
-}
-
-bool EnemyEncounter::startEncounter()
+bool EnemyEncounter::startEncounter(Player& player)
 {
 	//cout << flush;
 	system("CLS");
@@ -57,7 +36,32 @@ bool EnemyEncounter::startEncounter()
 	if (input == "retreat")
 		return false;
 	
-	currentState = EncounterState::ACTIVE;
+	if (currentState == EncounterState::NONE)
+	{
+		turnTime = player.getSpeed();
+
+		for (int i = 0; i < enemies.size(); i++)
+		{
+			Enemy& enemy = enemies[i];
+			if (enemy.getSpeed() > turnTime)
+			{
+				turnTime = enemy.getSpeed();
+			}
+		}
+
+		turnTime++;
+
+		playerTime = turnTime;
+		for (Enemy& enemy : enemies)
+		{
+			enemyNextTurn.push_back(turnTime);
+		}
+
+		currentState = EncounterState::ACTIVE;
+	}
+
+	startTurns(player);
+
 	return true;
 }
 
@@ -148,40 +152,6 @@ bool EnemyEncounter::studyEnemy(const string& enemyName) const
 bool EnemyEncounter::enemyExists(const string& enemyName) const
 {
 	return getEnemyIndex(enemyName) != -1;
-}
-
-void EnemyEncounter::enemyTurn(Player& player)
-{
-	for (int i = 0; i < enemies.size(); i++)
-	{
-		Enemy& enemy = enemies[i];
-		enemy.refreshStamina();
-
-		string attack = enemy.getRandomAttack();
-
-		displayTurnStart(enemy);
-
-		while (attack != "")
-		{
-			AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
-			player.damage(damageResult.damage);
-
-			enemy.useStamina(damageResult.staminaUsed);
-			attack = enemy.getRandomAttack();
-
-			displayAttack(enemy, player, damageResult);
-
-			if (player.isDead())
-				return;
-		}
-
-		if (i != enemies.size() - 1)
-		{
-			cout << endl;
-			system("pause");
-			system("CLS");
-		}
-	}
 }
 
 vector<shared_ptr<Item>> EnemyEncounter::removeDrops()
@@ -276,6 +246,59 @@ void EnemyEncounter::displayTurnStart(const Character& curChar) const
 	cout << "\t==============================================" << endl;
 	cout << "\t        " << curChar.getName() << "'s Turn" << endl;
 	cout << "\t----------------------------------------------" << endl;
+}
+
+void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
+{
+	enemy.refreshStamina();
+
+	string attack = enemy.getRandomAttack();
+
+	displayTurnStart(enemy);
+
+	while (attack != "")
+	{
+		AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
+		player.damage(damageResult.damage);
+
+		enemy.useStamina(damageResult.staminaUsed);
+		attack = enemy.getRandomAttack();
+
+		displayAttack(enemy, player, damageResult);
+
+		if (player.isDead())
+			return;
+	}
+}
+
+void EnemyEncounter::startTurns(Player& player)
+{
+	while (player.getSpeed() < playerTime)
+	{
+		playerTime -= player.getSpeed();
+
+		for (int i = 0; i < enemies.size(); i++)
+		{
+			Enemy& enemy = enemies[i];
+
+			if (enemy.getSpeed() < enemyNextTurn[i])
+				enemyNextTurn[i] -= enemy.getSpeed();
+			else
+			{
+				enemyTurn(enemy, player);
+				int diff = enemy.getSpeed() - enemyNextTurn[i];
+				enemyNextTurn[i] = turnTime - diff;
+
+				if (player.isDead())
+					return;
+			}
+		}
+	}
+
+	int diff = player.getSpeed() - playerTime;
+	playerTime = turnTime - diff;
+
+	return;
 }
 
 void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const

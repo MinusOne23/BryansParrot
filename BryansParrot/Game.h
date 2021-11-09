@@ -98,7 +98,6 @@ private:
 		DIED	// Player died
 	};
 
-	set<string> actionsUsed;
 	GameState gameState;
 	Player player;
 
@@ -116,7 +115,6 @@ private:
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
 
-	void helperDisplay();
 	void gameInteract();
 
 public:

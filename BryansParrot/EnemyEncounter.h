@@ -93,14 +93,12 @@ public:
 
 	EnemyEncounter();
 
-	static bool canUseAction(Interaction::ActionType actionType);
-
-	bool startEncounter();
+	bool startEncounter(Player& player);
 	bool attackEnemy(Player& player, const string& attackName, const string& enemyName);
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
 	bool enemyExists(const string& enemyName) const;
-	void enemyTurn(Player& player);
+	void startTurns(Player& player);
 
 	vector<shared_ptr<Item>> removeDrops();
 	void addDrop(shared_ptr<Item> item);
@@ -117,10 +115,9 @@ public:
 
 private:
 	int getEnemyIndex(const string& enemyName) const;
-	static const set<Interaction::ActionType> useableActions;
 	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const;
 	void displayTurnStart(const Character& curChar) const;
-
+	void enemyTurn(Enemy& enemy, Player& player);
 
 	const static vector<string> playerOptions;
 
@@ -128,6 +125,10 @@ private:
 	vector<shared_ptr<Item>> drops;
 	EncounterState currentState;
 	Room* lastRoom;
+
+	int turnTime = 0;
+	int playerTime = 0;
+	vector<int> enemyNextTurn;
 
 };
 
