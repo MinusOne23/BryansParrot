@@ -254,13 +254,14 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	}
 	case Interaction::ActionType::DODGE:
 	{
-		inputResult.succeeded = encounter.dodgeEnemy(player, inputResult.target);
-		if (inputResult.succeeded) {
-			dodge = true;
+		dodge = encounter.dodgeEnemy(player, inputResult.target);
+		if (dodge) {
+			cout << "Dodge Successful!" << endl;
+			cout << dodge << endl;
 		}
 		else {
-			dodge = false;
-			cout << "Your Dodge Failed!" << endl;
+			cout << "Dodge Failed!" << endl;
+			cout << dodge << endl;
 		}
 		break;
 	}
@@ -276,13 +277,13 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 		return;
 	}
 	}
-	cout << "You Sucessfully Dodged!" << endl;
+
 	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
 		currentRoom->completeEncounter();
 	else if (inputResult.succeeded && inputResult.isActiveAction)
 	{
 		cout << endl;
-		encounter.enemyTurn(player);
+		encounter.enemyTurn(player, dodge);
 		cout << endl;
 
 		encounter.displayEnemies();

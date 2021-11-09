@@ -116,11 +116,9 @@ bool EnemyEncounter::dodgeEnemy(const Player& player, const string& enemyName)
 	cout << dodgenum << endl;
 	cout << player.getDodgeChance() << endl;
 	if (dodgechance >= dodgenum) {
-		//cout << "You Sucessfully Dodged!" << endl;
 		return true;
 	}
 	else {
-		//cout << "Your dodge Failed!" << endl;
 		return false;
 	}
 }
@@ -176,7 +174,7 @@ bool EnemyEncounter::enemyExists(const string& enemyName) const
 	return getEnemyIndex(enemyName) != -1;
 }
 
-void EnemyEncounter::enemyTurn(Player& player)
+void EnemyEncounter::enemyTurn(Player& player, bool dodge)
 {
 	for (Enemy& enemy : enemies)
 	{
@@ -184,11 +182,16 @@ void EnemyEncounter::enemyTurn(Player& player)
 		cout << "\t        " << enemy.getName() << "'s Turn" << endl;
 		cout << "\t----------------------------------------------" << endl;
 
-
+		
 		Weapon::AttackType type = (Weapon::AttackType)(rand() % 2 + 1);
 
 		Weapon::DamageResult damageResult = enemy.calcDamage(type);
 
+		if (dodge == true)
+			damageResult.damage = 0;
+
+		cout << "Dodge: " << dodge << endl;
+		cout << "Damage: " << damageResult.damage << endl;
 		switch (type)
 		{
 		case Weapon::AttackType::LIGHT:
@@ -212,8 +215,6 @@ void EnemyEncounter::enemyTurn(Player& player)
 			}
 
 			cout <<"\t\t" << enemy.getName() << " dealt " << damageResult.damage << " damage to " << player.getName() << endl;
-
-			player.damage(damageResult.damage);
 		}
 
 		cout << "\t==============================================" << endl;

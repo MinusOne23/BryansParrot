@@ -57,7 +57,7 @@ public:
 	enum class AttackType
 	{
 		LIGHT = 1,
-		HEAVY = 2
+		HEAVY = 2,
 	};
 
 	struct Damage
@@ -91,7 +91,7 @@ public:
 private:
 	DamageResult getDamage(Damage damage) const;
 	Damage lightDmg; 
-	Damage heavyDmg;  
+	Damage heavyDmg; 
 	float critChance;
 	float critMult;
 };
