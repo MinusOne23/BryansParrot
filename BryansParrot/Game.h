@@ -110,7 +110,6 @@ private:
 	void playerDied();
 	void playerWin();
 	void promptReplay();
-	void encounterInteract(Interaction::InteractionResult& inputResult);
 
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);

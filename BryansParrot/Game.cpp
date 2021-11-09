@@ -140,20 +140,22 @@ void Game::openDoor(Room::DoorIndex index)
 		return;
 	}
 
-	EnemyEncounter& encounter = nextRoom->currentEncounter();
-
-	bool startEncounter = encounter.startEncounter(player);
-	
-	if (!startEncounter)
+	while (nextRoom->encounterCount() > 0)
 	{
-		cout << "You have retreated back to the previous room" << endl;
-		currentRoom->displayContents();
-		return;
-	}
+		EnemyEncounter& encounter = nextRoom->currentEncounter();
 
-	system("CLS");
-	encounter.setLastRoom(currentRoom);
-	encounter.displaySummary(player);
+		bool encounterComplete = encounter.startEncounter(player);
+
+		if (!encounterComplete)
+		{
+			if(!player.isDead())
+				currentRoom->displayContents();
+
+			return;
+		}
+
+		nextRoom->completeEncounter();
+	}
 
 	currentRoom = nextRoom;
 }
@@ -175,89 +177,6 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 	return Room::DoorIndex::NONE;
 }
 
-void Game::encounterInteract(Interaction::InteractionResult& inputResult)
-{
-	EnemyEncounter& encounter = currentRoom->currentEncounter();
-
-	switch (inputResult.actionType)
-	{
-	case Interaction::ActionType::ATTACK:
-	{
-		if (!encounter.enemyExists(inputResult.target))
-		{
-			cout << "That enemy does not exist" << endl;
-			inputResult.succeeded = false;
-			break;
-		}
-
-		Weapon activeWeapon = player.getActiveWeapon();
-
-		cout << "\t===========================================\n";
-		cout << "\t\tAttack Types:" << endl;
-		cout << "\t------------------------------------------\n";
-
-		activeWeapon.displayAttacks("\t - ");
-
-		cout << "\t - Cancel" << endl;
-		cout << "\t===========================================\n";
-
-		string input = Utils::inputValidator();
-
-		while (!Utils::equalsCI(input, "cancel") && !activeWeapon.hasAttackMove(input))
-		{
-			cout << "That move does not exist" << endl;
-			input = Utils::inputValidator();
-		}
-
-		if (Utils::equalsCI(input, "cancel"))
-		{
-			cout << "You've canceled your Attack" << endl;
-			inputResult.succeeded = false;
-		}
-		else
-		{
-			inputResult.succeeded = encounter.attackEnemy(player, input, inputResult.target);
-		}
-	
-		break;
-	}
-	case Interaction::ActionType::KILL:
-	{
-		inputResult.succeeded = encounter.killEnemy(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::STUDY:
-	{
-		inputResult.succeeded = encounter.studyEnemy(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::RETREAT:
-	{
-		currentRoom = encounter.getLastRoom();
-		currentRoom->displayContents();
-		return;
-	}
-	case Interaction::ActionType::END_TURN:
-	{
-		cout << endl;
-		encounter.startTurns(player);
-		cout << endl;
-
-		player.refreshStamina();
-	}
-	}
-
-	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
-		currentRoom->completeEncounter();
-
-	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::ACTIVE)
-	{
-		system("pause");
-		system("CLS");
-		encounter.displaySummary(player);
-	}
-}
-
 /// Game Loop: Takes in user input ant turns input into actions
 /// Calls different functions for Interaction enums
 ///		QUIT -- exits program
@@ -276,23 +195,7 @@ void Game::gameInteract()
 {
 	Interaction::InteractionResult inputResult = Interaction::universalInput(player);
 
-	bool inEncounter = currentRoom->encounterCount() > 0;
-
-	// Check if can use the action in current conditions
-	bool validAction = true;
-	if (inEncounter)
-	{
-		if (!Interaction::canUseInEncounter(inputResult.actionType))
-		{
-			validAction = false;
-		}
-	}
-	else if (!Interaction::canUseInRoom(inputResult.actionType))
-	{
-		validAction = false;
-	}
-
-	if (!validAction)
+	if (!Interaction::canUseInRoom(inputResult.actionType))
 	{
 		cout << "Sorry you can't do that right now" << endl;
 		return;
@@ -362,14 +265,5 @@ void Game::gameInteract()
 		currentRoom->displayContents();
 		break;
 	}
-	case Interaction::ActionType::ERROR:
-	{
-		return;
-	}
-	}
-
-	if (inEncounter)
-	{
-		encounterInteract(inputResult);
 	}
 };
