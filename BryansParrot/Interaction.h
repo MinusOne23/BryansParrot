@@ -81,28 +81,34 @@ public:
 		EQUIP,
 		HELP,
 		ATTACK,
-		KILL,
 		STUDY,
 		RETREAT,
-		END_TURN
+		END_TURN,
+		ENABLE_DEV_MODE
+	};
+
+	enum class DevActionType
+	{
+		ERROR = -1,
+		KILL,
+		TP
 	};
 
 
 	struct InteractionResult
 	{
+		DevActionType devActionType;
 		ActionType actionType;
 		string target;
 		string actionStr;
 		bool succeeded;
 	};
-
 	static string getHelpText(string action);
 	static InteractionResult universalInput(Player& player);
-	static InteractionResult parseInput(const string& input);
 	static bool canUseInRoom(ActionType type);
 	static bool canUseInEncounter(ActionType type);
-
 	static void addActionUsed(string actionStr);
+	static InteractionResult parseInput(const string& input, bool devMode = false);
 
 private:
 	static const int MAX_ACTION_WORDS;
@@ -111,6 +117,13 @@ private:
 
 	Interaction();
 	static void helperDisplay();
+	static InteractionResult parseInputDev(const string& input);
+
+	//To Do: Use secretcommand in map instead of "bryan" for security
+	static const string DEV_MODE;
+	static const map<string, ActionType> actions;
+	static  map<string, DevActionType> devActions;
+	static const map<ActionType, string> helpStrings;
 };
 
 #endif // INTERACTION_H

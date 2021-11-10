@@ -14,6 +14,12 @@ const vector<string> EnemyEncounter::playerOptions = {
 	"Retreat"
 };
 
+
+const set<Interaction::DevActionType> EnemyEncounter::useableDevActions = {
+	Interaction::DevActionType::KILL,
+	Interaction::DevActionType::TP
+};
+
 EnemyEncounter::EnemyEncounter()
 	: currentState(EncounterState::NONE), lastRoom(nullptr) {}
 

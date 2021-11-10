@@ -17,7 +17,14 @@
 
 using namespace std;
 
-const string VERSION = "1.3.3";
+const string VERSION = "1.3.4";
+
+const map<string, int> Game::roomNameToIndex = {
+	{"first_room",0},
+	{"second_room",1},
+	{"third_room",2},
+	{"forth_room",3}
+};
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -129,8 +136,30 @@ void Game::openDoor(Room::DoorIndex index)
 	}
 
 	Room* nextRoom = &door->getNextRoom();
+  
+	enterNewRoom(nextRoom);
+}
 
-	if (nextRoom->encounterCount() == 0)
+/// Door Index = Door Direction
+///Input: user input Door name
+/// Returns: Specific door direction enum
+Room::DoorIndex Game::getDoorIndex(string doorName)
+{
+	if (Utils::equalsCI(doorName, "north door"))
+		return Room::DoorIndex::NORTH_DOOR;
+	else if (Utils::equalsCI(doorName, "south door"))
+		return Room::DoorIndex::SOUTH_DOOR;
+	else if (Utils::equalsCI(doorName, "east door"))
+		return Room::DoorIndex::EAST_DOOR;
+	else if (Utils::equalsCI(doorName, "west door"))
+		return Room::DoorIndex::WEST_DOOR;
+
+	return Room::DoorIndex::NONE;
+}
+
+void Game::enterNewRoom(Room* nextRoom)
+{
+  if (nextRoom->encounterCount() == 0)
 	{
 		currentRoom = nextRoom;
 
@@ -160,23 +189,6 @@ void Game::openDoor(Room::DoorIndex index)
 	currentRoom = nextRoom;
 }
 
-/// Door Index = Door Direction
-///Input: user input Door name
-/// Returns: Specific door direction enum
-Room::DoorIndex Game::getDoorIndex(string doorName)
-{
-	if (Utils::equalsCI(doorName, "north door"))
-		return Room::DoorIndex::NORTH_DOOR;
-	else if (Utils::equalsCI(doorName, "south door"))
-		return Room::DoorIndex::SOUTH_DOOR;
-	else if (Utils::equalsCI(doorName, "east door"))
-		return Room::DoorIndex::EAST_DOOR;
-	else if (Utils::equalsCI(doorName, "west door"))
-		return Room::DoorIndex::WEST_DOOR;
-
-	return Room::DoorIndex::NONE;
-}
-
 /// Game Loop: Takes in user input ant turns input into actions
 /// Calls different functions for Interaction enums
 ///		QUIT -- exits program
@@ -201,6 +213,43 @@ void Game::gameInteract()
 		return;
 	}
 
+	if (isDevMode)
+	{
+		switch (inputResult.devActionType)
+		{
+		case Interaction::DevActionType::TP:
+		{
+
+			int roomIndex;
+			Room* nextRoom;
+			string room_name = inputResult.target;
+
+			if (roomNameToIndex.find(room_name) != roomNameToIndex.end())
+			{
+				cout << "Room Found" << endl;
+
+				roomIndex = roomNameToIndex.find(room_name)->second;
+				nextRoom = &allRooms[roomIndex];
+				//To Do: if next Room is an encounter room, display enter encounter or not
+				enterNewRoom(nextRoom);
+				return;
+			}
+			else {
+				cout << "Room Not Found" << endl;
+			}
+			break;
+		}
+		default:
+		{
+			if (!inEncounter && EnemyEncounter::canUseDevAction(inputResult.devActionType))
+			{
+				cout << "Sorry, you can not do that right now." << endl;
+				return;
+			}
+		}
+		}
+	}
+	//Actions
 	switch (inputResult.actionType)
 	{
 	case Interaction::ActionType::TAKE:

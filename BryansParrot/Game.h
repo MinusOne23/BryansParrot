@@ -113,7 +113,9 @@ private:
 
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
+	void enterNewRoom(Room* nextRoom);
 
+	static const map<string, int> roomNameToIndex;
 	void gameInteract();
 
 public:

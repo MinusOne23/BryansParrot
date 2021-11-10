@@ -11,6 +11,7 @@ struct ActionInfo
 };
 
 const int Interaction::MAX_ACTION_WORDS = 2;
+const string Interaction::DEV_MODE = "bryan";
 
 const map<string, Interaction::ActionType> Interaction::actions = {
 	{"q", ActionType::QUIT},
@@ -35,7 +36,12 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"retreat", ActionType::RETREAT},
 	{"end turn", ActionType::END_TURN},
 	{"study", ActionType::STUDY},
-	{"kill", ActionType::KILL}
+	{DEV_MODE, ActionType::ENABLE_DEV_MODE}
+};
+
+ map<string, Interaction::DevActionType> Interaction::devActions = {
+	{"kill", DevActionType::KILL},
+	{"tp", DevActionType::TP}
 };
 
 const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
@@ -123,6 +129,17 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 		player.displayInventory();
 		break;
 	}
+  case Interaction::ActionType::ENABLE_DEV_MODE:
+	{
+		isDevMode = !isDevMode;
+
+		if (isDevMode)
+			cout << "DevMode: Activated" << endl;
+		else
+			cout << "DevMode: Deactivated" << endl;
+
+		return;
+	}
 	case ActionType::EQUIP:
 	{
 		inputResult.succeeded = player.findAndEquip(inputResult.target);
@@ -183,9 +200,15 @@ void Interaction::helperDisplay()
 	cout << "\t===========================================\n";
 }
 
-Interaction::InteractionResult Interaction::parseInput(const string& input)
+Interaction::InteractionResult Interaction::parseInput(const string& input, bool devMode)
 {
 	InteractionResult result;
+
+	if (devMode)
+		result = parseInputDev(input);
+	else
+		result.devActionType = DevActionType::ERROR;
+
 	vector<string> tokens = Utils::tokenize(input);
 
 	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
@@ -219,5 +242,47 @@ Interaction::InteractionResult Interaction::parseInput(const string& input)
 	}
 
 	result.actionType = ActionType::ERROR;
+	return result;
+}
+
+Interaction::InteractionResult Interaction::parseInputDev(const string& input)
+{
+	InteractionResult result;
+	vector<string> tokens = Utils::tokenize(input);
+
+	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
+	{
+		string devactionStr = tokens[0];
+
+		for (int j = 1; j < i; j++)
+		{
+			devactionStr += " " + tokens[j];
+		}
+
+		if (devActions.find(devactionStr) != devActions.end())
+		{
+			result.devActionType = devActions.at(devactionStr);
+
+			if (i < tokens.size())
+			{
+				result.target = tokens[i];
+				for (int j = i + 1; j < tokens.size(); j++)
+				{
+					result.target += " " + tokens[j];
+				}
+			}
+
+			result.actionStr = Utils::strToLower(devactionStr);
+
+			if (isActiveDevActions.find(result.devActionType) != isActiveDevActions.end())
+				result.isActiveDevAction = isActiveDevActions.at(result.devActionType);
+
+			result.succeeded = true;
+
+			return result;
+		}
+	}
+
+	result.devActionType = DevActionType::ERROR;
 	return result;
 }
