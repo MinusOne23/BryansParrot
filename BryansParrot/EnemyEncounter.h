@@ -101,7 +101,7 @@ public:
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
 	bool enemyExists(const string& enemyName) const;
-	void enemyTurn(Player& player, bool dodge);
+	void enemyTurn(Player& player, bool dodge, int ExtraDodgeTurn);
 
 	vector<shared_ptr<Item>> removeDrops();
 	void addDrop(shared_ptr<Item> item);

@@ -256,12 +256,11 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	{
 		dodge = encounter.dodgeEnemy(player, inputResult.target);
 		if (dodge) {
+			extradodgeTurn = 2;
 			cout << "Dodge Successful!" << endl;
-			cout << dodge << endl;
 		}
 		else {
 			cout << "Dodge Failed!" << endl;
-			cout << dodge << endl;
 		}
 		break;
 	}
@@ -283,15 +282,16 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 	else if (inputResult.succeeded && inputResult.isActiveAction)
 	{
 		cout << endl;
-		encounter.enemyTurn(player, dodge);
+		encounter.enemyTurn(player, dodge, extradodgeTurn);
 		cout << endl;
 
 		encounter.displayEnemies();
-
 		cout << endl;
 		cout << "\tPlayer Health: " << player.healthDisplay() << endl;
 		cout << "\t===========================================";
 	}
+	if (extradodgeTurn != 0)
+		extradodgeTurn--;
 }
 
 /// Game Loop: Takes in user input ant turns input into actions

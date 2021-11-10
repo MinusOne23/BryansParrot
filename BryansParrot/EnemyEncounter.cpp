@@ -172,53 +172,64 @@ bool EnemyEncounter::enemyExists(const string& enemyName) const
 	return getEnemyIndex(enemyName) != -1;
 }
 
-void EnemyEncounter::enemyTurn(Player& player, bool dodge)
+void EnemyEncounter::enemyTurn(Player& player, bool dodge, int extraDodgeTurn)
 {
-	for (Enemy& enemy : enemies)
+	if (extraDodgeTurn <= 0) 
 	{
-		cout << "\t==============================================" << endl;
-		cout << "\t        " << enemy.getName() << "'s Turn" << endl;
-		cout << "\t----------------------------------------------" << endl;
-
-		
-		Weapon::AttackType type = (Weapon::AttackType)(rand() % 2 + 1);
-
-		Weapon::DamageResult damageResult = enemy.calcDamage(type);
-
-		if (dodge == true)
-			damageResult.damage = 0;
-
-		player.damage(damageResult.damage);
-
-		switch (type)
+		for (Enemy& enemy : enemies)
 		{
-		case Weapon::AttackType::LIGHT:
+			cout << "\t==============================================" << endl;
+			cout << "\t        " << enemy.getName() << "'s Turn" << endl;
+			cout << "\t----------------------------------------------" << endl;
 
-			cout << "\t\t" <<enemy.getName() << " used a light attack!" << endl;
-			break;
-		case Weapon::AttackType::HEAVY:
-			cout << "\t\t" <<enemy.getName() << " used a heavy attack!" << endl;
-			break;
-		}
-		
-		if (!damageResult.isHit)
-		{
-			cout <<"\t\t"<< enemy.getName() << "'s attack missed!" << endl;
-		}
-		else
-		{
-			if (damageResult.critical)
+
+			Weapon::AttackType type = (Weapon::AttackType)(rand() % 2 + 1);
+
+			Weapon::DamageResult damageResult = enemy.calcDamage(type);
+
+			if (dodge == true)
+				damageResult.damage = 0;
+
+			player.damage(damageResult.damage);
+
+			switch (type)
 			{
-				cout << "\t\tCritical Hit!" << endl;
+			case Weapon::AttackType::LIGHT:
+
+				cout << "\t\t" << enemy.getName() << " used a light attack!" << endl;
+				break;
+			case Weapon::AttackType::HEAVY:
+				cout << "\t\t" << enemy.getName() << " used a heavy attack!" << endl;
+				break;
 			}
 
-			cout <<"\t\t" << enemy.getName() << " dealt " << damageResult.damage << " damage to " << player.getName() << endl;
+			if (!damageResult.isHit)
+			{
+				cout << "\t\t" << enemy.getName() << "'s attack missed!" << endl;
+			}
+			else
+			{
+				if (damageResult.critical)
+				{
+					cout << "\t\tCritical Hit!" << endl;
+				}
+
+				cout << "\t\t" << enemy.getName() << " dealt " << damageResult.damage << " damage to " << player.getName() << endl;
+			}
+
+			cout << "\t==============================================" << endl;
+
+			if (player.isDead())
+				return;
 		}
-
-		cout << "\t==============================================" << endl;
-
-		if (player.isDead())
-			return;
+	}
+	else if (extraDodgeTurn == 2)
+	{
+		cout << "Since you Dodged you get 2  more actions!" << endl;
+	}
+	else if (extraDodgeTurn == 1)
+	{
+		cout << "Since you Dodged you get 1  more action!" << endl;
 	}
 }
 
