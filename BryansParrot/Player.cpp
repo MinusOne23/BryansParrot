@@ -165,6 +165,16 @@ bool Player::findAndEquip(string itemName)
 	cout << "You can not equip that item." << endl;
 }
 
+bool Player::isDev()
+{
+	return m_isDev;
+}
+
+void Player::setIsDev(bool _isDev)
+{
+	m_isDev = _isDev;
+}
+
 void Player::equipWeapon(shared_ptr<Weapon> weapon)
 {
 	Character::equipWeapon(weapon);

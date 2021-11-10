@@ -90,7 +90,6 @@ class Game
 {
 private:
 
-
 	enum class GameState
 	{
 		PLAY,	// Keep Playing
@@ -101,10 +100,10 @@ private:
 	GameState gameState;
 	Player player;
 
-	vector<Room> allRooms;
-
 	Room* currentRoom;
 	Room* winRoom;
+	
+	map<string, Room> allRooms;
 
 	void initializeGame();
 	void playerDied();
@@ -115,10 +114,10 @@ private:
 	Room::DoorIndex getDoorIndex(string doorName);
 	void enterNewRoom(Room* nextRoom);
 
-	static const map<string, int> roomNameToIndex;
 	void gameInteract();
 
 public:
+
 	// Unit Test methods
 	void initializeGameTest();
 	void start();

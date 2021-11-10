@@ -4,6 +4,7 @@
 #include "EnemyEncounter.h"
 #include "AttackMove.h"
 #include "Utils.h"
+#include "Interaction.h"
 
 const int EnemyEncounter::TURN_TIME = 100;
 
@@ -14,16 +15,10 @@ const vector<string> EnemyEncounter::playerOptions = {
 	"Retreat"
 };
 
-
-const set<Interaction::DevActionType> EnemyEncounter::useableDevActions = {
-	Interaction::DevActionType::KILL,
-	Interaction::DevActionType::TP
-};
-
 EnemyEncounter::EnemyEncounter()
 	: currentState(EncounterState::NONE), lastRoom(nullptr) {}
 
-bool EnemyEncounter::startEncounter(Player& player)
+EnemyEncounter::EncounterResult EnemyEncounter::startEncounter(Player& player)
 {
 	//cout << flush;
 	system("CLS");
@@ -34,6 +29,7 @@ bool EnemyEncounter::startEncounter(Player& player)
 	cout << "\t===================================================" << endl;
 
 	string input = Utils::inputValidator();
+	EncounterResult result;
 
 	while (input != "retreat" && input != "enter")
 	{
@@ -43,8 +39,9 @@ bool EnemyEncounter::startEncounter(Player& player)
 
 	if (input == "retreat")
 	{
-		cout << "You have reteated to the previous room" << endl;
-		return false;
+		cout << "You have retreated to the previous room" << endl;
+		result.encounterComplete = false;
+		return result;
 	}
 
 	system("CLS");
@@ -59,13 +56,10 @@ bool EnemyEncounter::startEncounter(Player& player)
 
 	while (currentState == EncounterState::ACTIVE)
 	{
-		tick(player);
+		tick(player, result);
 	}
 
-	if (currentState == EncounterState::RETREAT || currentState == EncounterState::LOSE)
-		return false;
-
-	return true;
+	return result;
 }
 
 bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const string& enemyName)
@@ -365,7 +359,7 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 	system("CLS");
 }
 
-void EnemyEncounter::playerTurn(Player& player)
+void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 {
 	bool endTurn = false;
 
@@ -442,6 +436,7 @@ void EnemyEncounter::playerTurn(Player& player)
 		case Interaction::ActionType::RETREAT:
 		{
 			currentState = EncounterState::RETREAT;
+			result.encounterComplete = false;
 			break;
 		}
 		case Interaction::ActionType::END_TURN:
@@ -450,6 +445,15 @@ void EnemyEncounter::playerTurn(Player& player)
 			player.refreshStamina();
 			break;
 		}
+		case Interaction::ActionType::TP:
+		{
+			if (inputResult.succeeded)
+			{
+				currentState = EncounterState::RETREAT;
+				result.encounterComplete = false;
+				result.tpRoomName = inputResult.tpRoomName;
+			}
+		}
 		}
 
 		system("pause");
@@ -457,14 +461,14 @@ void EnemyEncounter::playerTurn(Player& player)
 	}
 }
 
-void EnemyEncounter::tick(Player& player)
+void EnemyEncounter::tick(Player& player, EncounterResult& result)
 {
 	playerTime += player.getSpeed();
 
 	if (playerTime >= TURN_TIME)
 	{
 		currentTurn = -1;
-		playerTurn(player);
+		playerTurn(player, result);
 		playerTime -= TURN_TIME;
 	}
 
@@ -479,6 +483,12 @@ void EnemyEncounter::tick(Player& player)
 			enemyTimes[i] -= TURN_TIME;
 		}
 	}
+
+	if (player.isDead())
+		result.encounterComplete = false;
+
+	if (currentState == EncounterState::WIN)
+		result.encounterComplete = true;
 }
 
 void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const

@@ -1,11 +1,12 @@
 #include <iostream>
 #include <string>
 
-#include "EnemyEncounter.h"
 #include "Room.h"
 #include "Key.h"
 #include "Enemy.h"
 #include "Utils.h"
+
+#include "EnemyEncounter.h"
 
 using namespace std;
 
@@ -195,11 +196,6 @@ void Room::completeEncounter()
 	}
 
 	encounters.erase(encounters.begin());
-
-	if (encounters.size() == 0)
-	{
-		displayContents();
-	}
 }
 
 int Room::encounterCount()

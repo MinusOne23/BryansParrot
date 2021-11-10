@@ -7,7 +7,6 @@
 
 #include "Player.h"
 #include "Enemy.h"
-#include "Interaction.h"
 
 using namespace std;
 
@@ -92,9 +91,15 @@ public:
 		NONE,		// Not started
 	};
 
+	struct EncounterResult
+	{
+		bool encounterComplete = false;	// Whether or not player completed the encounter
+		string tpRoomName = "";			// Only set if tp
+	};
+
 	EnemyEncounter();
 
-	bool startEncounter(Player& player);
+	EncounterResult startEncounter(Player& player);
 	bool attackEnemy(Player& player, const string& attackName, const string& enemyName);
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
@@ -121,9 +126,9 @@ private:
 	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const;
 	void displayTurnStart(const Character& curChar) const;
 	void enemyTurn(Enemy& enemy, Player& player);
-	void playerTurn(Player& player);
+	void playerTurn(Player& player, EncounterResult& result);
 
-	void tick(Player& player);
+	void tick(Player& player, EncounterResult& result);
 
 	const static vector<string> playerOptions;
 

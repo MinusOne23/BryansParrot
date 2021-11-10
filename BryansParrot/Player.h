@@ -73,10 +73,15 @@ public:
 
 	bool findAndDrink(string itemName);
 	bool findAndEquip(string itemName);
+	bool isDev();
+	void setIsDev(bool _isDev);
+
 
 	virtual void equipWeapon(shared_ptr<Weapon> weapon);
 	virtual void drinkPotion(shared_ptr<Potion> potion);
+
 private:
+	bool m_isDev = false;
 	Inventory inventory;
 };
 #endif // !PLAYER.H

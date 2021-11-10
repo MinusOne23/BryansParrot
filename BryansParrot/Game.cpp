@@ -19,13 +19,6 @@ using namespace std;
 
 const string VERSION = "1.3.4";
 
-const map<string, int> Game::roomNameToIndex = {
-	{"first_room",0},
-	{"second_room",1},
-	{"third_room",2},
-	{"forth_room",3}
-};
-
 /// STARTS THE GAME:
 /// Game will continue untill:
 ///		-Player is Dead
@@ -70,10 +63,10 @@ void Game::initializeGame()
 	allRooms = DungeonBuilder::buildDungeon();
 
 	//Current Room player is in. Will change when player enters new room
-	currentRoom = &allRooms[0];
+	currentRoom = &allRooms.at("first_room");
 
 	//When player enters winRoom, game is over
-	winRoom = &allRooms[allRooms.size() - 1];
+	winRoom = &allRooms.at("fourth_room");
 }
 
 /// PlayerDied(): Health reaches 0
@@ -136,7 +129,7 @@ void Game::openDoor(Room::DoorIndex index)
 	}
 
 	Room* nextRoom = &door->getNextRoom();
-  
+
 	enterNewRoom(nextRoom);
 }
 
@@ -159,34 +152,44 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 
 void Game::enterNewRoom(Room* nextRoom)
 {
-  if (nextRoom->encounterCount() == 0)
-	{
-		currentRoom = nextRoom;
-
-		if(currentRoom != winRoom)
-			currentRoom->displayContents();
-
-		return;
-	}
-
 	while (nextRoom->encounterCount() > 0)
 	{
 		EnemyEncounter& encounter = nextRoom->currentEncounter();
+		encounter.setLastRoom(currentRoom);
 
-		bool encounterComplete = encounter.startEncounter(player);
+		EnemyEncounter::EncounterResult encResult = encounter.startEncounter(player);
 
-		if (!encounterComplete)
+		if (!encResult.encounterComplete)
 		{
-			if(!player.isDead())
+			if (encounter.getCurrentState() == EnemyEncounter::EncounterState::RETREAT)
+			{
+				if (encResult.tpRoomName != "")
+				{
+					nextRoom = &allRooms.at(encResult.tpRoomName);
+				}
+				else
+				{
+					currentRoom->displayContents();
+					return;
+				}
+			}
+			else if (!player.isDead())
+			{
 				currentRoom->displayContents();
-
-			return;
+				return;
+			}
 		}
-
-		nextRoom->completeEncounter();
+		else
+		{
+			nextRoom->completeEncounter();
+		}
 	}
 
 	currentRoom = nextRoom;
+
+	if (currentRoom != winRoom)
+		currentRoom->displayContents();
+
 }
 
 /// Game Loop: Takes in user input ant turns input into actions
@@ -213,42 +216,6 @@ void Game::gameInteract()
 		return;
 	}
 
-	if (isDevMode)
-	{
-		switch (inputResult.devActionType)
-		{
-		case Interaction::DevActionType::TP:
-		{
-
-			int roomIndex;
-			Room* nextRoom;
-			string room_name = inputResult.target;
-
-			if (roomNameToIndex.find(room_name) != roomNameToIndex.end())
-			{
-				cout << "Room Found" << endl;
-
-				roomIndex = roomNameToIndex.find(room_name)->second;
-				nextRoom = &allRooms[roomIndex];
-				//To Do: if next Room is an encounter room, display enter encounter or not
-				enterNewRoom(nextRoom);
-				return;
-			}
-			else {
-				cout << "Room Not Found" << endl;
-			}
-			break;
-		}
-		default:
-		{
-			if (!inEncounter && EnemyEncounter::canUseDevAction(inputResult.devActionType))
-			{
-				cout << "Sorry, you can not do that right now." << endl;
-				return;
-			}
-		}
-		}
-	}
 	//Actions
 	switch (inputResult.actionType)
 	{
@@ -313,6 +280,13 @@ void Game::gameInteract()
 	{
 		currentRoom->displayContents();
 		break;
+	}
+	case Interaction::ActionType::TP:
+	{
+		if (inputResult.succeeded)
+		{
+			enterNewRoom(&allRooms.at(inputResult.tpRoomName));
+		}
 	}
 	}
 };

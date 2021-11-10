@@ -67,6 +67,7 @@ public:
 
 	enum class ActionType
 	{
+		//Regular Actions
 		ERROR = -1,
 		QUIT,
 		INVENTORY,
@@ -84,12 +85,9 @@ public:
 		STUDY,
 		RETREAT,
 		END_TURN,
-		ENABLE_DEV_MODE
-	};
+		ENABLE_DEV_MODE,
 
-	enum class DevActionType
-	{
-		ERROR = -1,
+		//Dev Actions
 		KILL,
 		TP
 	};
@@ -97,18 +95,21 @@ public:
 
 	struct InteractionResult
 	{
-		DevActionType devActionType;
 		ActionType actionType;
 		string target;
 		string actionStr;
+		bool isDevAction;
 		bool succeeded;
+		string tpRoomName;
 	};
+
 	static string getHelpText(string action);
 	static InteractionResult universalInput(Player& player);
 	static bool canUseInRoom(ActionType type);
 	static bool canUseInEncounter(ActionType type);
+	static bool isDevAction(ActionType type);
 	static void addActionUsed(string actionStr);
-	static InteractionResult parseInput(const string& input, bool devMode = false);
+	static InteractionResult parseInput(const string& input);
 
 private:
 	static const int MAX_ACTION_WORDS;
@@ -117,12 +118,10 @@ private:
 
 	Interaction();
 	static void helperDisplay();
-	static InteractionResult parseInputDev(const string& input);
 
 	//To Do: Use secretcommand in map instead of "bryan" for security
 	static const string DEV_MODE;
 	static const map<string, ActionType> actions;
-	static  map<string, DevActionType> devActions;
 	static const map<ActionType, string> helpStrings;
 };
 
