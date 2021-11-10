@@ -59,7 +59,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.staminaBoost = 2;
 
 	Enemy goblin("Goblin", 100, 5, 2, goblinFists);
-	Enemy troll("Goblin", 100, 5, 2, trollFists);
+	Enemy troll("Troll", 100, 5, 2, trollFists);
 
 
 	map<string, Room> allRooms = {
