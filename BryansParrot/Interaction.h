@@ -4,6 +4,9 @@
 
 #include <string>
 #include <map>
+#include <set>
+
+#include "Player.h"
 
 using namespace std;
 
@@ -64,6 +67,7 @@ public:
 
 	enum class ActionType
 	{
+		//Regular Actions
 		ERROR = -1,
 		QUIT,
 		INVENTORY,
@@ -80,42 +84,45 @@ public:
 		ATTACK,
 		STUDY,
 		RETREAT,
-		ENABLE_DEV_MODE
-	};
+		END_TURN,
+		ENABLE_DEV_MODE,
 
-	enum class DevActionType
-	{
-		ERROR = -1,
+		//Dev Actions
 		KILL,
 		TP
 	};
 
+
 	struct InteractionResult
 	{
-		DevActionType devActionType;
 		ActionType actionType;
 		string target;
 		string actionStr;
-		bool isActiveAction;
-		bool isActiveDevAction;
+		bool isDevAction;
 		bool succeeded;
+		string tpRoomName;
 	};
+
 	static string getHelpText(string action);
-	static InteractionResult parseInput(const string& input, bool devMode = false);
+	static InteractionResult universalInput(Player& player);
+	static bool canUseInRoom(ActionType type);
+	static bool canUseInEncounter(ActionType type);
+	static bool isDevAction(ActionType type);
+	static void addActionUsed(string actionStr);
+	static InteractionResult parseInput(const string& input);
 
 private:
 	static const int MAX_ACTION_WORDS;
+	static const map<string, ActionType> actions;
+	static set<string> actionsUsed;
 
 	Interaction();
-	static InteractionResult parseInputDev(const string& input);
+	static void helperDisplay();
 
 	//To Do: Use secretcommand in map instead of "bryan" for security
 	static const string DEV_MODE;
 	static const map<string, ActionType> actions;
-	static  map<string, DevActionType> devActions;
 	static const map<ActionType, string> helpStrings;
-	static const map<ActionType, bool> isActiveActions;
-	static  map<DevActionType, bool> isActiveDevActions;
 };
 
 #endif // INTERACTION_H

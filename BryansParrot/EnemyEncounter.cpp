@@ -2,41 +2,23 @@
 #include <iostream>
 
 #include "EnemyEncounter.h"
+#include "AttackMove.h"
 #include "Utils.h"
+#include "Interaction.h"
 
-const set<Interaction::ActionType> EnemyEncounter::useableActions = {
-	Interaction::ActionType::QUIT,
-	Interaction::ActionType::INVENTORY,
-	Interaction::ActionType::USE,
-	Interaction::ActionType::ATTACK,
-	Interaction::ActionType::CHARACTER,
-	Interaction::ActionType::EQUIP,
-	Interaction::ActionType::HELP,
-	Interaction::ActionType::RETREAT,
-	Interaction::ActionType::STUDY,
-	Interaction::ActionType::LOOK
-};
+const int EnemyEncounter::TURN_TIME = 100;
 
-
-const set<Interaction::DevActionType> EnemyEncounter::useableDevActions = {
-	Interaction::DevActionType::KILL,
-	Interaction::DevActionType::TP
+const vector<string> EnemyEncounter::playerOptions = {
+	"Attack [Enemy Name]",
+	"Study [Enemy Name]",
+	"End Turn",
+	"Retreat"
 };
 
 EnemyEncounter::EnemyEncounter()
 	: currentState(EncounterState::NONE), lastRoom(nullptr) {}
 
-bool EnemyEncounter::canUseAction(Interaction::ActionType actionType)
-{
-	return useableActions.find(actionType) != useableActions.end();
-}
-
-bool EnemyEncounter::canUseDevAction(Interaction::DevActionType devActionType)
-{
-	return useableDevActions.find(devActionType) != useableDevActions.end();
-}
-
-bool EnemyEncounter::startEncounter()
+EnemyEncounter::EncounterResult EnemyEncounter::startEncounter(Player& player)
 {
 	//cout << flush;
 	system("CLS");
@@ -47,6 +29,7 @@ bool EnemyEncounter::startEncounter()
 	cout << "\t===================================================" << endl;
 
 	string input = Utils::inputValidator();
+	EncounterResult result;
 
 	while (input != "retreat" && input != "enter")
 	{
@@ -55,13 +38,31 @@ bool EnemyEncounter::startEncounter()
 	}
 
 	if (input == "retreat")
-		return false;
-	
+	{
+		cout << "You have retreated to the previous room" << endl;
+		result.encounterComplete = false;
+		return result;
+	}
+
+	system("CLS");
+
+	if (enemyTimes.size() == 0)
+	{
+		for (int i = 0; i < enemies.size(); i++)
+			enemyTimes.push_back(0);
+	}
+
 	currentState = EncounterState::ACTIVE;
-	return true;
+
+	while (currentState == EncounterState::ACTIVE)
+	{
+		tick(player, result);
+	}
+
+	return result;
 }
 
-bool EnemyEncounter::attackEnemy(const Player& player, Weapon::AttackType attackType, const string& enemyName)
+bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const string& enemyName)
 {
 	if (currentState != EncounterState::ACTIVE)
 		return false;
@@ -74,46 +75,29 @@ bool EnemyEncounter::attackEnemy(const Player& player, Weapon::AttackType attack
 		return false;
 	}
 
-	cout << "\t==============================================" << endl;
-	cout <<"\t\t"<< player.getName() << "'s Turn" << endl;
-	cout << "\t----------------------------------------------" << endl;
-
 	Enemy& enemy = enemies[index];
-
-	Weapon::DamageResult damageResult = player.calcDamage(attackType);
-
-	if (!damageResult.isHit)
+	AttackMove::DamageResult damageResult = player.calcDamage(attackName);
+	if (player.getCurrentStamina() < damageResult.staminaUsed)
 	{
-		cout << "\t\tYour attack missed!" << endl;
-	}
-	else
-	{
-		if (damageResult.critical)
-			cout << "\t\tCritical Hit!" << endl;
-
-		enemy.damage(damageResult.damage);
-
-		if (enemy.isDead())
-		{
-			cout << "\t\tYour Attack Hit!" << endl;
-			cout << "\t\tYou killed " << enemy.getName() << endl;
-
-			enemies.erase(enemies.begin() + index);
-
-			if (enemies.size() == 0)
-			{
-				currentState = EncounterState::WIN;
-			}
-		}
-		else
-		{
-			cout << "\t\tYour Attack Hit!" << endl;
-			cout << "\t\tYou dealt " << damageResult.damage << " damage to " << enemy.getName() << endl;
-		}
+		cout << "You do not have enough stamina" << endl;
+		return false;
 	}
 
-	cout << "\t==============================================" << endl;
+	player.useStamina(damageResult.staminaUsed);
+	enemy.damage(damageResult.damage);
 
+	displayTurnStart(player);
+	displayAttack(player, enemy, damageResult);
+
+	if (enemy.isDead())
+	{
+		enemies.erase(enemies.begin() + index);
+		enemyTimes.erase(enemyTimes.begin() + index);
+
+		if (enemies.size() == 0)
+			currentState = EncounterState::WIN;
+	}
+		
 	return true;
 }
 
@@ -168,53 +152,6 @@ bool EnemyEncounter::enemyExists(const string& enemyName) const
 	return getEnemyIndex(enemyName) != -1;
 }
 
-void EnemyEncounter::enemyTurn(Player& player)
-{
-	for (Enemy& enemy : enemies)
-	{
-		cout << "\t==============================================" << endl;
-		cout << "\t        " << enemy.getName() << "'s Turn" << endl;
-		cout << "\t----------------------------------------------" << endl;
-
-
-		Weapon::AttackType type = (Weapon::AttackType)(rand() % 2 + 1);
-
-		Weapon::DamageResult damageResult = enemy.calcDamage(type);
-
-		switch (type)
-		{
-		case Weapon::AttackType::LIGHT:
-
-			cout << "\t\t" <<enemy.getName() << " used a light attack!" << endl;
-			break;
-		case Weapon::AttackType::HEAVY:
-			cout << "\t\t" <<enemy.getName() << " used a heavy attack!" << endl;
-			break;
-		}
-		
-		if (!damageResult.isHit)
-		{
-			cout <<"\t\t"<< enemy.getName() << "'s attack missed!" << endl;
-		}
-		else
-		{
-			if (damageResult.critical)
-			{
-				cout << "\t\tCritical Hit!" << endl;
-			}
-
-			cout <<"\t\t" << enemy.getName() << " dealt " << damageResult.damage << " damage to " << player.getName() << endl;
-
-			player.damage(damageResult.damage);
-		}
-
-		cout << "\t==============================================" << endl;
-
-		if (player.isDead())
-			return;
-	}
-}
-
 vector<shared_ptr<Item>> EnemyEncounter::removeDrops()
 {
 	vector<shared_ptr<Item>> result = drops;
@@ -248,6 +185,83 @@ EnemyEncounter::EncounterState EnemyEncounter::getCurrentState() const
 	return currentState;
 }
 
+void EnemyEncounter::displayNextTurns(const Player& player, int numTurns) const
+{
+	if (numTurns < 1)
+		numTurns = 1;
+
+	cout << "\t==============================================\n";
+	cout << "\t\t\tUp Next:" << endl;
+	cout << "\t----------------------------------------------\n";
+
+	int tempPlayerTime = playerTime;
+	vector<int> tempEnemyTimes = enemyTimes;
+
+	int turnCount = 0;
+
+	if (currentTurn != -1)
+	{
+		tempEnemyTimes[currentTurn] = 0;
+
+		for (int i = currentTurn + 1; i++; i < enemies.size() && turnCount < numTurns)
+		{
+			tempEnemyTimes[i] += enemies[i].getSpeed();
+
+			if (tempEnemyTimes[i] >= TURN_TIME)
+			{
+				cout << "\t - " << enemies[i].getName() << endl;
+				tempEnemyTimes[i] -= TURN_TIME;
+				turnCount++;
+			}
+		}
+
+		if (turnCount < numTurns)
+		{
+			tempPlayerTime += player.getSpeed();
+
+			if (tempPlayerTime >= TURN_TIME)
+			{
+				cout << "\t - " << player.getName() << endl;
+				tempPlayerTime -= TURN_TIME;
+				turnCount++;
+			}
+		}
+	}
+	else
+	{
+		tempPlayerTime = 0;
+	}
+
+	while (turnCount < numTurns)
+	{
+		for (int i = 0; i < enemies.size() && turnCount < numTurns; i++)
+		{
+			tempEnemyTimes[i] += enemies[i].getSpeed();
+
+			if (tempEnemyTimes[i] >= TURN_TIME)
+			{
+				cout << "\t - " << enemies[i].getName() << endl;
+				tempEnemyTimes[i] -= TURN_TIME;
+				turnCount++;
+			}
+		}
+
+		if (turnCount < numTurns)
+		{
+			tempPlayerTime += player.getSpeed();
+
+			if (tempPlayerTime >= TURN_TIME)
+			{
+				cout << "\t - " << player.getName() << endl;
+				tempPlayerTime -= TURN_TIME;
+				turnCount++;
+			}
+		}
+	}
+
+	cout << "\t==============================================" << endl;
+}
+
 void EnemyEncounter::displayEnemies() const
 {
 	cout << "\t==============================================\n";
@@ -258,7 +272,35 @@ void EnemyEncounter::displayEnemies() const
 	{
 		cout << "\t - " << enemy.getName() << " " << enemy.healthDisplay() << endl;
 	}
-	cout << "\t==============================================";
+	cout << "\t==============================================" << endl;
+}
+
+void EnemyEncounter::displayPlayerOptions() const
+{
+	cout << "\t==============================================\n";
+	cout << "\t\t\Options:" << endl;
+	cout << "\t----------------------------------------------\n";
+
+	for (string option : playerOptions)
+	{
+		cout << "\t - " << option << endl;
+	}
+	cout << "\t==============================================" << endl;
+}
+
+void EnemyEncounter::displaySummary(const Player& player) const
+{
+	displayEnemies();
+	displayNextTurns(player, 3);
+
+	cout << endl;
+	cout << "\t==============================================" << endl;
+	cout << "\t - Player Health: " << player.healthDisplay() << endl;
+	cout << "\t - Player Stamina: " << player.getCurrentStamina() << endl;
+	cout << "\t==============================================" << endl;
+
+
+	displayPlayerOptions();
 }
 
 int EnemyEncounter::getEnemyIndex(const string& enemyName) const
@@ -274,4 +316,211 @@ int EnemyEncounter::getEnemyIndex(const string& enemyName) const
 	}
 
 	return -1;
+}
+
+void EnemyEncounter::displayTurnStart(const Character& curChar) const
+{
+	cout << "\t==============================================" << endl;
+	cout << "\t        " << curChar.getName() << "'s Turn" << endl;
+	cout << "\t----------------------------------------------" << endl;
+}
+
+void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
+{
+	if (currentState != EncounterState::ACTIVE)
+	{
+		return;
+	}
+
+	enemy.refreshStamina();
+
+	string attack = enemy.getRandomAttack();
+
+	displayTurnStart(enemy);
+
+	while (attack != "")
+	{
+		AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
+		player.damage(damageResult.damage);
+
+		enemy.useStamina(damageResult.staminaUsed);
+		attack = enemy.getRandomAttack();
+
+		displayAttack(enemy, player, damageResult);
+
+		if (player.isDead())
+		{
+			currentState = EncounterState::LOSE;
+			return;
+		}
+	}
+
+	system("pause");
+	system("CLS");
+}
+
+void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
+{
+	bool endTurn = false;
+
+	while (!endTurn)
+	{
+		if (currentState != EncounterState::ACTIVE)
+		{
+			return;
+		}
+
+		displaySummary(player);
+
+		Interaction::InteractionResult inputResult = Interaction::universalInput(player);
+
+		if (!Interaction::canUseInEncounter(inputResult.actionType))
+		{
+			cout << "Sorry you can't do that right now" << endl;
+			continue;
+		}
+
+		switch (inputResult.actionType)
+		{
+		case Interaction::ActionType::ATTACK:
+		{
+			if (!enemyExists(inputResult.target))
+			{
+				cout << "That enemy does not exist" << endl;
+				inputResult.succeeded = false;
+				break;
+			}
+
+			Weapon activeWeapon = player.getActiveWeapon();
+
+			cout << "\t===========================================\n";
+			cout << "\t\tAttack Types:" << endl;
+			cout << "\t------------------------------------------\n";
+
+			activeWeapon.displayAttacks("\t - ");
+
+			cout << "\t - Cancel" << endl;
+			cout << "\t===========================================\n";
+
+			string input = Utils::inputValidator();
+
+			while (!Utils::equalsCI(input, "cancel") && !activeWeapon.hasAttackMove(input))
+			{
+				cout << "That move does not exist" << endl;
+				input = Utils::inputValidator();
+			}
+
+			if (Utils::equalsCI(input, "cancel"))
+			{
+				cout << "You've canceled your Attack" << endl;
+				inputResult.succeeded = false;
+			}
+			else
+			{
+				system("CLS");
+				inputResult.succeeded = attackEnemy(player, input, inputResult.target);
+			}
+
+			break;
+		}
+		case Interaction::ActionType::KILL:
+		{
+			inputResult.succeeded = killEnemy(inputResult.target);
+			break;
+		}
+		case Interaction::ActionType::STUDY:
+		{
+			inputResult.succeeded = studyEnemy(inputResult.target);
+			break;
+		}
+		case Interaction::ActionType::RETREAT:
+		{
+			currentState = EncounterState::RETREAT;
+			result.encounterComplete = false;
+			break;
+		}
+		case Interaction::ActionType::END_TURN:
+		{
+			endTurn = true;
+			player.refreshStamina();
+			break;
+		}
+		case Interaction::ActionType::TP:
+		{
+			if (inputResult.succeeded)
+			{
+				currentState = EncounterState::RETREAT;
+				result.encounterComplete = false;
+				result.tpRoomName = inputResult.tpRoomName;
+			}
+		}
+		}
+
+		system("pause");
+		system("CLS");
+	}
+}
+
+void EnemyEncounter::tick(Player& player, EncounterResult& result)
+{
+	playerTime += player.getSpeed();
+
+	if (playerTime >= TURN_TIME)
+	{
+		currentTurn = -1;
+		playerTurn(player, result);
+		playerTime -= TURN_TIME;
+	}
+
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		enemyTimes[i] += enemies[i].getSpeed();
+
+		if (enemyTimes[i] >= TURN_TIME)
+		{
+			currentTurn = i;
+			enemyTurn(enemies[i], player);
+			enemyTimes[i] -= TURN_TIME;
+		}
+	}
+
+	if (player.isDead())
+		result.encounterComplete = false;
+
+	if (currentState == EncounterState::WIN)
+		result.encounterComplete = true;
+}
+
+void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const
+{
+	cout << "\t\t" << attacker.getName() << " used " << damageResult.attackName << "!" << endl;
+
+	if (!damageResult.isHit)
+	{
+		cout << "\t\t" << attacker.getName() << "'s attack missed!" << endl;
+	}
+	else
+	{
+		if (damageResult.isCritical)
+		{
+			cout << "\t\tCritical Hit!" << endl;
+		}
+
+		cout << "\t\t" << attacker.getName() << " dealt " << damageResult.damage << " damage to " << target.getName() << endl;
+	}
+
+	cout << "\t\tStamina used: " << damageResult.staminaUsed << endl;
+	cout << "\t\tStamina remaining: " << attacker.getCurrentStamina() << endl;
+	cout << endl;
+
+	if (target.isDead())
+	{
+		cout << "\t\t" << target.getName() << " died!" << endl;
+	}
+	else
+	{
+		cout << "\t\t" << target.getName() << " Health: " << target.healthDisplay() << endl;
+	}
+
+	cout << "\t==============================================" << endl;
 }

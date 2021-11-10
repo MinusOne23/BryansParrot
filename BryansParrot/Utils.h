@@ -41,8 +41,23 @@ public:
 	static string strToLower(string str);
 	static bool isNumber(const string& str);
 
+	template<class T>
+	static int vecIndexOf(vector<T> vec, T val);
+
 private:
 	Utils();
 };
 
 #endif // UTILS_H
+
+template<class T>
+inline int Utils::vecIndexOf(vector<T> vec, T val)
+{
+	for (int i = 0; i < vec.size(); i++)
+	{
+		if (vec[i] == val)
+			return i;
+	}
+
+	return -1;
+}

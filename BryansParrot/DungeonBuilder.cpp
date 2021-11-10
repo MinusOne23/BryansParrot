@@ -1,9 +1,12 @@
 #include "DungeonBuilder.h"
+#include "EnemyEncounter.h"
+
+vector<string> DungeonBuilder::roomNames;
 
 /// HOW TO CREATE NEW ROOM:
-///		-Add Room() to the allRooms array
+///		-Add Room() to the allRooms map with a unique name
 ///		- create the new room object linking it to the index of the room you added in addRooms
-///			Room& [ROOMNAME] = allRooms[INDEX]
+///			Room& [ROOMNAME] = allRooms.at(ROOM_NAME)
 /// 
 ///	ADDING A DOOR TO A ROOM:
 ///		-shared_ptr<Door>DOOR_NAME(new Door(NEXT ROOM, LOCKS AMOUNT)); 
@@ -39,32 +42,42 @@
 ///			controlRoom.addEnemyEncounter(controlRoomEncounter1)
 /// 
 /// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
-vector<Room> DungeonBuilder::buildDungeon()
+map<string, Room> DungeonBuilder::buildDungeon()
 {
 	// Name - Light: Min/Max/Acceracy -Heavy: Min/Max/Acceracy, critchance, critMulti
-	Weapon goblinFists("Goblin Fists", { 5, 10, 0.9f }, { 12, 18, 0.6f }, 0.1f, 1.5f);
-	Weapon sword("Sword", { 20, 30, 0.95f }, { 35, 50, 0.7f }, 0.25f, 1.65f);
+	Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
+	goblinFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
 
-	Enemy goblin("Goblin", 100, goblinFists);
+	Weapon sword("Sword", 0.25f, 1.65f);
+	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	sword.speedBoost = 2;
+	sword.staminaBoost = 2;
 
-	vector<Room> allRooms = {
-		Room(),
-		Room(),
-		Room(),
-		Room()
+	Enemy goblin("Goblin", 100, 5, 2, goblinFists);
+
+	map<string, Room> allRooms = {
+		{"first_room",	Room()},
+		{"second_room",	Room()},
+		{"third_room",	Room()},
+		{"fourth_room", Room()}
 	};
 
+	roomNames.clear();
+	for (map<string, Room>::iterator it = allRooms.begin(); it != allRooms.end(); it++)
+		roomNames.push_back(it->first);
+
 	//Create room object that will set it to array of all all rooms
-	Room& firstRoom = allRooms[0];
-	Room& secondRoom = allRooms[1];
-	Room& thirdRoom = allRooms[2];
-	Room& forthRoom = allRooms[3];
+	Room& firstRoom = allRooms.at("first_room");
+	Room& secondRoom = allRooms.at("second_room");
+	Room& thirdRoom = allRooms.at("third_room");
+	Room& fourthRoom = allRooms.at("fourth_room");
 
 	//create new doors that will be added to doors vector
 	shared_ptr<Door> firstNorthDoor(new Door(secondRoom));
 	shared_ptr<Door> secondNorthDoor(new Door(thirdRoom, 2));
 	shared_ptr<Door> secondSouthDoor(new Door(firstRoom));
-	shared_ptr<Door> thirdNorthDoor(new Door(forthRoom));
+	shared_ptr<Door> thirdNorthDoor(new Door(fourthRoom));
 	shared_ptr<Door> thirdSouthDoor(new Door(secondRoom));
 
 	//create new items that will be added to Inventory
@@ -94,4 +107,9 @@ vector<Room> DungeonBuilder::buildDungeon()
 	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
 
 	return allRooms;
+}
+
+vector<string> DungeonBuilder::getRoomNames()
+{
+	return roomNames;
 }
