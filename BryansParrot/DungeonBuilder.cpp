@@ -61,12 +61,21 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Enemy goblin("Goblin", 100, 5, 2, goblinFists);
 	Enemy troll("Troll", 100, 5, 2, trollFists);
 
+	Enemy mini1("Mini Boss West", 100, 20, 2, goblinFists);
+	Enemy mini2("Mini Boss East", 100, 5, 4, goblinFists);
+	Enemy mini3("Mini Boss North", 100, 10, 2, goblinFists);
+	Enemy boss("Boss", 100, 15, 3, goblinFists);
 
 	map<string, Room> allRooms = {
-		{"first_room",	Room()},
-		{"second_room",	Room()},
-		{"third_room",	Room()},
-		{"fourth_room", Room()}
+		{"first_room",			Room()},
+		{"second_room",			Room()},
+		{"third_room",			Room()},
+		{"fourth_room",			Room()},
+		{"miniBossWestRoom",	Room()},
+		{"miniBossEastRoom",	Room()},
+		{"miniBossNorthRoom",	Room()},
+		{"mainBossRoom",		Room()},
+		{"fifthRoom",			Room()}
 	};
 
 	roomNames.clear();
@@ -78,27 +87,73 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Room& secondRoom = allRooms.at("second_room");
 	Room& thirdRoom = allRooms.at("third_room");
 	Room& fourthRoom = allRooms.at("fourth_room");
+	Room& miniBossWestRoom = allRooms.at("miniBossWestRoom");
+	Room& miniBossEastRoom = allRooms.at("miniBossEastRoom");
+	Room& miniBossNorthRoom = allRooms.at("miniBossNorthRoom");
+	Room& mainBossRoom = allRooms.at("mainBossRoom");
+	Room& fithRoom = allRooms.at("fifthRoom");
 
 	//create new doors that will be added to doors vector
+	//Room1				door name		connecting room
 	shared_ptr<Door> firstNorthDoor(new Door(secondRoom));
+	//Room2
 	shared_ptr<Door> secondNorthDoor(new Door(thirdRoom, 2));
 	shared_ptr<Door> secondSouthDoor(new Door(firstRoom));
+	//Room3
 	shared_ptr<Door> thirdNorthDoor(new Door(fourthRoom));
 	shared_ptr<Door> thirdSouthDoor(new Door(secondRoom));
+	//Room4
+	shared_ptr<Door> fourthWestDoor(new Door(miniBossWestRoom));
+	shared_ptr<Door> fourthEastDoor(new Door(miniBossEastRoom));
+	shared_ptr<Door> fourthNorthDoor(new Door(miniBossNorthRoom));
+	shared_ptr<Door> fourthSouthDoor(new Door(thirdRoom));
+	//West Mini Boss 1
+	shared_ptr<Door> miniWest_EasthDoor(new Door(fourthRoom));
+	//East Mini Boss 2
+	shared_ptr<Door> miniEast_WestDoor(new Door(fourthRoom));
+	//North Mini Boss 3
+	shared_ptr<Door> miniNorth_NorthDoor(new Door(mainBossRoom, 3));
+	shared_ptr<Door> miniNorth_SouthDoor(new Door(fourthRoom));
+	//Boss 
+	shared_ptr<Door> bossNorthDoor(new Door(fithRoom, 1));
+	shared_ptr<Door> bossSouthDoor(new Door(miniBossNorthRoom));
+	//Fith Room
+	shared_ptr<Door> fithSouthDoor(new Door(mainBossRoom));
+
 
 	//create new items that will be added to Inventory
 	Potion sPotion("Small Potion", 25);
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
-
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Encounters
+		//Second Room Encounter: Initialization
 	EnemyEncounter secondRoomEncounter1;
 	secondRoomEncounter1.addEnemy(goblin);
 	secondRoomEncounter1.addEnemy(troll);
+	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor))); //Add drops to specific Enemy Object 
 
-	//Add drops to specific Enemy Object 
-	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
 
-	//Room 1: Initialization
+	//Mini 1 Room Encounter: INitialization
+	EnemyEncounter miniBossWestEncounter2;
+	miniBossWestEncounter2.addEnemy(mini1);
+	miniBossWestEncounter2.addDrop(shared_ptr<Item>(new Key(miniNorth_NorthDoor)));
+
+	//Mini 2 Room Encounter: INitialization
+	EnemyEncounter miniBossEastEncounter3;
+	miniBossEastEncounter3.addEnemy(mini2);
+	miniBossEastEncounter3.addDrop(shared_ptr<Item>(new Key(miniNorth_NorthDoor)));
+
+	//Mini 3 Room Encounter: INitialization
+	EnemyEncounter miniBossNorthEncounter4;
+	miniBossNorthEncounter4.addEnemy(mini3);
+	miniBossNorthEncounter4.addDrop(shared_ptr<Item>(new Key(miniNorth_NorthDoor)));
+
+	//Mini Room Encounter: Initialization
+	EnemyEncounter BossNorthEncounter5;
+	BossNorthEncounter5.addEnemy(boss);
+	BossNorthEncounter5.addDrop(shared_ptr<Item>(new Key(bossNorthDoor)));
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
 	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
 	firstRoom.addItem(make_shared<Weapon>(sword));
@@ -112,6 +167,37 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	thirdRoom.setDoor(Room::DoorIndex::NORTH_DOOR, thirdNorthDoor);
 	thirdRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, thirdSouthDoor);
 	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
+
+	//Room4: Initialization
+	fourthRoom.setDoor(Room::DoorIndex::NORTH_DOOR, fourthNorthDoor);
+	fourthRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, fourthSouthDoor);
+	fourthRoom.setDoor(Room::DoorIndex::EAST_DOOR, fourthEastDoor);
+	fourthRoom.setDoor(Room::DoorIndex::WEST_DOOR, fourthWestDoor);
+	fourthRoom.addItem(make_shared<Potion>(lPotion)); // make_shared: makes smart prt with contents of sPotion
+
+	//Mini West: Initialization
+	miniBossWestRoom.setDoor(Room::DoorIndex::EAST_DOOR, miniWest_EasthDoor);
+	//miniBossWestRoom.addItem(shared_ptr<Item>(new Key(miniNorth_NorthDoor)));
+	miniBossWestRoom.addEnemyEncounter(miniBossWestEncounter2);
+
+	//Mini East: Initialization
+	miniBossEastRoom.setDoor(Room::DoorIndex::WEST_DOOR, miniEast_WestDoor);
+	//miniBossEastRoom.addItem(shared_ptr<Item>(new Key(miniNorth_NorthDoor)));
+	miniBossEastRoom.addEnemyEncounter(miniBossEastEncounter3);
+
+	//Mini North: Initialization
+	miniBossNorthRoom.setDoor(Room::DoorIndex::NORTH_DOOR, miniNorth_NorthDoor);
+	miniBossNorthRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, miniNorth_SouthDoor);
+	//miniBossNorthRoom.addItem(shared_ptr<Item>(new Key(miniNorth_NorthDoor)));
+	miniBossNorthRoom.addEnemyEncounter(miniBossNorthEncounter4);
+
+	//Boss: Initialization
+	mainBossRoom.setDoor(Room::DoorIndex::NORTH_DOOR, bossNorthDoor);
+	mainBossRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, bossSouthDoor);
+	mainBossRoom.addEnemyEncounter(BossNorthEncounter5);
+
+	//FithRoom: Initialization
+	fithRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, fithSouthDoor);
 
 	return allRooms;
 }

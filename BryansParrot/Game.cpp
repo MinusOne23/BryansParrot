@@ -17,7 +17,7 @@
 
 using namespace std;
 
-const string VERSION = "1.3.4";
+const string VERSION = "1.3.5";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -56,7 +56,7 @@ void Game::initializeGame()
 	Weapon playerFists("Fists", 0.2f, 1.5f);
 	playerFists.addAttackMove(AttackMove("Punch", 10, 15, 1, 0.9f));
 
-	player = Player(100, 10, 1, playerFists);
+	player = Player(100, 10, 1, playerFists); // 100 health, 10 speed, 1 stamina
 	player.refreshStamina();
 	gameState = GameState::PLAY;
 
@@ -66,7 +66,7 @@ void Game::initializeGame()
 	currentRoom = &allRooms.at("first_room");
 
 	//When player enters winRoom, game is over
-	winRoom = &allRooms.at("fourth_room");
+	winRoom = &allRooms.at("fifthRoom");
 }
 
 /// PlayerDied(): Health reaches 0
