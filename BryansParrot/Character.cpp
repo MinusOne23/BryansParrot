@@ -18,8 +18,9 @@ using namespace std;
 /// IS_DEAD: Player health reaches 0
 /// GET_DAMAGE: Adds up damage health and returns
 /// DISPLAY_STATS: Displays Current/Max Health, min/max damage, and Crit chance percentage
-Character::Character(Health _health, string _name, int _baseSpeed, int _baseStamina, Weapon _baseWeapon)
-	: health(_health), name(_name), baseSpeed(_baseSpeed), baseStamina(_baseStamina), equipment{_baseWeapon} {}
+
+Character::Character(Health _health, string _name, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon)
+	: health(_health), name(_name), baseSpeed(_baseSpeed), baseStamina(_baseStamina), dodge(_dodgeChance), equipment{_baseWeapon} {}
 
 string Character::getName() const
 {
@@ -81,6 +82,11 @@ int Character::getMaxHealth() const
 	return health.getMaxHealth();
 }
 
+float Character::getDodgeChance() const
+{
+	return dodge;
+}
+
 int Character::getMaxStamina() const
 {
 	return getActiveWeapon().staminaBoost + baseStamina;
@@ -124,6 +130,7 @@ void Character::displayStats() const
 	cout << "\t Health: " << healthDisplay() << endl;
 	cout << "\t Stamina: " << getMaxStamina() << endl;
 	cout << "\t Speed: " << getSpeed() << endl;
+	cout << "\t Dodge Chance: " << fixed << setprecision(2) << dodge * 100 << "%" << endl;
 	cout << "\t Equipment: " << endl;
 	cout << "\t    MainWeapon: " << activeWeapon.getName() << endl;
 	activeWeapon.displayAttacks("\t       ");

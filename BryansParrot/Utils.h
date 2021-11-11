@@ -40,6 +40,7 @@ public:
 	static bool equalsCI(string a, string b);
 	static string strToLower(string str);
 	static bool isNumber(const string& str);
+	static bool chanceTest(float chance);
 
 	template<class T>
 	static int vecIndexOf(vector<T> vec, T val);

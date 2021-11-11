@@ -60,3 +60,9 @@ bool Utils::isNumber(const string& str)
 
 	return true;
 }
+
+bool Utils::chanceTest(float chance)
+{
+	int testNum = rand() % 1000;
+	return testNum <= chance * 1000;
+}

@@ -11,6 +11,7 @@ const int EnemyEncounter::TURN_TIME = 100;
 const vector<string> EnemyEncounter::playerOptions = {
 	"Attack [Enemy Name]",
 	"Study [Enemy Name]",
+	"Dodge [Enemy Name] - 1 stamina",
 	"End Turn",
 	"Retreat"
 };
@@ -62,7 +63,7 @@ EnemyEncounter::EncounterResult EnemyEncounter::startEncounter(Player& player)
 	return result;
 }
 
-bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const string& enemyName)
+bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const string& enemyName, bool useStamina)
 {
 	if (currentState != EncounterState::ACTIVE)
 		return false;
@@ -77,6 +78,10 @@ bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const
 
 	Enemy& enemy = enemies[index];
 	AttackMove::DamageResult damageResult = player.calcDamage(attackName);
+
+	if (!useStamina)
+		damageResult.staminaUsed = 0;
+
 	if (player.getCurrentStamina() < damageResult.staminaUsed)
 	{
 		cout << "You do not have enough stamina" << endl;
@@ -84,6 +89,7 @@ bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const
 	}
 
 	player.useStamina(damageResult.staminaUsed);
+
 	enemy.damage(damageResult.damage);
 
 	displayTurnStart(player);
@@ -91,14 +97,27 @@ bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const
 
 	if (enemy.isDead())
 	{
+		int dodgeIndex = getDodgeIndex(enemy.getName());
+
+		while (dodgeIndex != -1)
+		{
+			playerDodges.erase(playerDodges.begin() + dodgeIndex);
+			dodgeIndex = getDodgeIndex(enemy.getName());
+		}
+
 		enemies.erase(enemies.begin() + index);
 		enemyTimes.erase(enemyTimes.begin() + index);
 
 		if (enemies.size() == 0)
 			currentState = EncounterState::WIN;
 	}
-		
+
 	return true;
+}
+
+bool EnemyEncounter::dodgeEnemy(const Player& player, const Enemy& enemy)
+{
+	return Utils::chanceTest(player.getDodgeChance());
 }
 
 bool EnemyEncounter::killEnemy(const string& enemyName)
@@ -299,6 +318,11 @@ void EnemyEncounter::displaySummary(const Player& player) const
 	cout << "\t - Player Stamina: " << player.getCurrentStamina() << endl;
 	cout << "\t==============================================" << endl;
 
+	if (playerDodges.size() > 0)
+	{
+		displayDodgeAttempts();
+	}
+
 
 	displayPlayerOptions();
 }
@@ -318,11 +342,37 @@ int EnemyEncounter::getEnemyIndex(const string& enemyName) const
 	return -1;
 }
 
+int EnemyEncounter::getDodgeIndex(const string& enemyName) const
+{
+	for (int i = 0; i < playerDodges.size(); i++)
+	{
+		if (Utils::equalsCI(enemyName, playerDodges[i]))
+			return i;
+	}
+
+	return -1;
+}
+
 void EnemyEncounter::displayTurnStart(const Character& curChar) const
 {
 	cout << "\t==============================================" << endl;
 	cout << "\t        " << curChar.getName() << "'s Turn" << endl;
 	cout << "\t----------------------------------------------" << endl;
+}
+
+void EnemyEncounter::displayDodgeAttempts() const
+{
+	cout << endl;
+	cout << "\t==============================================" << endl;
+	cout << "\t           Pending Dodge Attempts:" << endl;
+	cout << "\t==============================================" << endl;
+
+	for (int i = 0; i < playerDodges.size(); i++)
+	{
+		cout << "\t - " << playerDodges[i] << endl;
+	}
+
+	cout << "\t==============================================" << endl;
 }
 
 void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
@@ -340,19 +390,70 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 
 	while (attack != "")
 	{
-		AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
-		player.damage(damageResult.damage);
+		int dodgeIndex = getDodgeIndex(enemy.getName());
+		bool dodge = false;
 
-		enemy.useStamina(damageResult.staminaUsed);
-		attack = enemy.getRandomAttack();
-
-		displayAttack(enemy, player, damageResult);
-
-		if (player.isDead())
+		if (dodgeIndex != -1)
 		{
-			currentState = EncounterState::LOSE;
-			return;
+			dodge = dodgeEnemy(player, enemy);
+			playerDodges.erase(playerDodges.begin() + dodgeIndex);
 		}
+
+		AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
+		enemy.useStamina(damageResult.staminaUsed);
+
+
+		if (!dodge)
+		{
+			player.damage(damageResult.damage);
+			displayAttack(enemy, player, damageResult, dodgeIndex != -1, dodge);
+
+			if (player.isDead())
+			{
+				currentState = EncounterState::LOSE;
+				return;
+			}
+		}
+		else
+		{
+			displayAttack(enemy, player, damageResult, dodgeIndex != -1, dodge);
+			
+			cout << "\n\tYou can now counter the attack!" << endl;
+
+			Weapon activeWeapon = player.getActiveWeapon();
+
+			cout << "\t===========================================\n";
+			cout << "\t\tAttack Types:" << endl;
+			cout << "\t------------------------------------------\n";
+
+			activeWeapon.displayAttacks("\t - ");
+
+			cout << "\t===========================================\n";
+
+			string input = Utils::inputValidator();
+
+			while (!activeWeapon.hasAttackMove(input))
+			{
+				cout << "That move does not exist" << endl;
+				input = Utils::inputValidator();
+			}
+
+			int enemyCount = enemies.size();
+
+			system("CLS");
+			attackEnemy(player, input, enemy.getName(), false);
+			system("pause");
+			system("CLS");
+
+			if (enemies.size() < enemyCount)
+			{
+				return;
+			}
+
+			displayTurnStart(enemy);
+		}
+
+		attack = enemy.getRandomAttack();
 	}
 
 	system("pause");
@@ -433,6 +534,31 @@ void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 			inputResult.succeeded = studyEnemy(inputResult.target);
 			break;
 		}
+		case Interaction::ActionType::DODGE:
+		{
+			if (player.getCurrentStamina() < 1)
+			{
+				inputResult.succeeded = false;
+				cout << "You need at least 1 stamina to dodge" << endl;
+			}
+			else
+			{
+				int index = getEnemyIndex(inputResult.target);
+
+				if (index != -1)
+				{
+					playerDodges.push_back(enemies[index].getName());
+					inputResult.succeeded = true;
+					player.useStamina(1);
+				}
+				else
+				{
+					cout << "That enemy does not exist" << endl;
+					inputResult.succeeded = false;
+				}
+			}
+			break;
+		}
 		case Interaction::ActionType::RETREAT:
 		{
 			currentState = EncounterState::RETREAT;
@@ -479,8 +605,15 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 		if (enemyTimes[i] >= TURN_TIME)
 		{
 			currentTurn = i;
+
+			int enemyCount = enemies.size();
 			enemyTurn(enemies[i], player);
-			enemyTimes[i] -= TURN_TIME;
+
+			int diff = enemyCount - enemies.size();
+			i -= diff;
+
+			if(diff == 0)
+				enemyTimes[i] -= TURN_TIME;
 		}
 	}
 
@@ -494,22 +627,33 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 	}
 }
 
-void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const
+void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult, bool dodgeAttempted, bool dodgeSuccess) const
 {
 	cout << "\t\t" << attacker.getName() << " used " << damageResult.attackName << "!" << endl;
 
-	if (!damageResult.isHit)
+	if(dodgeAttempted)
 	{
-		cout << "\t\t" << attacker.getName() << "'s attack missed!" << endl;
+		if(dodgeSuccess)
+			cout << "\t\t" << target.getName() << " successfully dodged the attack!" << endl;
+		else
+			cout << "\t\t" << target.getName() << " failed to dodge the attack!" << endl;
 	}
-	else
-	{
-		if (damageResult.isCritical)
-		{
-			cout << "\t\tCritical Hit!" << endl;
-		}
 
-		cout << "\t\t" << attacker.getName() << " dealt " << damageResult.damage << " damage to " << target.getName() << endl;
+	if (!dodgeAttempted || dodgeAttempted && !dodgeSuccess)
+	{
+		if (!damageResult.isHit)
+		{
+			cout << "\t\t" << attacker.getName() << "'s attack missed!" << endl;
+		}
+		else
+		{
+			if (damageResult.isCritical)
+			{
+				cout << "\t\tCritical Hit!" << endl;
+			}
+
+			cout << "\t\t" << attacker.getName() << " dealt " << damageResult.damage << " damage to " << target.getName() << endl;
+		}
 	}
 
 	cout << "\t\tStamina used: " << damageResult.staminaUsed << endl;

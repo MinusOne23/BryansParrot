@@ -56,17 +56,19 @@ protected:
 	int baseSpeed;
 	int baseStamina;
 	Equipment equipment;
+	float dodge;
 
 	int curStamina = 0;
 
 public:
 
-	Character(Health _health, string _name, int _baseSpeed, int _baseStamina, Weapon _baseWeapon);
+	Character(Health _health, string _name, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon);
 
 	int getCurrentHealth() const;
 	int getMaxHealth() const;
 	int getMaxStamina() const;
 	int getSpeed() const;
+  float getDodgeChance() const;
 
 	int getCurrentStamina() const;
 	void refreshStamina();

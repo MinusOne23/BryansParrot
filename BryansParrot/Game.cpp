@@ -17,7 +17,7 @@
 
 using namespace std;
 
-const string VERSION = "1.3.5";
+const string VERSION = "1.3.6";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -56,8 +56,10 @@ void Game::initializeGame()
 	Weapon playerFists("Fists", 0.2f, 1.5f);
 	playerFists.addAttackMove(AttackMove("Punch", 10, 15, 1, 0.9f));
 
-	player = Player(100, 10, 1, playerFists); // 100 health, 10 speed, 1 stamina
+	//					health	speed	baseStamina	dodgeChance	baseWeapon
+	player = Player(	100,	10,		1,			0.4f,		playerFists);
 	player.refreshStamina();
+
 	gameState = GameState::PLAY;
 
 	allRooms = DungeonBuilder::buildDungeon();
@@ -152,6 +154,7 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 
 void Game::enterNewRoom(Room* nextRoom)
 {
+
 	while (nextRoom->encounterCount() > 0)
 	{
 		EnemyEncounter& encounter = nextRoom->currentEncounter();
@@ -189,7 +192,6 @@ void Game::enterNewRoom(Room* nextRoom)
 
 	if (currentRoom != winRoom)
 		currentRoom->displayContents();
-
 }
 
 /// Game Loop: Takes in user input ant turns input into actions

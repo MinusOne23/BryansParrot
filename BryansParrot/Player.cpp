@@ -27,11 +27,10 @@ using namespace std;
 
 // Stats for the player constructor
 Player::Player()
-	: Character{ Health(100), "Player", 1, 1, Weapon("None", 0.0f, 0.0f) } {}
+	: Character{ Health(100), "Player", 1, 1, 0.75f, Weapon("None", 0.0f, 0.0f) } {}
 
-Player::Player(int maxHealth, int _baseSpeed, int _baseStamina, Weapon _baseWeapon)
-	: Character{ Health(maxHealth), "Player", _baseSpeed, _baseStamina, _baseWeapon } {}
-
+Player::Player(int maxHealth, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon)
+	: Character{ Health(maxHealth), "Player", _baseSpeed, _baseStamina, _dodgeChance, _baseWeapon } {}
 
 //Takes a Item form the room and adds it into your inventory
 void Player::takeItem(shared_ptr<Item> item)

@@ -38,6 +38,7 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"retreat",		ActionType::RETREAT},
 	{"end turn",	ActionType::END_TURN},
 	{"study",		ActionType::STUDY},
+  {"dodge",   ActionType::DODGE},
 	{DEV_MODE,		ActionType::ENABLE_DEV_MODE},
 	{"kill",		ActionType::KILL},
 	{"tp",			ActionType::TP}
@@ -68,6 +69,7 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 	{Interaction::ActionType::ATTACK,			{false,	true,		false,		"Attack the specified enemy in the room"}},
 	{Interaction::ActionType::RETREAT,			{false,	true,		false,		"Retreat from the current encounter"}},
 	{Interaction::ActionType::STUDY,			{false,	true,		false,		"Display the enemy stats"}},
+  {Interaction::ActionType::DODGE,      {false, true,   false,    "Attempt to dodge enemy attack awarding you with free turn"}},
 	{Interaction::ActionType::END_TURN,			{false,	true,		false,		""}},
 	{Interaction::ActionType::KILL,				{false,	true,		true,		""}},
 };

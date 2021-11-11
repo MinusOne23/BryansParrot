@@ -62,7 +62,7 @@ class Player : public Character
 {
 public:
 	Player();
-	Player(int maxHealth, int _baseSpeed, int _baseStamina, Weapon _baseWeapon);
+	Player(int maxHealth, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon);
 
 	void takeItem(shared_ptr<Item> item);
 	bool useItem(string itemName);

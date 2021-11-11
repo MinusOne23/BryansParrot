@@ -82,6 +82,7 @@ public:
 		EQUIP,
 		HELP,
 		ATTACK,
+		DODGE,
 		STUDY,
 		RETREAT,
 		END_TURN,

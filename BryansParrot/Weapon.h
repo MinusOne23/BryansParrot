@@ -57,7 +57,6 @@ class Weapon : public Item, public Equippable
 public:
 	Weapon(string _name, float _critChance, float _critMult);
 
-
 	AttackMove::DamageResult getDamage(string attackName) const;
 	bool hasAttackMove(string attackName) const;
 

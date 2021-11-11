@@ -44,13 +44,11 @@ vector<string> DungeonBuilder::roomNames;
 /// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
 map<string, Room> DungeonBuilder::buildDungeon()
 {
-	// Name - Light: Min/Max/Acceracy -Heavy: Min/Max/Acceracy, critchance, critMulti
+  
 	Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
 	goblinFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
 	Weapon trollFists("Troll Firsts", 0.1f, 1.5f);
 	trollFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
-
-
 
 	Weapon sword("Sword", 0.25f, 1.65f);
 	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
@@ -58,13 +56,13 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.speedBoost = 2;
 	sword.staminaBoost = 2;
 
-	Enemy goblin("Goblin", 100, 5, 2, goblinFists);
-	Enemy troll("Troll", 100, 5, 2, trollFists);
-
-	Enemy mini1("Mini Boss West", 100, 20, 2, goblinFists);
-	Enemy mini2("Mini Boss East", 100, 5, 4, goblinFists);
-	Enemy mini3("Mini Boss North", 100, 10, 2, goblinFists);
-	Enemy boss("Boss", 100, 15, 3, goblinFists);
+	//				name				health	baseSpeed	baseStamina	dodgeChance	baseWeapon
+	Enemy goblin(	"Goblin",			100,	5,			2,			0.5f,		goblinFists);
+	Enemy troll(	"Troll",			100,	5,			2,			0.5f,		trollFists);
+	Enemy mini1(	"Mini Boss West",	100,	20,			2,			0.75f,		goblinFists);
+	Enemy mini2(	"Mini Boss East",	100,	5,			4,			0.25f,		goblinFists);
+	Enemy mini3(	"Mini Boss North",	100,	10,			2,			0.5f,		goblinFists);
+	Enemy boss(		"Boss",				100,	15,			3,			0.65f,		goblinFists);
 
 	map<string, Room> allRooms = {
 		{"first_room",			Room()},

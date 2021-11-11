@@ -121,6 +121,8 @@ public:
 	// Unit Test methods
 	void initializeGameTest();
 	void start();
+	//
+	int extradodgeTurn;
 };
 
 #endif // GAME_H

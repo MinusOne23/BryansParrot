@@ -2,6 +2,7 @@
 #include <iomanip>
 
 #include "AttackMove.h"
+#include "Utils.h"
 
 AttackMove::AttackMove(string _name, int _minDamage, int _maxDamage, int _stamina, float _accuracy)
 	: name(_name), minDamage(_minDamage), maxDamage(_maxDamage), stamina(_stamina), accuracy(_accuracy) {}
@@ -31,16 +32,14 @@ AttackMove::DamageResult AttackMove::getDamage(float critChance, float critMult)
 	result.attackName = name;
 	result.staminaUsed = stamina;
 
-	int hitNum = rand() % 1000;
-	result.isHit = hitNum <= 1000 * accuracy;
+	result.isHit = Utils::chanceTest(accuracy);
 
 	if (!result.isHit)
 		return result;
 
 	result.damage = rand() % (maxDamage - minDamage + 1) + minDamage;
 
-	int critNum = rand() % 1000;
-	result.isCritical = critNum <= 1000 * critChance;
+	result.isCritical = Utils::chanceTest(critChance);
 
 	if (result.isCritical)
 		result.damage *= critMult;
