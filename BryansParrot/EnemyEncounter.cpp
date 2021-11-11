@@ -58,6 +58,13 @@ EnemyEncounter::EncounterResult EnemyEncounter::startEncounter(Player& player)
 	while (currentState == EncounterState::ACTIVE)
 	{
 		tick(player, result);
+
+		if (player.isDead())
+		{
+			currentState = EncounterState::LOSE;
+			result.encounterComplete = false;
+			return result;
+		}
 	}
 
 	return result;
@@ -410,6 +417,8 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 
 			if (player.isDead())
 			{
+				system("pause");
+				system("CLS");
 				currentState = EncounterState::LOSE;
 				return;
 			}
@@ -614,11 +623,11 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 
 			if(diff == 0)
 				enemyTimes[i] -= TURN_TIME;
+
+			if (player.isDead())
+				return;
 		}
 	}
-
-	if (player.isDead())
-		result.encounterComplete = false;
 
 	if (currentState == EncounterState::WIN)
 	{
