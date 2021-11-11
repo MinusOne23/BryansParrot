@@ -62,20 +62,20 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Enemy troll("Troll", 100, 5, 2, trollFists);
 
 	Enemy mini1("Mini Boss West", 100, 20, 2, goblinFists);
-	Enemy mini2("Mini Boss East", 100, 2, 2, goblinFists);
+	Enemy mini2("Mini Boss East", 100, 5, 4, goblinFists);
 	Enemy mini3("Mini Boss North", 100, 10, 2, goblinFists);
 	Enemy boss("Boss", 100, 15, 3, goblinFists);
 
 	map<string, Room> allRooms = {
-		{"first_room",	Room()},
-		{"second_room",	Room()},
-		{"third_room",	Room()},
-		{"fourth_room", Room()},
-		{"miniBossWestRoom", Room()},
-    {"miniBossEastRoom", Room()},
-    {"miniBossNorthRoom", Room()},
-    {"mainBossRoom", Room()},
-    {"fifthRoom", Room()},
+		{"first_room",			Room()},
+		{"second_room",			Room()},
+		{"third_room",			Room()},
+		{"fourth_room",			Room()},
+		{"miniBossWestRoom",	Room()},
+		{"miniBossEastRoom",	Room()},
+		{"miniBossNorthRoom",	Room()},
+		{"mainBossRoom",		Room()},
+		{"fifthRoom",			Room()}
 	};
 
 	roomNames.clear();
@@ -103,35 +103,35 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	shared_ptr<Door> thirdNorthDoor(new Door(fourthRoom));
 	shared_ptr<Door> thirdSouthDoor(new Door(secondRoom));
 	//Room4
-	shared_ptr<Door> forthWestDoor(new Door(miniBossWestRoom));
-	shared_ptr<Door> forthEastDoor(new Door(miniBossEastRoom));
-	shared_ptr<Door> forthNorthDoor(new Door(miniBossNorthRoom));
-	shared_ptr<Door> forthSouthDoor(new Door(thirdRoom));
+	shared_ptr<Door> fourthWestDoor(new Door(miniBossWestRoom));
+	shared_ptr<Door> fourthEastDoor(new Door(miniBossEastRoom));
+	shared_ptr<Door> fourthNorthDoor(new Door(miniBossNorthRoom));
+	shared_ptr<Door> fourthSouthDoor(new Door(thirdRoom));
 	//West Mini Boss 1
-	shared_ptr<Door> miniWest_EasthDoor(new Door(forthRoom));
+	shared_ptr<Door> miniWest_EasthDoor(new Door(fourthRoom));
 	//East Mini Boss 2
-	shared_ptr<Door> miniEast_WestDoor(new Door(forthRoom)); 
+	shared_ptr<Door> miniEast_WestDoor(new Door(fourthRoom));
 	//North Mini Boss 3
-	shared_ptr<Door> miniNorth_NorthDoor(new Door(mainBossRoom, 3)); 
-	shared_ptr<Door> miniNorth_SouthDoor(new Door(forthRoom)); 
+	shared_ptr<Door> miniNorth_NorthDoor(new Door(mainBossRoom, 3));
+	shared_ptr<Door> miniNorth_SouthDoor(new Door(fourthRoom));
 	//Boss 
-	shared_ptr<Door> bossNorthDoor(new Door(fithRoom,1)); 
+	shared_ptr<Door> bossNorthDoor(new Door(fithRoom, 1));
 	shared_ptr<Door> bossSouthDoor(new Door(miniBossNorthRoom));
 	//Fith Room
-	shared_ptr<Door> fithSouthDoor(new Door(mainBossRoom)); 
+	shared_ptr<Door> fithSouthDoor(new Door(mainBossRoom));
 
 
 	//create new items that will be added to Inventory
 	Potion sPotion("Small Potion", 25);
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Encounters
-	//Second Room Encounter: Initialization
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Encounters
+		//Second Room Encounter: Initialization
 	EnemyEncounter secondRoomEncounter1;
 	secondRoomEncounter1.addEnemy(goblin);
-  secondRoomEncounter1.addEnemy(troll);
+	secondRoomEncounter1.addEnemy(troll);
 	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor))); //Add drops to specific Enemy Object 
-	
+
 
 	//Mini 1 Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter2;
@@ -152,8 +152,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	EnemyEncounter BossNorthEncounter5;
 	BossNorthEncounter5.addEnemy(boss);
 	BossNorthEncounter5.addDrop(shared_ptr<Item>(new Key(bossNorthDoor)));
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Room 1: Initialization
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//Room 1: Initialization
 	firstRoom.setDoor(Room::DoorIndex::NORTH_DOOR, firstNorthDoor);
 	firstRoom.addItem(shared_ptr<Item>(new Key(secondNorthDoor)));
 	firstRoom.addItem(make_shared<Weapon>(sword));
@@ -169,11 +169,11 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	thirdRoom.addItem(make_shared<Potion>(sPotion)); // make_shared: makes smart prt with contents of sPotion
 
 	//Room4: Initialization
-	forthRoom.setDoor(Room::DoorIndex::NORTH_DOOR, forthNorthDoor);
-	forthRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, forthSouthDoor);
-	forthRoom.setDoor(Room::DoorIndex::EAST_DOOR, forthEastDoor);
-	forthRoom.setDoor(Room::DoorIndex::WEST_DOOR, forthWestDoor);
-	forthRoom.addItem(make_shared<Potion>(lPotion)); // make_shared: makes smart prt with contents of sPotion
+	fourthRoom.setDoor(Room::DoorIndex::NORTH_DOOR, fourthNorthDoor);
+	fourthRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, fourthSouthDoor);
+	fourthRoom.setDoor(Room::DoorIndex::EAST_DOOR, fourthEastDoor);
+	fourthRoom.setDoor(Room::DoorIndex::WEST_DOOR, fourthWestDoor);
+	fourthRoom.addItem(make_shared<Potion>(lPotion)); // make_shared: makes smart prt with contents of sPotion
 
 	//Mini West: Initialization
 	miniBossWestRoom.setDoor(Room::DoorIndex::EAST_DOOR, miniWest_EasthDoor);

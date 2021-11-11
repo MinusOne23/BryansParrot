@@ -488,7 +488,10 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 		result.encounterComplete = false;
 
 	if (currentState == EncounterState::WIN)
+	{
 		result.encounterComplete = true;
+		player.refreshStamina();
+	}
 }
 
 void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const
