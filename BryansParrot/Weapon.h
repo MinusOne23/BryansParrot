@@ -3,8 +3,12 @@
 #define WEAPON_H
 
 #include <string>
+#include <map>
+#include <vector>
 
 #include "Item.h"
+#include "AttackMove.h"
+#include "Equippable.h"
 
 using namespace std;
 
@@ -13,35 +17,33 @@ using namespace std;
 * Class Scope
 * --------------------------------------------------------------------------------------
 * Weapon class that can be owned by any character within the game to increase damage
-* during combat
-*
-* --------------------------------------------------------------------------------------
-* Enums and Structures
-* --------------------------------------------------------------------------------------
-* Damage
-*	holds the minimum and maximum values for a range of damage
-* 
-* DamageResult
-*	used as result for get damage function to return the amount of damage and whether 
-*	or not it was a critical hit
+* during combat. Has a list of moves unique to it that can be used during combat
 *
 * --------------------------------------------------------------------------------------
 * Methods
 * --------------------------------------------------------------------------------------
 *
-* getDamage()
-*	produces a randomized amount of damage for the weapon evenly distributed based off
-*	of first the critChance, and if a critical hit the damage is randomized based off 
-*	critDamage, otherwise based off baseDamage
+* getDamage(string attackName)
+*	returns damage produced by the AttackMove with the name attackName. If there is no
+*	such attack, returns a default DamageResult
+* 
+* hasAttackMove(string attackName)
+*	returns whether or not the weapon has an attack with the given attackName
+* 
+* addAttackMove(AttackMove newMove)
+*	adds newMove to the attackMoves map
 * 
 * getDisplay()
 *	returns the weapon name as its display
+* 
+* displayAttacks()
+*	displays all of the weapon's attacks to the player
 *
 * --------------------------------------------------------------------------------------
 * Variables
 * --------------------------------------------------------------------------------------
-* baseDamage
-*	structure outlining weapon damage range for a noncritical hit
+* attackMoves
+*	map of attackMoves that map each attack's name to the move
 * 
 * critChance
 *	float for the percent chance the weapon will have a critical hit
@@ -50,48 +52,27 @@ using namespace std;
 *	structure outlining weapon damage range for a critical hit
 * --------------------------------------------------------------------------------------
 */
-class Weapon : public Item
+class Weapon : public Item, public Equippable
 {
 public:
+	Weapon(string _name, float _critChance, float _critMult);
 
-	enum class AttackType
-	{
-		LIGHT = 1,
-		HEAVY = 2,
-	};
+	AttackMove::DamageResult getDamage(string attackName) const;
+	bool hasAttackMove(string attackName) const;
 
-	struct Damage
-	{
-		int min = 0;
-		int max = 0;
-		float acc = 0.0f;
+	void addAttackMove(AttackMove newMove);
 
-		string display();
-	};
-
-	struct DamageResult
-	{
-		bool critical = false;
-		int damage = 0;
-		bool isHit = false;
-	};
-
-	Weapon(string _name, Damage _lightDmg, Damage _heavyDmg, float _critChance, float _critMult);
-
+	vector<string> getMoveNames(int maxStamina = -1) const;
 	float getCritChance() const;
 	float getCritMult() const;
 
-	DamageResult calcDamage(AttackType attackType) const;
-
-	Damage getLightDmg()const;
-	Damage getHeavyDmg()const;
-
 	virtual string getDisplay() const;
+	void displayAttacks(string linePrefix = "") const;
 
 private:
-	DamageResult getDamage(Damage damage) const;
-	Damage lightDmg; 
-	Damage heavyDmg; 
+
+	map<string, AttackMove> attackMoves;
+
 	float critChance;
 	float critMult;
 };

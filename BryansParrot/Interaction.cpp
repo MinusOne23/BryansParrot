@@ -1,70 +1,110 @@
+#include <iostream>
+
 #include "Interaction.h"
 #include "Utils.h"
+#include "DungeonBuilder.h"
+
+struct ActionInfo
+{
+	bool useInRoom = false;
+	bool useInEncounter = false;
+	bool isDevAction = false;
+	string helpString = "";
+};
 
 const int Interaction::MAX_ACTION_WORDS = 2;
+const string Interaction::DEV_MODE = "bryan";
 
 const map<string, Interaction::ActionType> Interaction::actions = {
-	{"q", ActionType::QUIT},
-	{"i", ActionType::INVENTORY},
-	{"inventory", ActionType::INVENTORY},
-	{"take", ActionType::TAKE},
-	{"grab", ActionType::TAKE},
-	{"pick up", ActionType::TAKE},
-	{"open", ActionType::OPEN},
-	{"unlock", ActionType::UNLOCK},
-	{"l", ActionType::LOOK},
-	{"look", ActionType::LOOK},
-	{"h", ActionType::HELP},
-	{"help", ActionType::HELP},
-	{"use", ActionType::USE},
-	{"drink", ActionType::DRINK},
-	{"drop", ActionType::DROP},
-	{"c", ActionType::CHARACTER},
-	{"character", ActionType::CHARACTER},
-	{"equip", ActionType::EQUIP},
-	{"attack", ActionType::ATTACK},
-	{"dodge", ActionType::DODGE},
-	{"retreat", ActionType::RETREAT},
-	{"study", ActionType::STUDY}
-	//{"kill", ActionType::KILL}
+	{"q",			ActionType::QUIT},
+	{"i",			ActionType::INVENTORY},
+	{"inventory",	ActionType::INVENTORY},
+	{"take",		ActionType::TAKE},
+	{"grab",		ActionType::TAKE},
+	{"pick up",		ActionType::TAKE},
+	{"open",		ActionType::OPEN},
+	{"unlock",		ActionType::UNLOCK},
+	{"l",			ActionType::LOOK},
+	{"look",		ActionType::LOOK},
+	{"h",			ActionType::HELP},
+	{"help",		ActionType::HELP},
+	{"use",			ActionType::USE},
+	{"drink",		ActionType::DRINK},
+	{"drop",		ActionType::DROP},
+	{"c",			ActionType::CHARACTER},
+	{"character",	ActionType::CHARACTER},
+	{"equip",		ActionType::EQUIP},
+	{"attack",		ActionType::ATTACK},
+	{"retreat",		ActionType::RETREAT},
+	{"end turn",	ActionType::END_TURN},
+	{"study",		ActionType::STUDY},
+  {"dodge",   ActionType::DODGE},
+	{DEV_MODE,		ActionType::ENABLE_DEV_MODE},
+	{"kill",		ActionType::KILL},
+	{"tp",			ActionType::TP}
 };
 
-const map<Interaction::ActionType, string> Interaction::helpStrings = {
-	{ActionType::INVENTORY, "Displays Inventory"},
-	{ActionType::TAKE, "Takes the specified item in the room"},
-	{ActionType::USE, "Use the specified item from the inventory"},
-	{ActionType::OPEN, "Opens the specified container/door"},
-	{ActionType::DROP, "Drop the specified item from the inventory into the room"},
-	{ActionType::UNLOCK, "Unlocks the specified container/door"},
-	{ActionType::ATTACK, "Attack the specified enemy in the room"},
-	{ActionType::DODGE, "Attempt to dodge enemy attack awarding you with free turn"},
-	{ActionType::LOOK, "Displays the contents of the room"},
-	{ActionType::CHARACTER, "Displays the player stats"},
-	{ActionType::EQUIP, "Equips the specified piece of equipment from the inventory"},
-	{ActionType::RETREAT, "Retreat from the current encounter"},
-	{ActionType::STUDY, "Display the enemy stats"},
-	//{ActionType::KILL, "Kill the enemy"},
-	{ActionType::DRINK, "Drink the specified item from the player's inventory"}
+const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
+	//											room	encounter	isDevAction	helpString
+	//Universal
+	{Interaction::ActionType::INVENTORY,		{true,	true,		false,		"Displays Inventory"}},
+	{Interaction::ActionType::USE,				{true,	true,		false,		"Use the specified item from the inventory"}},
+	{Interaction::ActionType::CHARACTER,		{true,	true,		false,		"Displays the player stats"}},
+	{Interaction::ActionType::EQUIP,			{true,	true,		false,		"Equips the specified piece of equipment from the inventory"}},
+	{Interaction::ActionType::DRINK,			{true,	true,		false,		"Drink the specified item from the player's inventory"}},
+	{Interaction::ActionType::ERROR,			{true,	true,		false,		""}},
+	{Interaction::ActionType::QUIT,				{true,	true,		false,		""}},
+	{Interaction::ActionType::HELP,				{true,	true,		false,		""}},
+	{Interaction::ActionType::ENABLE_DEV_MODE,	{true,	true,		false,		""}},
+	{Interaction::ActionType::TP,				{true,	true,		true,		""}},
+
+	//Room Specific	
+	{Interaction::ActionType::TAKE,				{true,	false,		false,		"Takes the specified item in the room"}},
+	{Interaction::ActionType::OPEN,				{true,	false,		false,		"Opens the specified container/door"}},
+	{Interaction::ActionType::DROP,				{true,	false,		false,		"Drop the specified item from the inventory into the room"}},
+	{Interaction::ActionType::UNLOCK,			{true,	false,		false,		"Unlocks the specified container/door"}},
+	{Interaction::ActionType::LOOK,				{true,	false,		false,		"Displays the contents of the room"}},
+
+	//Encounter Specific
+	{Interaction::ActionType::ATTACK,			{false,	true,		false,		"Attack the specified enemy in the room"}},
+	{Interaction::ActionType::RETREAT,			{false,	true,		false,		"Retreat from the current encounter"}},
+	{Interaction::ActionType::STUDY,			{false,	true,		false,		"Display the enemy stats"}},
+  {Interaction::ActionType::DODGE,      {false, true,   false,    "Attempt to dodge enemy attack awarding you with free turn"}},
+	{Interaction::ActionType::END_TURN,			{false,	true,		false,		""}},
+	{Interaction::ActionType::KILL,				{false,	true,		true,		""}},
 };
 
-const map<Interaction::ActionType, bool> Interaction::isActiveActions = {
-	{ActionType::INVENTORY, false},
-	{ActionType::TAKE, true},
-	{ActionType::USE, true},
-	{ActionType::OPEN, true},
-	{ActionType::DROP, true},
-	{ActionType::UNLOCK, true},
-	{ActionType::ATTACK, true},
-	{ActionType::DODGE, true},
-	{ActionType::LOOK, false},
-	{ActionType::CHARACTER, false},
-	{ActionType::EQUIP, true},
-	{ActionType::HELP, false},
-	{ActionType::RETREAT, true},
-	{ActionType::STUDY, false},
-	//{ActionType::KILL, true},
-	{ActionType::DRINK, true}
-};
+set<string> Interaction::actionsUsed;
+
+bool Interaction::canUseInRoom(ActionType type)
+{
+	if (actionInfoMap.find(type) == actionInfoMap.end())
+	{
+		return false;
+	}
+
+	ActionInfo info = actionInfoMap.at(type);
+	return info.useInRoom;
+}
+
+bool Interaction::canUseInEncounter(ActionType type)
+{
+	if (actionInfoMap.find(type) == actionInfoMap.end())
+	{
+		return false;
+	}
+
+	ActionInfo info = actionInfoMap.at(type);
+	return info.useInEncounter;
+}
+bool Interaction::isDevAction(ActionType type)
+{
+	if (actionInfoMap.find(type) == actionInfoMap.end())
+		return false;
+
+	ActionInfo info = actionInfoMap.at(type);
+	return info.isDevAction;
+}
 
 string Interaction::getHelpText(string action)
 {
@@ -73,19 +113,134 @@ string Interaction::getHelpText(string action)
 	if (actions.find(lowerAct) != actions.end())
 	{
 		ActionType type = actions.at(lowerAct);
+		ActionInfo info;
 
-		if (helpStrings.find(type) != helpStrings.end())
+		if (actionInfoMap.find(type) != actionInfoMap.end())
 		{
-			return helpStrings.at(type);
+			return actionInfoMap.at(type).helpString;
 		}
 	}
 
 	return "";
 }
 
+Interaction::InteractionResult Interaction::universalInput(Player& player)
+{
+	string inputStr = Utils::inputValidator();
+	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
+
+	if (!player.isDev() && isDevAction(inputResult.actionType))
+		inputResult.actionType = ActionType::ERROR;
+
+	switch (inputResult.actionType)
+	{
+	case ActionType::QUIT:
+	{
+		exit(0);
+	}
+	case ActionType::INVENTORY:
+	{
+		player.displayInventory();
+		break;
+	}
+	case Interaction::ActionType::ENABLE_DEV_MODE:
+	{
+		player.setIsDev(!player.isDev());
+
+		if (player.isDev())
+			cout << "DevMode: Activated" << endl;
+		else
+			cout << "DevMode: Deactivated" << endl;
+
+		break;
+	}
+	case ActionType::EQUIP:
+	{
+		inputResult.succeeded = player.findAndEquip(inputResult.target);
+		break;
+	}
+	case ActionType::CHARACTER:
+	{
+		player.displayStats();
+		break;
+	}
+	case ActionType::USE:
+	{
+		inputResult.succeeded = player.useItem(inputResult.target);
+		break;
+	}
+	case ActionType::DRINK:
+	{
+		inputResult.succeeded = player.findAndDrink(inputResult.target);
+		break;
+	}
+	case ActionType::HELP:
+	{
+		helperDisplay();
+		break;
+	}
+	case Interaction::ActionType::TP:
+	{
+
+		string roomName = inputResult.target;
+		vector<string> allRoomNames = DungeonBuilder::getRoomNames();
+
+		int roomIndex = Utils::vecIndexOf(allRoomNames, roomName);
+
+		if (roomIndex != -1)
+		{
+			cout << "Room Found" << endl;
+
+			inputResult.tpRoomName = roomName;
+			inputResult.succeeded = true;
+		}
+		else 
+		{
+			cout << "Room Not Found" << endl;
+			inputResult.succeeded = false;
+		}
+
+		break;
+	}
+	case ActionType::ERROR:
+	{
+		cout << "Sorry, that input is not recognized." << endl;
+		break;
+	}
+	}
+
+	if (inputResult.actionType != ActionType::ERROR)
+		addActionUsed(inputResult.actionStr);
+
+	cout << endl;
+
+	return inputResult;
+}
+
+void Interaction::addActionUsed(string actionStr)
+{
+	actionsUsed.insert(actionStr);
+}
+
+void Interaction::helperDisplay()
+{
+	cout << "\t===========================================\n";
+	cout << "\t\t\tKnownCommands\n";
+	cout << "\t-------------------------------------------\n";
+	for (string act : actionsUsed)
+	{
+		string helpStr = Interaction::getHelpText(act);
+
+		if (helpStr != "")
+			cout << "\t- " << act << ": " << helpStr << endl;
+	}
+	cout << "\t===========================================\n";
+}
+
 Interaction::InteractionResult Interaction::parseInput(const string& input)
 {
 	InteractionResult result;
+
 	vector<string> tokens = Utils::tokenize(input);
 
 	for (int i = 1; i < tokens.size() + 1 && i <= MAX_ACTION_WORDS; i++)
@@ -111,11 +266,8 @@ Interaction::InteractionResult Interaction::parseInput(const string& input)
 			}
 
 			result.actionStr = Utils::strToLower(actionStr);
-
-			if (isActiveActions.find(result.actionType) != isActiveActions.end())
-				result.isActiveAction = isActiveActions.at(result.actionType);
-
 			result.succeeded = true;
+			result.isDevAction = isDevAction(result.actionType);
 
 			return result;
 		}

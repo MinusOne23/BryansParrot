@@ -7,7 +7,6 @@
 
 #include "Player.h"
 #include "Enemy.h"
-#include "Interaction.h"
 
 using namespace std;
 
@@ -88,20 +87,25 @@ public:
 		WIN,		// Player won the encounter
 		LOSE,		// Player lost the encounter
 		ACTIVE,		// Still in combat
-		NONE		// Not started
+		RETREAT,	// Player Retreated
+		NONE,		// Not started
+	};
+
+	struct EncounterResult
+	{
+		bool encounterComplete = false;	// Whether or not player completed the encounter
+		string tpRoomName = "";			// Only set if tp
 	};
 
 	EnemyEncounter();
 
-	static bool canUseAction(Interaction::ActionType actionType);
-
-	bool startEncounter();
-	bool attackEnemy(const Player& player, Weapon::AttackType attackType, const string& enemyName);
-	bool dodgeEnemy(const Player& player, const string& enemyName);
+	//void enemyTurn(Player& player, bool dodge, int ExtraDodgeTurn);
+	EncounterResult startEncounter(Player& player);
+	bool attackEnemy(Player& player, const string& attackName, const string& enemyName);
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
+  bool dodgeEnemy(const Player& player, const string& enemyName);
 	bool enemyExists(const string& enemyName) const;
-	void enemyTurn(Player& player, bool dodge, int ExtraDodgeTurn);
 
 	vector<shared_ptr<Item>> removeDrops();
 	void addDrop(shared_ptr<Item> item);
@@ -112,18 +116,32 @@ public:
 
 	EncounterState getCurrentState() const;
 
+	void displayNextTurns(const Player& player, int numTurns = 3) const;
 	void displayEnemies() const;
+	void displayPlayerOptions() const;
+	void displaySummary(const Player& player) const;
 
 private:
-	int getEnemyIndex(const string& enemyName) const;
-	static const set<Interaction::ActionType> useableActions;
+	static const int TURN_TIME;
 
+	int getEnemyIndex(const string& enemyName) const;
+	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult) const;
+	void displayTurnStart(const Character& curChar) const;
+	void enemyTurn(Enemy& enemy, Player& player);
+	void playerTurn(Player& player, EncounterResult& result);
+
+	void tick(Player& player, EncounterResult& result);
+
+	const static vector<string> playerOptions;
 
 	vector<Enemy> enemies;
 	vector<shared_ptr<Item>> drops;
 	EncounterState currentState;
 	Room* lastRoom;
 
+	int currentTurn = 0;
+	int playerTime = 0;
+	vector<int> enemyTimes;
 };
 
 #endif // ENEMY_ENCOUNTER_H
