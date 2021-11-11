@@ -57,7 +57,7 @@ void Game::initializeGame()
 	playerFists.addAttackMove(AttackMove("Punch", 10, 15, 1, 0.9f));
 
 	//					health	speed	baseStamina	dodgeChance	baseWeapon
-	player = Player(	1,	10,		1,			0.4f,		playerFists);
+	player = Player(	100,	10,		1,			0.4f,		playerFists);
 	player.refreshStamina();
 
 	gameState = GameState::PLAY;
