@@ -130,6 +130,7 @@ void Character::displayStats() const
 	cout << "\t Health: " << healthDisplay() << endl;
 	cout << "\t Stamina: " << getMaxStamina() << endl;
 	cout << "\t Speed: " << getSpeed() << endl;
+	cout << "\t Dodge Chance: " << fixed << setprecision(2) << dodge * 100 << "%" << endl;
 	cout << "\t Equipment: " << endl;
 	cout << "\t    MainWeapon: " << activeWeapon.getName() << endl;
 	activeWeapon.displayAttacks("\t       ");

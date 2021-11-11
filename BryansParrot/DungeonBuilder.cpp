@@ -56,13 +56,13 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.speedBoost = 2;
 	sword.staminaBoost = 2;
 
-	Enemy goblin("Goblin", 100, 5, 2, 0.5f, goblinFists);
-	Enemy troll("Troll", 100, 5, 2, 0.5f, trollFists);
-
-	Enemy mini1("Mini Boss West", 100, 20, 2, 0.75f, goblinFists);
-	Enemy mini2("Mini Boss East", 100, 5, 4, 0.25f, goblinFists);
-	Enemy mini3("Mini Boss North", 100, 10, 2, 0.5f, goblinFists);
-	Enemy boss("Boss", 100, 15, 3, 0.65f, goblinFists);
+	//				name				health	baseSpeed	baseStamina	dodgeChance	baseWeapon
+	Enemy goblin(	"Goblin",			100,	5,			2,			0.5f,		goblinFists);
+	Enemy troll(	"Troll",			100,	5,			2,			0.5f,		trollFists);
+	Enemy mini1(	"Mini Boss West",	100,	20,			2,			0.75f,		goblinFists);
+	Enemy mini2(	"Mini Boss East",	100,	5,			4,			0.25f,		goblinFists);
+	Enemy mini3(	"Mini Boss North",	100,	10,			2,			0.5f,		goblinFists);
+	Enemy boss(		"Boss",				100,	15,			3,			0.65f,		goblinFists);
 
 	map<string, Room> allRooms = {
 		{"first_room",			Room()},
