@@ -3,6 +3,7 @@
 #define CHARACTER_H
 
 #include <string>
+#include <memory>
 
 #include "Health.h"
 #include "Weapon.h"
@@ -52,14 +53,25 @@ protected:
 
 	Health health;
 	string name;
+	int baseSpeed;
+	int baseStamina;
 	Equipment equipment;
+
+	int curStamina = 0;
 
 public:
 
-	Character(Health _health, string _name, Weapon _baseWeapon);
+	Character(Health _health, string _name, int _baseSpeed, int _baseStamina, Weapon _baseWeapon);
 
 	int getCurrentHealth() const;
 	int getMaxHealth() const;
+	int getMaxStamina() const;
+	int getSpeed() const;
+
+	int getCurrentStamina() const;
+	void refreshStamina();
+	void useStamina(int amt);
+
 	bool isDead() const;
 	string getName() const;
 	Equipment getEquipment()const;
@@ -69,7 +81,7 @@ public:
 	virtual void heal(int amt);
 	virtual void equipWeapon(shared_ptr<Weapon> weapon);
 	virtual void drinkPotion(shared_ptr<Potion> potion);
-	virtual Weapon::DamageResult calcDamage(Weapon::AttackType attackType) const;
+	virtual AttackMove::DamageResult calcDamage(string attackName) const;
 
 	string healthDisplay() const;
 

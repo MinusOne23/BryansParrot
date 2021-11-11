@@ -1,11 +1,12 @@
 #include <iostream>
 #include <string>
 
-#include "EnemyEncounter.h"
 #include "Room.h"
 #include "Key.h"
 #include "Enemy.h"
 #include "Utils.h"
+
+#include "EnemyEncounter.h"
 
 using namespace std;
 
@@ -175,6 +176,8 @@ void Room::completeEncounter()
 		return;
 	
 	vector<shared_ptr<Item>> drops = encounters[0].removeDrops();
+
+	cout << "You've completed the encounter!" << endl;
 
 	if (drops.size() > 0)
 	{

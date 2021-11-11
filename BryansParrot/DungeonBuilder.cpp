@@ -1,9 +1,12 @@
 #include "DungeonBuilder.h"
+#include "EnemyEncounter.h"
+
+vector<string> DungeonBuilder::roomNames;
 
 /// HOW TO CREATE NEW ROOM:
-///		-Add Room() to the allRooms array
+///		-Add Room() to the allRooms map with a unique name
 ///		- create the new room object linking it to the index of the room you added in addRooms
-///			Room& [ROOMNAME] = allRooms[INDEX]
+///			Room& [ROOMNAME] = allRooms.at(ROOM_NAME)
 /// 
 ///	ADDING A DOOR TO A ROOM:
 ///		-shared_ptr<Door>DOOR_NAME(new Door(NEXT ROOM, LOCKS AMOUNT)); 
@@ -39,42 +42,56 @@
 ///			controlRoom.addEnemyEncounter(controlRoomEncounter1)
 /// 
 /// ** WHEN ADDING ROOM, ALWAYS UPDATE THE WINROOM OBJ IF NESSESARY **
-vector<Room> DungeonBuilder::buildDungeon()
+map<string, Room> DungeonBuilder::buildDungeon()
 {
 	// Name - Light: Min/Max/Acceracy -Heavy: Min/Max/Acceracy, critchance, critMulti
-	Weapon goblinFists("Goblin Fists", { 5, 10, 0.9f }, { 12, 18, 0.6f }, 0.1f, 1.5f);
-	Weapon sword("Sword", { 20, 30, 0.95f }, { 35, 50, 0.7f }, 0.25f, 1.65f);
+	Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
+	goblinFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+	Weapon trollFists("Troll Firsts", 0.1f, 1.5f);
+	trollFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
 
-	Enemy goblin("Goblin", 100, goblinFists);
-	Enemy mini1("Mini Boss West", 100, goblinFists);
-	Enemy mini2("Mini Boss East", 100, goblinFists);
-	Enemy mini3("Mini Boss North", 100, goblinFists);
-	Enemy boss("Boss", 100, goblinFists);
 
-	vector<Room> allRooms = {
-		Room(),
-		Room(),
-		Room(),
-		Room(),
-		Room(),
-		Room(),
-		Room(),
-		Room(),
-		Room(),
-		Room()
+
+	Weapon sword("Sword", 0.25f, 1.65f);
+	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	sword.speedBoost = 2;
+	sword.staminaBoost = 2;
+
+	Enemy goblin("Goblin", 100, 5, 2, goblinFists);
+	Enemy troll("Troll", 100, 5, 2, trollFists);
+
+	Enemy mini1("Mini Boss West", 100, 20, 2, goblinFists);
+	Enemy mini2("Mini Boss East", 100, 2, 2, goblinFists);
+	Enemy mini3("Mini Boss North", 100, 10, 2, goblinFists);
+	Enemy boss("Boss", 100, 15, 3, goblinFists);
+
+	map<string, Room> allRooms = {
+		{"first_room",	Room()},
+		{"second_room",	Room()},
+		{"third_room",	Room()},
+		{"fourth_room", Room()},
+		{"miniBossWestRoom", Room()},
+    {"miniBossEastRoom", Room()},
+    {"miniBossNorthRoom", Room()},
+    {"mainBossRoom", Room()},
+    {"fifthRoom", Room()},
 	};
 
-	//Create room object that will set it to array of all all rooms
-	Room& firstRoom = allRooms[0];
-	Room& secondRoom = allRooms[1];
-	Room& thirdRoom = allRooms[2];
-	Room& forthRoom = allRooms[3];
-	Room& miniBossWestRoom = allRooms[4];
-	Room& miniBossEastRoom = allRooms[5];
-	Room& miniBossNorthRoom = allRooms[6];
-	Room& mainBossRoom = allRooms[7];
-	Room& fithRoom = allRooms[9];
+	roomNames.clear();
+	for (map<string, Room>::iterator it = allRooms.begin(); it != allRooms.end(); it++)
+		roomNames.push_back(it->first);
 
+	//Create room object that will set it to array of all all rooms
+	Room& firstRoom = allRooms.at("first_room");
+	Room& secondRoom = allRooms.at("second_room");
+	Room& thirdRoom = allRooms.at("third_room");
+	Room& fourthRoom = allRooms.at("fourth_room");
+	Room& miniBossWestRoom = allRooms.at("miniBossWestRoom");
+	Room& miniBossEastRoom = allRooms.at("miniBossEastRoom");
+	Room& miniBossNorthRoom = allRooms.at("miniBossNorthRoom");
+	Room& mainBossRoom = allRooms.at("mainBossRoom");
+	Room& fithRoom = allRooms.at("fifthRoom");
 
 	//create new doors that will be added to doors vector
 	//Room1				door name		connecting room
@@ -83,7 +100,7 @@ vector<Room> DungeonBuilder::buildDungeon()
 	shared_ptr<Door> secondNorthDoor(new Door(thirdRoom, 2));
 	shared_ptr<Door> secondSouthDoor(new Door(firstRoom));
 	//Room3
-	shared_ptr<Door> thirdNorthDoor(new Door(forthRoom)); 
+	shared_ptr<Door> thirdNorthDoor(new Door(fourthRoom));
 	shared_ptr<Door> thirdSouthDoor(new Door(secondRoom));
 	//Room4
 	shared_ptr<Door> forthWestDoor(new Door(miniBossWestRoom));
@@ -112,7 +129,9 @@ vector<Room> DungeonBuilder::buildDungeon()
 	//Second Room Encounter: Initialization
 	EnemyEncounter secondRoomEncounter1;
 	secondRoomEncounter1.addEnemy(goblin);
+  secondRoomEncounter1.addEnemy(troll);
 	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor))); //Add drops to specific Enemy Object 
+	
 
 	//Mini 1 Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter2;
@@ -181,4 +200,9 @@ vector<Room> DungeonBuilder::buildDungeon()
 	fithRoom.setDoor(Room::DoorIndex::SOUTH_DOOR, fithSouthDoor);
 
 	return allRooms;
+}
+
+vector<string> DungeonBuilder::getRoomNames()
+{
+	return roomNames;
 }

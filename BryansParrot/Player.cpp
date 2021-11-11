@@ -27,10 +27,10 @@ using namespace std;
 
 // Stats for the player constructor
 Player::Player()
-	: Character{ Health(100), "Player", Weapon("Fists", {10, 20, 0.9f}, {15, 25, 0.6f}, 0.2f, 1.5f) } {}
+	: Character{ Health(100), "Player", 1, 1, Weapon("None", 0.0f, 0.0f) } {}
 
-Player::Player(int maxHealth, Weapon _baseWeapon)
-	: Character{ Health(maxHealth), "Player", _baseWeapon } {}
+Player::Player(int maxHealth, int _baseSpeed, int _baseStamina, Weapon _baseWeapon)
+	: Character{ Health(maxHealth), "Player", _baseSpeed, _baseStamina, _baseWeapon } {}
 
 
 //Takes a Item form the room and adds it into your inventory
@@ -163,6 +163,16 @@ bool Player::findAndEquip(string itemName)
 	}
 
 	cout << "You can not equip that item." << endl;
+}
+
+bool Player::isDev()
+{
+	return m_isDev;
+}
+
+void Player::setIsDev(bool _isDev)
+{
+	m_isDev = _isDev;
 }
 
 void Player::equipWeapon(shared_ptr<Weapon> weapon)

@@ -16,6 +16,7 @@
 #include "Interaction.cpp"
 #include "EnemyEncounter.cpp"
 #include "DungeonBuilder.cpp"
+#include "AttackMove.cpp"
 
 
 
@@ -36,8 +37,9 @@ namespace BryansParrotAutoTest
 			const std::string TROLL_WEAPON = "Troll Fists";
 			const int TROLL_HEALTH = 100;
 
-			Weapon trollFists(TROLL_WEAPON, {5, 10}, {10, 20}, 0.1f, 1.5f);
-			Enemy troll(TROLL_NAME, TROLL_HEALTH, trollFists);
+			Weapon trollFists(TROLL_WEAPON, 0.1f, 1.5f);
+			trollFists.addAttackMove(AttackMove("Troll Punch", 5, 10, 1, 0.9f));
+			Enemy troll(TROLL_NAME, TROLL_HEALTH, 10, 1, trollFists);
 
 			// Verify can retrieve stored character name
 			Assert::AreEqual(TROLL_NAME, troll.getName());
@@ -53,13 +55,14 @@ namespace BryansParrotAutoTest
 
 			const std::string ENEMY_NAME = "Troll";
 			const std::string ENEMY_WEAPON = "Troll Fists";
-			const int ENEMY_HEALTH = -1;
-			const int DAMAGE1 = -50;
-			const int HEALTH1 = -50;
+			const int ENEMY_HEALTH = 100;
+			const int DAMAGE1 = 50;
+			const int HEALTH1 = 50;
 
  
-			Weapon enemyWeapon(ENEMY_NAME, { 5, 10 }, { 10, 20 }, 0.1f, 1.5f);
-			Enemy enemy(ENEMY_NAME, ENEMY_HEALTH, enemyWeapon);
+			Weapon enemyWeapon(ENEMY_NAME, 0.1f, 1.5f);
+			enemyWeapon.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+			Enemy enemy(ENEMY_NAME, ENEMY_HEALTH, 10, 1, enemyWeapon);
 
 			// Now verify health
 			str = "*Starting Health: " + to_string(enemy.getCurrentHealth()) + "\n";

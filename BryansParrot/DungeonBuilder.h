@@ -2,6 +2,7 @@
 #ifndef DUNGEON_BUILDER_H
 #define DUNGEON_BUILDER_H
 
+#include <map>
 #include <vector>
 
 #include "Room.h"
@@ -11,9 +12,11 @@ using namespace std;
 class DungeonBuilder
 {
 public:
-	static vector<Room> buildDungeon();
+	static map<string, Room> buildDungeon();
+	static vector<string> getRoomNames();
 
 private:
+	static vector<string> roomNames;
 	DungeonBuilder();
 };
 

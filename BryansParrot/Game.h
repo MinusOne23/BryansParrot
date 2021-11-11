@@ -90,7 +90,6 @@ class Game
 {
 private:
 
-
 	enum class GameState
 	{
 		PLAY,	// Keep Playing
@@ -98,28 +97,27 @@ private:
 		DIED	// Player died
 	};
 
-	set<string> actionsUsed;
 	GameState gameState;
 	Player player;
 
-	vector<Room> allRooms;
-
 	Room* currentRoom;
 	Room* winRoom;
+	
+	map<string, Room> allRooms;
 
 	void initializeGame();
 	void playerDied();
 	void playerWin();
 	void promptReplay();
-	void encounterInteract(Interaction::InteractionResult& inputResult);
 
 	void openDoor(Room::DoorIndex index);
 	Room::DoorIndex getDoorIndex(string doorName);
+	void enterNewRoom(Room* nextRoom);
 
-	void helperDisplay();
 	void gameInteract();
 
 public:
+
 	// Unit Test methods
 	void initializeGameTest();
 	void start();

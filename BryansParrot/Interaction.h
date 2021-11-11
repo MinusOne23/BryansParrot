@@ -4,6 +4,9 @@
 
 #include <string>
 #include <map>
+#include <set>
+
+#include "Player.h"
 
 using namespace std;
 
@@ -64,6 +67,7 @@ public:
 
 	enum class ActionType
 	{
+		//Regular Actions
 		ERROR = -1,
 		QUIT,
 		INVENTORY,
@@ -78,30 +82,47 @@ public:
 		EQUIP,
 		HELP,
 		ATTACK,
-		KILL,
 		STUDY,
-		RETREAT
+		RETREAT,
+		END_TURN,
+		ENABLE_DEV_MODE,
+
+		//Dev Actions
+		KILL,
+		TP
 	};
+
 
 	struct InteractionResult
 	{
 		ActionType actionType;
 		string target;
 		string actionStr;
-		bool isActiveAction;
+		bool isDevAction;
 		bool succeeded;
+		string tpRoomName;
 	};
 
 	static string getHelpText(string action);
+	static InteractionResult universalInput(Player& player);
+	static bool canUseInRoom(ActionType type);
+	static bool canUseInEncounter(ActionType type);
+	static bool isDevAction(ActionType type);
+	static void addActionUsed(string actionStr);
 	static InteractionResult parseInput(const string& input);
 
 private:
 	static const int MAX_ACTION_WORDS;
+	static const map<string, ActionType> actions;
+	static set<string> actionsUsed;
 
 	Interaction();
+	static void helperDisplay();
+
+	//To Do: Use secretcommand in map instead of "bryan" for security
+	static const string DEV_MODE;
 	static const map<string, ActionType> actions;
 	static const map<ActionType, string> helpStrings;
-	static const map<ActionType, bool> isActiveActions;
 };
 
 #endif // INTERACTION_H

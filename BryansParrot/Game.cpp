@@ -17,7 +17,7 @@
 
 using namespace std;
 
-const string VERSION = "1.3.3";
+const string VERSION = "1.3.4";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -52,17 +52,21 @@ void Game::initializeGameTest() {
 void Game::initializeGame()
 {
 	srand(time(NULL));
-	Weapon playerFists("Fists", { 10, 20, 0.9f }, { 15, 25, 0.6f }, 0.2f, 1.5f); // Name,Light min/max/acc Damage,Heavy min/max/acc Damage,crit chance, crit multi
-	player = Player(100, playerFists); // Player starting Health(100) + Starting weapon(playerFists)
+
+	Weapon playerFists("Fists", 0.2f, 1.5f);
+	playerFists.addAttackMove(AttackMove("Punch", 10, 15, 1, 0.9f));
+
+	player = Player(100, 10, 1, playerFists); // 100 health, 10 speed, 1 stamina
+	player.refreshStamina();
 	gameState = GameState::PLAY;
 
 	allRooms = DungeonBuilder::buildDungeon();
 
 	//Current Room player is in. Will change when player enters new room
-	currentRoom = &allRooms[0];
+	currentRoom = &allRooms.at("first_room");
 
 	//When player enters winRoom, game is over
-	winRoom = &allRooms[allRooms.size() - 1];
+	winRoom = &allRooms.at("fourth_room");
 }
 
 /// PlayerDied(): Health reaches 0
@@ -105,21 +109,6 @@ void Game::promptReplay()
 	}
 }
 
-void Game::helperDisplay()
-{
-	cout << "\t===========================================\n";
-	cout << "\t\t\tKnownCommands\n";
-	cout << "\t-------------------------------------------\n";
-	for (string act : actionsUsed)
-	{
-		string helpStr = Interaction::getHelpText(act);
-
-		if(helpStr != "")
-			cout << "\t- " << act << ": " << helpStr << endl;
-	}
-	cout << "\t===========================================\n";
-}
-
 /// Opens door in room specified by direction
 ///Input: DOOR DIRECTOM
 ///Updates: NEW ROOM
@@ -141,28 +130,7 @@ void Game::openDoor(Room::DoorIndex index)
 
 	Room* nextRoom = &door->getNextRoom();
 
-	if (nextRoom->encounterCount() == 0)
-	{
-		currentRoom = nextRoom;
-		currentRoom->displayContents();
-		return;
-	}
-
-	EnemyEncounter& encounter = nextRoom->currentEncounter();
-
-	bool startEncounter = encounter.startEncounter();
-	
-	if (!startEncounter)
-	{
-		cout << "You have retreated back to the previous room" << endl;
-		currentRoom->displayContents();
-		return;
-	}
-	//cout << flush;
-	//system("CLS");
-	encounter.setLastRoom(currentRoom);
-	encounter.displayEnemies();
-	currentRoom = nextRoom;
+	enterNewRoom(nextRoom);
 }
 
 /// Door Index = Door Direction
@@ -182,108 +150,46 @@ Room::DoorIndex Game::getDoorIndex(string doorName)
 	return Room::DoorIndex::NONE;
 }
 
-void Game::encounterInteract(Interaction::InteractionResult& inputResult)
+void Game::enterNewRoom(Room* nextRoom)
 {
-	EnemyEncounter& encounter = currentRoom->currentEncounter();
-
-	switch (inputResult.actionType)
+	while (nextRoom->encounterCount() > 0)
 	{
-	case Interaction::ActionType::ATTACK:
-	{
-		if (!encounter.enemyExists(inputResult.target))
+		EnemyEncounter& encounter = nextRoom->currentEncounter();
+		encounter.setLastRoom(currentRoom);
+
+		EnemyEncounter::EncounterResult encResult = encounter.startEncounter(player);
+
+		if (!encResult.encounterComplete)
 		{
-			cout << "That enemy does not exist" << endl;
-			inputResult.succeeded = false;
-			break;
-		}
-
-		Weapon activeWeapon = player.getActiveWeapon();
-		Weapon::Damage lightDmg = activeWeapon.getLightDmg();
-		Weapon::Damage heavyDmg = activeWeapon.getHeavyDmg();
-
-		cout << "\t===========================================\n";
-		cout << "\t\tAttack Types:" << endl;
-		cout << "\t------------------------------------------\n";
-		cout << "\t - 0 = Cancel Attack: " << endl;
-		cout << "\t - 1 = Light Attack: " << lightDmg.display() << endl;
-		cout << "\t - 2 = Heavy Attack: " << heavyDmg.display() << endl;
-		cout << "\t===========================================\n";
-
-		int choice = -1;
-		Weapon::AttackType attackType;
-
-		bool valid = false;
-		while (!valid)
-		{
-			string input = Utils::inputValidator();
-
-			if (Utils::isNumber(input))
+			if (encounter.getCurrentState() == EnemyEncounter::EncounterState::RETREAT)
 			{
-				choice = stoi(input);
-
-				if (choice == 0)
+				if (encResult.tpRoomName != "")
 				{
-					valid = true;
+					nextRoom = &allRooms.at(encResult.tpRoomName);
 				}
-				if (choice > 0 && choice <= (int)Weapon::AttackType::HEAVY)
+				else
 				{
-					//cout << flush;
-					system("CLS");
-					attackType = (Weapon::AttackType)choice;
-					valid = true;
+					currentRoom->displayContents();
+					return;
 				}
 			}
-
-			if (!valid)
+			else if (!player.isDead())
 			{
-				cout << "Invalid input" << endl;
+				currentRoom->displayContents();
+				return;
 			}
-		}
-
-		if (choice == 0)
-		{
-			cout << "You've canceled your Attack" << endl;
-			inputResult.succeeded = false;
 		}
 		else
 		{
-			inputResult.succeeded = encounter.attackEnemy(player, (Weapon::AttackType)choice, inputResult.target);
+			nextRoom->completeEncounter();
 		}
-	
-		break;
 	}
-	case Interaction::ActionType::KILL:
-	{
-		inputResult.succeeded = encounter.killEnemy(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::STUDY:
-	{
-		inputResult.succeeded = encounter.studyEnemy(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::RETREAT:
-	{
-		currentRoom = encounter.getLastRoom();
+
+	currentRoom = nextRoom;
+
+	if (currentRoom != winRoom)
 		currentRoom->displayContents();
-		return;
-	}
-	}
 
-	if (encounter.getCurrentState() == EnemyEncounter::EncounterState::WIN)
-		currentRoom->completeEncounter();
-	else if (inputResult.succeeded && inputResult.isActiveAction)
-	{
-		cout << endl;
-		encounter.enemyTurn(player);
-		cout << endl;
-
-		encounter.displayEnemies();
-
-		cout << endl;
-		cout << "\tPlayer Health: " << player.healthDisplay() << endl;
-		cout << "\t===========================================";
-	}
 }
 
 /// Game Loop: Takes in user input ant turns input into actions
@@ -302,38 +208,17 @@ void Game::encounterInteract(Interaction::InteractionResult& inputResult)
 ///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
-	string inputStr = Utils::inputValidator();
-	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
+	Interaction::InteractionResult inputResult = Interaction::universalInput(player);
 
-	bool inEncounter = currentRoom->encounterCount() > 0;
-
-	if (inEncounter && !EnemyEncounter::canUseAction(inputResult.actionType))
+	if (!Interaction::canUseInRoom(inputResult.actionType))
 	{
-		cout << "Sorry you can't do that within an enemy encounter." << endl;
+		cout << "Sorry you can't do that right now" << endl;
 		return;
 	}
 
+	//Actions
 	switch (inputResult.actionType)
 	{
-	case Interaction::ActionType::QUIT:
-	{
-		exit(0);
-	}
-	case Interaction::ActionType::INVENTORY:
-	{
-		player.displayInventory();
-		break;
-	}
-	case Interaction::ActionType::EQUIP:
-	{
-		inputResult.succeeded = player.findAndEquip(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::CHARACTER:
-	{
-		player.displayStats();
-		break;
-	}
 	case Interaction::ActionType::TAKE:
 	{
 		shared_ptr<Item> item = currentRoom->takeItem(inputResult.target);
@@ -348,16 +233,6 @@ void Game::gameInteract()
 			player.takeItem(item);
 		}
 
-		break;
-	}
-	case Interaction::ActionType::USE:
-	{
-		inputResult.succeeded = player.useItem(inputResult.target);
-		break;
-	}
-	case Interaction::ActionType::DRINK:
-	{
-		inputResult.succeeded = player.findAndDrink(inputResult.target);
 		break;
 	}
 	case Interaction::ActionType::OPEN:
@@ -406,32 +281,12 @@ void Game::gameInteract()
 		currentRoom->displayContents();
 		break;
 	}
-	case Interaction::ActionType::HELP:
+	case Interaction::ActionType::TP:
 	{
-		helperDisplay();
-		break;
-	}
-	case Interaction::ActionType::ERROR:
-	{
-		cout << "Sorry, that input is not recognized." << endl;
-		return;
-	}
-	default:
-	{
-		if (!inEncounter && EnemyEncounter::canUseAction(inputResult.actionType))
+		if (inputResult.succeeded)
 		{
-			cout << "Sorry, you can not do that right now." << endl;
-			return;
+			enterNewRoom(&allRooms.at(inputResult.tpRoomName));
 		}
 	}
 	}
-
-	if (inEncounter)
-	{
-		encounterInteract(inputResult);
-	}
-
-	actionsUsed.insert(inputResult.actionStr);
-
-	cout << endl;
 };

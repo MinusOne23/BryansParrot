@@ -62,7 +62,7 @@ class Player : public Character
 {
 public:
 	Player();
-	Player(int maxHealth, Weapon _baseWeapon);
+	Player(int maxHealth, int _baseSpeed, int _baseStamina, Weapon _baseWeapon);
 
 	void takeItem(shared_ptr<Item> item);
 	bool useItem(string itemName);
@@ -73,10 +73,15 @@ public:
 
 	bool findAndDrink(string itemName);
 	bool findAndEquip(string itemName);
+	bool isDev();
+	void setIsDev(bool _isDev);
+
 
 	virtual void equipWeapon(shared_ptr<Weapon> weapon);
 	virtual void drinkPotion(shared_ptr<Potion> potion);
+
 private:
+	bool m_isDev = false;
 	Inventory inventory;
 };
 #endif // !PLAYER.H
