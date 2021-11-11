@@ -47,6 +47,10 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// Name - Light: Min/Max/Acceracy -Heavy: Min/Max/Acceracy, critchance, critMulti
 	Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
 	goblinFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+	Weapon trollFists("Troll Firsts", 0.1f, 1.5f);
+	trollFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+
+
 
 	Weapon sword("Sword", 0.25f, 1.65f);
 	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
@@ -55,6 +59,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.staminaBoost = 2;
 
 	Enemy goblin("Goblin", 100, 5, 2, goblinFists);
+	Enemy troll("Troll", 100, 5, 2, trollFists);
+
 
 	map<string, Room> allRooms = {
 		{"first_room",	Room()},
@@ -87,6 +93,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	EnemyEncounter secondRoomEncounter1;
 	secondRoomEncounter1.addEnemy(goblin);
+	secondRoomEncounter1.addEnemy(troll);
 
 	//Add drops to specific Enemy Object 
 	secondRoomEncounter1.addDrop(shared_ptr<Item>(new Key(secondNorthDoor)));
