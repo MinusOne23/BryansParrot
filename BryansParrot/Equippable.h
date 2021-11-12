@@ -17,11 +17,9 @@ public:
 
 	void setStaminaBoost(int boost);
 	void setSpeedBoost(int boost);
-	void setStaminaGiven(int stam);
 
 	int getStaminaBoost() const;
 	int getSpeedBoost() const;
-	int getStaminaGiven() const;
 
 protected:
 	Equippable(string _name);
@@ -29,7 +27,6 @@ protected:
 private:
 	int speedBoost = 0;
 	int staminaBoost = 0;
-	int staminaGiven = 0;
 };
 
 #endif // EQUIPPABLE_H

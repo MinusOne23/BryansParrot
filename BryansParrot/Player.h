@@ -78,7 +78,6 @@ public:
 	void setIsDev(bool _isDev);
 
 	virtual void drinkPotion(shared_ptr<Potion> potion);
-	virtual void refreshStamina();
 
 private:
 	virtual void equip(shared_ptr<Equippable> equippable);

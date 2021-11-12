@@ -171,13 +171,6 @@ bool Player::findAndUnequip(const string& itemName)
 		cout << "You unequipped " << weapon->getName() << endl;
 		equipment.mainWeapon = nullptr;
 
-		if (curStamina > getMaxStamina())
-		{
-			int diff = curStamina - getMaxStamina();
-			curStamina = getMaxStamina();
-			weapon->setStaminaGiven(diff);
-		}
-
 		return true;
 	}
 
@@ -201,19 +194,6 @@ void Player::drinkPotion(shared_ptr<Potion> potion)
 
 	cout << "You drank " << potion->getName() << "." << endl;
 	cout << "Your health has been raised by " << potion->getPotionSize() << endl;
-}
-
-void Player::refreshStamina()
-{
-	Character::refreshStamina();
-
-	for (int i = 0; i < inventory.numItems(); i++)
-	{
-		shared_ptr<Equippable> equippable = dynamic_pointer_cast<Equippable>(inventory[i]);
-
-		if (equippable != nullptr)
-			equippable->setStaminaGiven(equippable->getStaminaBoost());
-	}
 }
 
 void Player::equip(shared_ptr<Equippable> equippable)

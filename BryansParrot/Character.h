@@ -58,7 +58,7 @@ protected:
 	Equipment equipment;
 	float dodge;
 
-	int curStamina = 0;
+	int staminaUsed = 0;
 
 public:
 

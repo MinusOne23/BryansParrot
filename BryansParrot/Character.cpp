@@ -57,8 +57,6 @@ void Character::equip(shared_ptr<Equippable> equippable)
 			equipment.mainWeapon->isEquipped = false;
 
 		equipment.mainWeapon = weapon;
-		curStamina += weapon->getStaminaGiven();
-		weapon->setStaminaGiven(0);
 	}
 }
 
@@ -108,21 +106,18 @@ int Character::getSpeed() const
 
 int Character::getCurrentStamina() const
 {
-	return curStamina;
+	int maxStamina = getMaxStamina();
+	return staminaUsed > maxStamina ? 0 : getMaxStamina() - staminaUsed;
 }
 
 void Character::refreshStamina()
 {
-	curStamina = getMaxStamina();
-	getActiveWeapon().setStaminaGiven(0);
+	staminaUsed = 0;
 }
 
 void Character::useStamina(int amt)
 {
-	curStamina -= amt;
-
-	if (curStamina < 0)
-		curStamina = 0;
+	staminaUsed += amt;
 }
 
 bool Character::isDead() const
