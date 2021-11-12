@@ -26,7 +26,7 @@ vector<string> DungeonBuilder::roomNames;
 /// 
 /// CREATE NEW WEAPON
 ///		- create weapon object
-///			Weapon [WEAPON_NAME]("[NAME]", baseDamage{min, max}, critChance, critDamage{min, max})
+///			Weapon [WEAPON_NAME]("[NAME]", critChance, critMult)
 /// 
 /// CREATE NEW ENEMY
 ///		- create enemy object

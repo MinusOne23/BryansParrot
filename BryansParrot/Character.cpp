@@ -53,6 +53,9 @@ void Character::equip(shared_ptr<Equippable> equippable)
 
 	if (weapon != nullptr)
 	{
+		if (equipment.mainWeapon != nullptr)
+			equipment.mainWeapon->isEquipped = false;
+
 		equipment.mainWeapon = weapon;
 		curStamina += weapon->getStaminaGiven();
 		weapon->setStaminaGiven(0);
