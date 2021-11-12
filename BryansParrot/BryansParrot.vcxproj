@@ -145,6 +145,7 @@
     <ClCompile Include="DungeonBuilder.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyEncounter.cpp" />
+    <ClCompile Include="Equippable.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Health.cpp" />
     <ClCompile Include="Interaction.cpp" />

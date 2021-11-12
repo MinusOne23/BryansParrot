@@ -59,11 +59,10 @@ bool Player::useItem(string itemName)
 		return true;
 	}
 
-	shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(inventory[index]);
-	if (weapon != nullptr)
+	shared_ptr<Equippable> equippable = dynamic_pointer_cast<Equippable>(inventory[index]);
+	if (equippable != nullptr)
 	{
-		inventory.remove(index);
-		equipWeapon(weapon);
+		equip(equippable);
 		return true;
 	}
 
@@ -118,7 +117,7 @@ void Player::displayInventory() const
 	cout << "\t===========================================\n";
 }
 
-bool Player::findAndDrink(string itemName)
+bool Player::findAndDrink(const string& itemName)
 {
 	int index = inventory.find(itemName);
 
@@ -141,7 +140,7 @@ bool Player::findAndDrink(string itemName)
 	cout << "You can not drink that item." << endl;
 }
 
-bool Player::findAndEquip(string itemName)
+bool Player::findAndEquip(const string& itemName)
 {
 	int index = inventory.find(itemName);
 
@@ -151,17 +150,31 @@ bool Player::findAndEquip(string itemName)
 		return false;
 	}
 
-	shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(inventory[index]);
+	shared_ptr<Equippable> equippable = dynamic_pointer_cast<Equippable>(inventory[index]);
 
-	if (weapon != nullptr)
+	if (equippable != nullptr)
 	{
-		inventory.remove(index);
-		equipWeapon(weapon);
-
+		equip(equippable);
 		return true;
 	}
 
 	cout << "You can not equip that item." << endl;
+	return false;
+}
+
+bool Player::findAndUnequip(const string& itemName)
+{
+	if (Utils::equalsCI(equipment.mainWeapon->getName(), itemName))
+	{
+		equipment.mainWeapon->isEquipped = false;
+		cout << "You unequipped " << equipment.mainWeapon->getName();
+		equipment.mainWeapon = nullptr;
+
+		return true;
+	}
+
+	cout << "That item is not equipped." << endl;
+	return false;
 }
 
 bool Player::isDev()
@@ -174,17 +187,17 @@ void Player::setIsDev(bool _isDev)
 	m_isDev = _isDev;
 }
 
-void Player::equipWeapon(shared_ptr<Weapon> weapon)
-{
-	Character::equipWeapon(weapon);
-
-	cout << "You equipped " << weapon->getName() << "." << endl;
-}
-
 void Player::drinkPotion(shared_ptr<Potion> potion)
 {
 	Character::drinkPotion(potion);
 
 	cout << "You drank " << potion->getName() << "." << endl;
 	cout << "Your health has been raised by " << potion->getPotionSize() << endl;
+}
+
+void Player::equip(shared_ptr<Equippable> equippable)
+{
+	Character::equip(equippable);
+	cout << "You equipped " << equippable->getName() << "." << endl;
+	equippable->isEquipped = true;
 }

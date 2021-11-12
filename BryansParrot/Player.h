@@ -71,16 +71,17 @@ public:
 	vector<shared_ptr<Key>> findKeys(shared_ptr<Door> door);
 	void displayInventory() const;
 
-	bool findAndDrink(string itemName);
-	bool findAndEquip(string itemName);
+	bool findAndDrink(const string& itemName);
+	bool findAndEquip(const string& itemName);
+	bool findAndUnequip(const string& itemName);
 	bool isDev();
 	void setIsDev(bool _isDev);
 
 
-	virtual void equipWeapon(shared_ptr<Weapon> weapon);
 	virtual void drinkPotion(shared_ptr<Potion> potion);
 
 private:
+	virtual void equip(shared_ptr<Equippable> equippable);
 	bool m_isDev = false;
 	Inventory inventory;
 };

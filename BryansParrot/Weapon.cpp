@@ -8,7 +8,7 @@
 
 
 Weapon::Weapon(string _name, float _critChance, float _critMult)
-	: Item{ _name }, critChance(_critChance), critMult(_critMult) {}
+	: Equippable{ _name }, critChance(_critChance), critMult(_critMult) {}
 
 AttackMove::DamageResult Weapon::getDamage(string attackName) const
 {
@@ -53,7 +53,7 @@ float Weapon::getCritMult() const
 
 string Weapon::getDisplay() const
 {
-	return name;
+	return Equippable::getDisplay();
 }
 
 void Weapon::displayAttacks(string linePrefix) const

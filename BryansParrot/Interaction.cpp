@@ -34,11 +34,12 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"c",			ActionType::CHARACTER},
 	{"character",	ActionType::CHARACTER},
 	{"equip",		ActionType::EQUIP},
+	{"unequip",		ActionType::UNEQUIP},
 	{"attack",		ActionType::ATTACK},
 	{"retreat",		ActionType::RETREAT},
 	{"end turn",	ActionType::END_TURN},
 	{"study",		ActionType::STUDY},
-  {"dodge",   ActionType::DODGE},
+	{"dodge",   ActionType::DODGE},
 	{DEV_MODE,		ActionType::ENABLE_DEV_MODE},
 	{"kill",		ActionType::KILL},
 	{"tp",			ActionType::TP}
@@ -51,6 +52,7 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 	{Interaction::ActionType::USE,				{true,	true,		false,		"Use the specified item from the inventory"}},
 	{Interaction::ActionType::CHARACTER,		{true,	true,		false,		"Displays the player stats"}},
 	{Interaction::ActionType::EQUIP,			{true,	true,		false,		"Equips the specified piece of equipment from the inventory"}},
+	{Interaction::ActionType::UNEQUIP,			{true,	true,		false,		"Unequips the specified piece of equipment and places into inventory"}},
 	{Interaction::ActionType::DRINK,			{true,	true,		false,		"Drink the specified item from the player's inventory"}},
 	{Interaction::ActionType::ERROR,			{true,	true,		false,		""}},
 	{Interaction::ActionType::QUIT,				{true,	true,		false,		""}},
@@ -69,7 +71,7 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 	{Interaction::ActionType::ATTACK,			{false,	true,		false,		"Attack the specified enemy in the room"}},
 	{Interaction::ActionType::RETREAT,			{false,	true,		false,		"Retreat from the current encounter"}},
 	{Interaction::ActionType::STUDY,			{false,	true,		false,		"Display the enemy stats"}},
-  {Interaction::ActionType::DODGE,      {false, true,   false,    "Attempt to dodge enemy attack awarding you with free turn"}},
+	{Interaction::ActionType::DODGE,			{false,	true,		false,		"Attempt to dodge enemy attack awarding you with free turn"}},
 	{Interaction::ActionType::END_TURN,			{false,	true,		false,		""}},
 	{Interaction::ActionType::KILL,				{false,	true,		true,		""}},
 };
@@ -159,6 +161,11 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 		inputResult.succeeded = player.findAndEquip(inputResult.target);
 		break;
 	}
+	case ActionType::UNEQUIP:
+	{
+		inputResult.succeeded = player.findAndUnequip(inputResult.target);
+		break;
+	}
 	case ActionType::CHARACTER:
 	{
 		player.displayStats();
@@ -194,7 +201,7 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 			inputResult.tpRoomName = roomName;
 			inputResult.succeeded = true;
 		}
-		else 
+		else
 		{
 			cout << "Room Not Found" << endl;
 			inputResult.succeeded = false;

@@ -47,10 +47,15 @@ void Character::heal(int amt)
 	health.addHealth(amt);
 }
 
-void Character::equipWeapon(shared_ptr<Weapon> weapon)
+void Character::equip(shared_ptr<Equippable> equippable)
 {
-	equipment.mainWeapon = weapon;
-	curStamina += weapon->staminaBoost;
+	shared_ptr<Weapon> weapon =  dynamic_pointer_cast<Weapon>(equippable);
+
+	if (weapon != nullptr)
+	{
+		equipment.mainWeapon = weapon;
+		curStamina += weapon->staminaBoost;
+	}
 }
 
 void Character::drinkPotion(shared_ptr<Potion> potion)

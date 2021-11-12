@@ -18,6 +18,7 @@
     <ClCompile Include="Interaction.cpp" />
     <ClCompile Include="DungeonBuilder.cpp" />
     <ClCompile Include="AttackMove.cpp" />
+    <ClCompile Include="Equippable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />

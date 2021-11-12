@@ -52,7 +52,7 @@ using namespace std;
 *	structure outlining weapon damage range for a critical hit
 * --------------------------------------------------------------------------------------
 */
-class Weapon : public Item, public Equippable
+class Weapon : public Equippable
 {
 public:
 	Weapon(string _name, float _critChance, float _critMult);

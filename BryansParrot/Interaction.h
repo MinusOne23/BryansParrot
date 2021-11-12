@@ -80,13 +80,16 @@ public:
 		LOOK,
 		CHARACTER,
 		EQUIP,
+		UNEQUIP,
 		HELP,
+		ENABLE_DEV_MODE,
+
+		//EncounterSpecific
 		ATTACK,
 		DODGE,
 		STUDY,
 		RETREAT,
 		END_TURN,
-		ENABLE_DEV_MODE,
 
 		//Dev Actions
 		KILL,
