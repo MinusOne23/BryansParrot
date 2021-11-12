@@ -71,7 +71,7 @@ public:
 	float getDodgeChance() const;
 
 	int getCurrentStamina() const;
-	void refreshStamina();
+	virtual void refreshStamina();
 	void useStamina(int amt);
 
 	bool isDead() const;

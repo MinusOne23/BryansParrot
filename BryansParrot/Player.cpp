@@ -36,7 +36,6 @@ Player::Player(int maxHealth, int _baseSpeed, int _baseStamina, float _dodgeChan
 void Player::takeItem(shared_ptr<Item> item)
 {
 	inventory.addItem(item);
-
 	cout << item->getName() << " has been added to your inventory." << endl;
 }
 
@@ -164,11 +163,20 @@ bool Player::findAndEquip(const string& itemName)
 
 bool Player::findAndUnequip(const string& itemName)
 {
-	if (Utils::equalsCI(equipment.mainWeapon->getName(), itemName))
+	if (equipment.mainWeapon != nullptr && Utils::equalsCI(equipment.mainWeapon->getName(), itemName))
 	{
-		equipment.mainWeapon->isEquipped = false;
-		cout << "You unequipped " << equipment.mainWeapon->getName();
+		shared_ptr<Weapon> weapon = equipment.mainWeapon;
+		weapon->isEquipped = false;
+
+		cout << "You unequipped " << weapon->getName() << endl;
 		equipment.mainWeapon = nullptr;
+
+		if (curStamina > getMaxStamina())
+		{
+			int diff = curStamina - getMaxStamina();
+			curStamina = getMaxStamina();
+			weapon->setStaminaGiven(diff);
+		}
 
 		return true;
 	}
@@ -195,8 +203,27 @@ void Player::drinkPotion(shared_ptr<Potion> potion)
 	cout << "Your health has been raised by " << potion->getPotionSize() << endl;
 }
 
+void Player::refreshStamina()
+{
+	Character::refreshStamina();
+
+	for (int i = 0; i < inventory.numItems(); i++)
+	{
+		shared_ptr<Equippable> equippable = dynamic_pointer_cast<Equippable>(inventory[i]);
+
+		if (equippable != nullptr)
+			equippable->setStaminaGiven(equippable->getStaminaBoost());
+	}
+}
+
 void Player::equip(shared_ptr<Equippable> equippable)
 {
+	if (equippable->isEquipped)
+	{
+		cout << equippable->getName() << " is already equipped." << endl;
+		return;
+	}
+
 	Character::equip(equippable);
 	cout << "You equipped " << equippable->getName() << "." << endl;
 	equippable->isEquipped = true;

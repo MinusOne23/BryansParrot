@@ -603,6 +603,7 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 	if (playerTime >= TURN_TIME)
 	{
 		currentTurn = -1;
+		player.refreshStamina();
 		playerTurn(player, result);
 		playerTime -= TURN_TIME;
 	}

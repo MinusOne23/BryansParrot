@@ -54,7 +54,8 @@ void Character::equip(shared_ptr<Equippable> equippable)
 	if (weapon != nullptr)
 	{
 		equipment.mainWeapon = weapon;
-		curStamina += weapon->staminaBoost;
+		curStamina += weapon->getStaminaGiven();
+		weapon->setStaminaGiven(0);
 	}
 }
 
@@ -94,12 +95,12 @@ float Character::getDodgeChance() const
 
 int Character::getMaxStamina() const
 {
-	return getActiveWeapon().staminaBoost + baseStamina;
+	return getActiveWeapon().getStaminaBoost() + baseStamina;
 }
 
 int Character::getSpeed() const
 {
-	return getActiveWeapon().speedBoost + baseSpeed;
+	return getActiveWeapon().getSpeedBoost() + baseSpeed;
 }
 
 int Character::getCurrentStamina() const
@@ -110,6 +111,7 @@ int Character::getCurrentStamina() const
 void Character::refreshStamina()
 {
 	curStamina = getMaxStamina();
+	getActiveWeapon().setStaminaGiven(0);
 }
 
 void Character::useStamina(int amt)
@@ -141,9 +143,9 @@ void Character::displayStats() const
 	activeWeapon.displayAttacks("\t       ");
 	cout << "\t       Crit Chance: " << fixed << setprecision(2) << activeWeapon.getCritChance() * 100 << "%" << endl;
 	cout << "\t       Crit Multiplier: " << fixed << setprecision(2) << activeWeapon.getCritMult() << "x" << endl;
-	if(activeWeapon.speedBoost)
-		cout << "\t       Speed +" << activeWeapon.speedBoost << endl;
-	if (activeWeapon.staminaBoost)
-		cout << "\t       Stamina +" << activeWeapon.staminaBoost << endl;
+	if(activeWeapon.getSpeedBoost())
+		cout << "\t       Speed +" << activeWeapon.getSpeedBoost() << endl;
+	if (activeWeapon.getStaminaBoost())
+		cout << "\t       Stamina +" << activeWeapon.getStaminaBoost() << endl;
 	cout << "\t===========================================\n";
 }

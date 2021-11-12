@@ -53,8 +53,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Weapon sword("Sword", 0.25f, 1.65f);
 	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
 	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
-	sword.speedBoost = 2;
-	sword.staminaBoost = 2;
+	sword.setSpeedBoost(2);
+	sword.setStaminaBoost(2);
 
 	//				name				health	baseSpeed	baseStamina	dodgeChance	baseWeapon
 	Enemy goblin(	"Goblin",			100,	5,			2,			0.5f,		goblinFists);
