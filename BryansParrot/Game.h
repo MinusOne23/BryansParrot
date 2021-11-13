@@ -110,8 +110,8 @@ private:
 	void playerWin();
 	void promptReplay();
 
-	void openDoor(Room::DoorIndex index);
-	Room::DoorIndex getDoorIndex(string doorName);
+	void openDoor(Room::Direction index);
+	Room::Direction getDoorIndex(string doorName);
 	void enterNewRoom(Room* nextRoom);
 
 	void gameInteract();

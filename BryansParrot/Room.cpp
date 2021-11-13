@@ -10,6 +10,13 @@
 
 using namespace std;
 
+const Room::Direction Room::oppDirection[] = {
+	Room::Direction::SOUTH,
+	Room::Direction::NORTH,
+	Room::Direction::WEST,
+	Room::Direction::EAST
+};
+
 //Displays Items / doors / and enemies in curent room
 void Room::displayContents() const
 {
@@ -42,11 +49,20 @@ void Room::addItems(vector<shared_ptr<Item>> newItems)
 	}
 }
 
-
 //creates a new door with a index coresponding to direction
-void Room::setDoor(DoorIndex index, shared_ptr<Door> newDoor)
+void Room::setRoom(Direction direction, Room* room, int locks, bool bothWays)
 {
-	doors[(int)index] = newDoor;
+	int index = (int)direction;
+	int oppIndex = (int)oppDirection[index];
+
+	doors[index] = shared_ptr<Door>(new Door(locks));
+	rooms[index] = room;
+
+	if (bothWays)
+	{
+		room->doors[oppIndex] = doors[index];
+		room->rooms[oppIndex] = this;
+	}
 }
 
 void Room::addEnemyEncounter(EnemyEncounter encounter)
@@ -69,13 +85,13 @@ void Room::displayDoors() const
 {
 	for (int i = 0; i < 4; i++)
 	{
-		displayDoor((DoorIndex)i);
+		displayDoor((Direction)i);
 	}
 }
 
 //door index switched to direction
 //displays door with direction and weither or not it has a lock
-void Room::displayDoor(DoorIndex index) const
+void Room::displayDoor(Direction index) const
 {
 	shared_ptr<Door> door = doors[(int)index];
 
@@ -86,16 +102,16 @@ void Room::displayDoor(DoorIndex index) const
 
 	switch(index)
 	{
-	case DoorIndex::NORTH_DOOR:
+	case Direction::NORTH:
 		direction = "North";
 		break;
-	case DoorIndex::SOUTH_DOOR:
+	case Direction::SOUTH:
 		direction = "South";
 		break;
-	case DoorIndex::EAST_DOOR:
+	case Direction::EAST:
 		direction = "East";
 		break;
-	case DoorIndex::WEST_DOOR:
+	case Direction::WEST:
 		direction = "West";
 		break;
 	}
@@ -132,7 +148,7 @@ shared_ptr<Item> Room::takeItem(string objectName)
 //if the door is locked and you have a keys
 //	then you can unlock the one of the locks on the door
 //
-void Room::unlockDoor(DoorIndex index, Player& player)
+void Room::unlockDoor(Direction index, Player& player)
 {
 	if (doors[(int)index] == nullptr)
 	{
@@ -149,6 +165,12 @@ void Room::unlockDoor(DoorIndex index, Player& player)
 	}
 
 	vector<shared_ptr<Key>> keys = player.findKeys(door);
+	if (keys.size() == 0)
+	{
+		cout << player.getName() << " has no keys for that door" << endl;
+		return;
+	}
+
 	for (unsigned int i = 0; i < keys.size() && door->isLocked(); i++)
 	{
 		door->unlock();

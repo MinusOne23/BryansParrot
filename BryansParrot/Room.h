@@ -96,25 +96,26 @@ using namespace std;
 class Room
 {
 public:
-	enum class DoorIndex
+	enum class Direction
 	{
 		NONE = -1,
-		NORTH_DOOR = 0,
-		SOUTH_DOOR = 1,
-		EAST_DOOR = 2,
-		WEST_DOOR = 3
+		NORTH = 0,
+		SOUTH = 1,
+		EAST = 2,
+		WEST = 3
 	};
 
 	void displayContents() const;
 	void addItem(shared_ptr<Item> newItem);
 	void addItems(vector<shared_ptr<Item>> newItems);
-	void setDoor(DoorIndex index, shared_ptr<Door> newDoor);
+	void setRoom(Direction index, Room* room, int locks = 0, bool bothWays = true);
 	void addEnemyEncounter(EnemyEncounter encounter);
 
 	shared_ptr<Item> takeItem(string objectName);
-	void unlockDoor(DoorIndex index, Player& player);
+	void unlockDoor(Direction index, Player& player);
 
-	inline shared_ptr<Door> getDoor(DoorIndex index) { return doors[(int)index]; }
+	inline shared_ptr<Door> getDoor(Direction index) { return doors[(int)index]; }
+	inline Room* getRoom(Direction index) { return rooms[(int)index]; }
 
 	EnemyEncounter& currentEncounter();
 	void completeEncounter();
@@ -122,12 +123,16 @@ public:
 	int encounterCount();
 
 private:
+
 	shared_ptr<Door> doors[4];
+	Room* rooms[4];
+
+	const static Direction oppDirection[4];
 
 	vector<shared_ptr<Item>> items;
 	vector<EnemyEncounter> encounters;
 
-	void displayDoor(DoorIndex index) const;
+	void displayDoor(Direction index) const;
 	void displayItems() const;
 	void displayDoors() const;
 };

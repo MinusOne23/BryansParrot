@@ -5,8 +5,8 @@
 ///		-constructor: connecting next room. number of locks
 ///		-IS_LOCKED: returns number of locks
 /// 
-Door::Door(Room& nRoom, int locks) 
-	: nextRoom(nRoom), numLocks(locks), locksLeft(locks) {}
+Door::Door(int locks) 
+	: numLocks(locks), locksLeft(locks) {}
 
 bool Door::isLocked() const
 {

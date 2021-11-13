@@ -114,7 +114,7 @@ void Game::promptReplay()
 /// Opens door in room specified by direction
 ///Input: DOOR DIRECTOM
 ///Updates: NEW ROOM
-void Game::openDoor(Room::DoorIndex index)
+void Game::openDoor(Room::Direction index)
 {
 	shared_ptr<Door> door = currentRoom->getDoor(index);
 
@@ -130,7 +130,7 @@ void Game::openDoor(Room::DoorIndex index)
 		return;
 	}
 
-	Room* nextRoom = &door->getNextRoom();
+	Room* nextRoom = currentRoom->getRoom(index);
 
 	enterNewRoom(nextRoom);
 }
@@ -138,18 +138,18 @@ void Game::openDoor(Room::DoorIndex index)
 /// Door Index = Door Direction
 ///Input: user input Door name
 /// Returns: Specific door direction enum
-Room::DoorIndex Game::getDoorIndex(string doorName)
+Room::Direction Game::getDoorIndex(string doorName)
 {
 	if (Utils::equalsCI(doorName, "north door"))
-		return Room::DoorIndex::NORTH_DOOR;
+		return Room::Direction::NORTH;
 	else if (Utils::equalsCI(doorName, "south door"))
-		return Room::DoorIndex::SOUTH_DOOR;
+		return Room::Direction::SOUTH;
 	else if (Utils::equalsCI(doorName, "east door"))
-		return Room::DoorIndex::EAST_DOOR;
+		return Room::Direction::EAST;
 	else if (Utils::equalsCI(doorName, "west door"))
-		return Room::DoorIndex::WEST_DOOR;
+		return Room::Direction::WEST;
 
-	return Room::DoorIndex::NONE;
+	return Room::Direction::NONE;
 }
 
 void Game::enterNewRoom(Room* nextRoom)
@@ -243,9 +243,9 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::OPEN:
 	{
-		Room::DoorIndex index = getDoorIndex(inputResult.target);
+		Room::Direction index = getDoorIndex(inputResult.target);
 
-		if (index == Room::DoorIndex::NONE)
+		if (index == Room::Direction::NONE)
 		{
 			cout << "That is not a valid object to open." << endl;
 			inputResult.succeeded = false;
@@ -270,9 +270,9 @@ void Game::gameInteract()
 	}
 	case Interaction::ActionType::UNLOCK:
 	{
-		Room::DoorIndex index = getDoorIndex(inputResult.target);
+		Room::Direction index = getDoorIndex(inputResult.target);
 
-		if (index == Room::DoorIndex::NONE)
+		if (index == Room::Direction::NONE)
 		{
 			cout << "That is not a valid object to unlock." << endl;
 			inputResult.succeeded = false;
