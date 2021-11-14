@@ -199,23 +199,23 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// ...
 	//-----------------------------------------------------------------------
 	
-	//Second Room Encounter: Initialization
+	//Guard Room Encounter: Initialization
 	EnemyEncounter secondRoomEncounter1;
 	secondRoomEncounter1.addEnemy(goblin);
 	secondRoomEncounter1.addEnemy(troll);
-	secondRoomEncounter1.addDrop(make_shared<Key>(secondNorthKey));
+	secondRoomEncounter1.addDrop(make_shared<Key>(guardRoomKey));
 
-	//Mini 1 Room Encounter: INitialization
+	//MiniWest Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter1;
 	miniBossWestEncounter1.addEnemy(miniWest);
 	miniBossWestEncounter1.addDrop(make_shared<Key>(mainBossKey));
 
-	//Mini 2 Room Encounter: INitialization
+	//MiniEast Room Encounter: INitialization
 	EnemyEncounter miniBossEastEncounter1;
 	miniBossEastEncounter1.addEnemy(miniEast);
 	miniBossEastEncounter1.addDrop(make_shared<Key>(mainBossKey1));
 
-	//Mini 3 Room Encounter: INitialization
+	//MiniNorth Room Encounter: INitialization
 	EnemyEncounter miniBossNorthEncounter1;
 	miniBossNorthEncounter1.addEnemy(miniNorth);
 	miniBossNorthEncounter1.addDrop(make_shared<Key>(mainBossKey2));
