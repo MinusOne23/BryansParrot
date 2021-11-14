@@ -11,15 +11,15 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// *** All room names MUST BE UNIQUE ***
 	//-----------------------------------------------------------------------
 	map<string, Room> allRooms = {
-		{"first_room",			Room()},
-		{"second_room",			Room()},
-		{"third_room",			Room()},
-		{"fourth_room",			Room()},
-		{"miniBossWestRoom",	Room()},
-		{"miniBossEastRoom",	Room()},
-		{"miniBossNorthRoom",	Room()},
-		{"mainBossRoom",		Room()},
-		{"fifthRoom",			Room()}
+		{"Jail Cell",			Room()},
+		{"Guard Room",			Room()},
+		{"Control Room",		Room()},
+		{"Bryan's Parrot",		Room()},
+		{"East Corridor",		Room()},
+		{"East Safe Room",		Room()},
+		{"Wearable Treasure",	Room()},
+		{"Condor Lair",			Room()},
+		{"Cavernous Chasm",		Room()}
 	};
 
 	//-----------------------------------------------------------------------
@@ -37,15 +37,17 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// Room& [RoomName] = allRooms.at("[CapsSensitiveRoomName]")
 	//-----------------------------------------------------------------------
-	Room& firstRoom = allRooms.at("first_room");
-	Room& secondRoom = allRooms.at("second_room");
-	Room& thirdRoom = allRooms.at("third_room");
-	Room& fourthRoom = allRooms.at("fourth_room");
-	Room& miniBossWestRoom = allRooms.at("miniBossWestRoom");
-	Room& miniBossEastRoom = allRooms.at("miniBossEastRoom");
-	Room& miniBossNorthRoom = allRooms.at("miniBossNorthRoom");
-	Room& mainBossRoom = allRooms.at("mainBossRoom");
-	Room& fithRoom = allRooms.at("fifthRoom");
+	Room& jailCell = allRooms.at("Jail Cell");
+	Room& guardRoom = allRooms.at("Guard Room");
+	Room& controlRoom = allRooms.at("Control Room");
+	Room& eastCorridor = allRooms.at("East Corridor");
+	Room& cavernousChasm = allRooms.at("Cavernous Chasm");
+	Room& bryansParrot = allRooms.at("Bryan's Parrot");
+	Room& controlRoom = allRooms.at("Control Room");
+	Room& eastSafeRoom = allRooms.at("East Safe Room");
+	Room& wearableTreasure = allRooms.("Wearable Treasure");
+	Room& condorLair= allRooms.("Condor Lair");
+	Room& emergence = allRooms.("Emergence");
 
 	//-----------------------------------------------------------------------
 	// Set up Room Connections
@@ -60,19 +62,29 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// will automatically set its south room to roomA
 	//-----------------------------------------------------------------------
 	
-	//Room 1: Initialization
-	firstRoom.setRoom(Room::Direction::NORTH, &secondRoom);
+	//JailCell: Initialization
+	jailCell.setRoom(Room::Direction::NORTH, &guardRoom, 1);
 
-	//Room 2: Initialization
-	secondRoom.setRoom(Room::Direction::NORTH, &thirdRoom, 2);
+	//GuardRoom: Initialization
+	guardRoom.setRoom(Room::Direction::NORTH, &controlRoom);
 
-	//Room3: Initialization
-	thirdRoom.setRoom(Room::Direction::NORTH, &fourthRoom);
+	//ControlRoom: Initialization
+	controlRoom.setRoom(Room::Direction::NORTH, &bryansParrot, 3);
+	controlRoom.setRoom(Room::Direction::EAST, &eastSafeRoom);
+	//controlRoom.setRoom(Room::Direction::WEST, & westCorridor);
 
-	//Room4: Initialization
-	fourthRoom.setRoom(Room::Direction::NORTH, &miniBossNorthRoom);
-	fourthRoom.setRoom(Room::Direction::EAST, &miniBossEastRoom);
-	fourthRoom.setRoom(Room::Direction::WEST, &miniBossWestRoom);
+	//BryansParrot: Initialization
+	bryansParrot.setRoom(Room::Direction::North, &emergence);
+	
+	//EastCorridor: Initialization
+	eastCorridor.setRoom(Room::Direction::EAST, &condorLair);
+	eastCorridor.setRoom(Room::Direction::SOUTH, &wearableTreasure);
+
+	//CondorLair: Initialization
+	condorLair.setRoom(Room::Direction::,SOUTH &cavernousChasm,1);
+
+	//CavernousChasm: Initialization
+	cavernousChasm.setRoom(Room::Direction::EAST, &jailCell);
 
 	//Mini North: Initialization
 	miniBossNorthRoom.setRoom(Room::Direction::NORTH, &mainBossRoom, 3);
@@ -91,7 +103,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// ...
 	// 
 	//-----------------------------------------------------------------------
-	Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
+	/*Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
 	goblinFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
 
 	Weapon trollFists("Troll Firsts", 0.1f, 1.5f);
@@ -212,7 +224,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	mainBossRoom.addEnemyEncounter(mainBossEcounter1);
 
 	return allRooms;
-}
+}*/
 
 vector<string> DungeonBuilder::getRoomNames()
 {
