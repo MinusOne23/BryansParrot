@@ -65,10 +65,10 @@ void Game::initializeGame()
 	allRooms = DungeonBuilder::buildDungeon();
 
 	//Current Room player is in. Will change when player enters new room
-	currentRoom = &allRooms.at("first_room");
+	currentRoom = &allRooms.at("Jail Cell");
 
 	//When player enters winRoom, game is over
-	winRoom = &allRooms.at("fifthRoom");
+	winRoom = &allRooms.at("Emergence");
 }
 
 /// PlayerDied(): Health reaches 0
