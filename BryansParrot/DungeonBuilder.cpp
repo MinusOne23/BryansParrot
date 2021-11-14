@@ -38,14 +38,14 @@ map<string, Room> DungeonBuilder::buildDungeon()
 		roomNames.push_back(it->first);
 
 	//-----------------------------------------------------------------------
-									
+
 	//-----------------------------------------------------------------------
 	// Create References to all rooms
 	// 
 	// Room& [RoomName] = allRooms.at("[CapsSensitiveRoomName]")
 	//-----------------------------------------------------------------------
 	Room& jailCell = allRooms.at("Jail Cell");
-	Room& guardRoom = allRooms.at("Guard Room"); 
+	Room& guardRoom = allRooms.at("Guard Room"); //
 	Room& controlRoom = allRooms.at("Control Room");
 	Room& eastCorridor = allRooms.at("East Corridor");
 	Room& cavernousChasm = allRooms.at("Cavernous Chasm");
@@ -61,23 +61,6 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Room& safeRoomWest = allRooms.at("Safe Room West");
 	Room& westCorridorRoom = allRooms.at("West Corridor Room");
 	Room& usableTreasureRoom = allRooms.at("Usable Treasure Room");
-
-	/*
-	*	Pickled Crane   <->   Guessing Room   <->   Casso Care Room
-	*		^
-	*		v
-	*	Vulture Surprise							  Bryans Parrot
-	*		^												^
-	*		v												v
-	*	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
-	*		^												^											^					 ^
-	*		v												v										    v					 v
-	*	usable Treasure									Guard Room								 Wearable Teasure	Cernous Chasm
-	*														^
-	*														v
-	*													Jail Cell
-	*/
-
 
 	//-----------------------------------------------------------------------
 	// Set up Room Connections
@@ -96,7 +79,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	jailCell.setRoom(Room::Direction::NORTH, &guardRoom, 1);
 
 	//GuardRoom: Initialization
-	guardRoom.setRoom(Room::Direction::NORTH, &controlRoom);
+	guardRoom.setRoom(Room::Direction::NORTH, &controlRoom,1);
 
 	//ControlRoom: Initialization
 	controlRoom.setRoom(Room::Direction::NORTH, &bryansParrot, 3);
@@ -122,6 +105,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	//Guessing Room: Initialization
 	guessingRoom.setRoom(Room::Direction::WEST, &pickledCraneRoom);
+	guessingRoom.setRoom(Room::Direction::EAST, &cassoCareRoom,1);
 
 	//Pickled Crane Room: Initialization
 	pickledCraneRoom.setRoom(Room::Direction::SOUTH, &vultureSurpriseRoom,1);
@@ -187,8 +171,12 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	
 	Key jailKey("Jail Cell Key", jailCell.getDoor(Room::Direction::NORTH));
 	Key guardRoomKey("Guard Room Key", guardRoom.getDoor(Room::Direction::NORTH));
-	Key mainBossKey("Skull Key", miniBossNorthRoom.getDoor(Room::Direction::NORTH));
-	Key winRoomKey("Golden Key", mainBossRoom.getDoor(Room::Direction::NORTH));
+	Key mainBossKey("Parrot Skull Key", controlRoom.getDoor(Room::Direction::NORTH));
+	Key mainBossKey1("Blue Feather Key", controlRoom.getDoor(Room::Direction::NORTH));
+	Key mainBossKey2("Green Feather Key", controlRoom.getDoor(Room::Direction::NORTH));
+	Key winRoomKey("Golden Key", bryansParrot.getDoor(Room::Direction::NORTH));
+	Key condorRoomKey("Ostrich Room Key", condorLair.getDoor(Room::Direction::SOUTH));
+	Key cassoCareRoomKey("Cassowary Room Key", guessingRoom.getDoor(Room::Direction::EAST));
 
 	//-----------------------------------------------------------------------
 	// Create Potions
