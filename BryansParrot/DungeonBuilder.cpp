@@ -45,7 +45,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// Room& [RoomName] = allRooms.at("[CapsSensitiveRoomName]")
 	//-----------------------------------------------------------------------
 	Room& jailCell = allRooms.at("Jail Cell");
-	Room& guardRoom = allRooms.at("Guard Room");
+	Room& guardRoom = allRooms.at("Guard Room"); //
 	Room& controlRoom = allRooms.at("Control Room");
 	Room& eastCorridor = allRooms.at("East Corridor");
 	Room& cavernousChasm = allRooms.at("Cavernous Chasm");
