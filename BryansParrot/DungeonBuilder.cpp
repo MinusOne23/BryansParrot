@@ -38,14 +38,14 @@ map<string, Room> DungeonBuilder::buildDungeon()
 		roomNames.push_back(it->first);
 
 	//-----------------------------------------------------------------------
-
+									
 	//-----------------------------------------------------------------------
 	// Create References to all rooms
 	// 
 	// Room& [RoomName] = allRooms.at("[CapsSensitiveRoomName]")
 	//-----------------------------------------------------------------------
 	Room& jailCell = allRooms.at("Jail Cell");
-	Room& guardRoom = allRooms.at("Guard Room"); //
+	Room& guardRoom = allRooms.at("Guard Room"); 
 	Room& controlRoom = allRooms.at("Control Room");
 	Room& eastCorridor = allRooms.at("East Corridor");
 	Room& cavernousChasm = allRooms.at("Cavernous Chasm");
@@ -61,6 +61,23 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Room& safeRoomWest = allRooms.at("Safe Room West");
 	Room& westCorridorRoom = allRooms.at("West Corridor Room");
 	Room& usableTreasureRoom = allRooms.at("Usable Treasure Room");
+
+	/*
+	*	Pickled Crane   <->   Guessing Room   <->   Casso Care Room
+	*		^
+	*		v
+	*	Vulture Surprise							  Bryans Parrot
+	*		^												^
+	*		v												v
+	*	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
+	*		^												^											^					 ^
+	*		v												v										    v					 v
+	*	usable Treasure									Guard Room								 Wearable Teasure	Cernous Chasm
+	*														^
+	*														v
+	*													Jail Cell
+	*/
+
 
 	//-----------------------------------------------------------------------
 	// Set up Room Connections
