@@ -63,6 +63,22 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Room& westCorridorRoom = allRooms.at("West Corridor Room");
 	Room& usableTreasureRoom = allRooms.at("Usable Treasure Room");
 
+	/*
+	*	Pickled Crane Room   <->   Guessing Room   <->   Casso Care Room
+	*		^
+	*		v
+	*	Vulture Surprise							  Bryans Parrot
+	*		^												^
+	*		v												v
+	*	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
+	*		^												^											^					 ^
+	*		v												v										    v					 v
+	*	usable Treasure									Guard Room								 Wearable Teasure	Cernous Chasm
+	*														^
+	*														v
+	*													Jail Cell
+	*/
+
 	//-----------------------------------------------------------------------
 	// Set up Room Connections
 	// 
@@ -191,8 +207,6 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Potion sPotion("Small Potion", 25);
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Encounters
 
 	//-----------------------------------------------------------------------
 	// Create Enemy Encounters
