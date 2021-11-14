@@ -154,10 +154,10 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 	Enemy goblin("Goblin", 100, 5, 2, 0.5f, goblinFists);
 	Enemy troll("Troll", 100, 5, 2, 0.5f, trollFists);
-	Enemy mini1("Mini Boss West", 100, 20, 2, 0.75f, goblinFists);
-	Enemy mini2("Mini Boss East", 100, 5, 4, 0.25f, goblinFists);
-	Enemy mini3("Mini Boss North", 100, 10, 2, 0.5f, goblinFists);
-	Enemy boss("Boss", 100, 15, 3, 0.65f, goblinFists);
+	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, goblinFists);
+	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, goblinFists);
+	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, goblinFists);
+	Enemy boss("Bryan's Parrot", 100, 15, 3, 0.65f, goblinFists);
 
 	//-----------------------------------------------------------------------
 	// Create Keys
@@ -207,18 +207,18 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	//Mini 1 Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter1;
-	miniBossWestEncounter1.addEnemy(mini1);
+	miniBossWestEncounter1.addEnemy(miniWest);
 	miniBossWestEncounter1.addDrop(make_shared<Key>(mainBossKey));
 
 	//Mini 2 Room Encounter: INitialization
 	EnemyEncounter miniBossEastEncounter1;
-	miniBossEastEncounter1.addEnemy(mini2);
-	miniBossEastEncounter1.addDrop(make_shared<Key>(mainBossKey));
+	miniBossEastEncounter1.addEnemy(miniEast);
+	miniBossEastEncounter1.addDrop(make_shared<Key>(mainBossKey1));
 
 	//Mini 3 Room Encounter: INitialization
 	EnemyEncounter miniBossNorthEncounter1;
-	miniBossNorthEncounter1.addEnemy(mini3);
-	miniBossNorthEncounter1.addDrop(make_shared<Key>(mainBossKey));
+	miniBossNorthEncounter1.addEnemy(miniNorth);
+	miniBossNorthEncounter1.addDrop(make_shared<Key>(mainBossKey2));
 
 	//Main Boss Room Encounter: Initialization
 	EnemyEncounter mainBossEcounter1;
@@ -237,29 +237,29 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 
 	// First Room Init
-	firstRoom.addItem(make_shared<Weapon>(sword));
-	firstRoom.addItem(make_shared<Key>(jailKey));
+	jailCell.addItem(make_shared<Weapon>(sword));
+	jailCell.addItem(make_shared<Key>(jailKey));
 
 	// Second Room Init
-	secondRoom.addEnemyEncounter(secondRoomEncounter1);
+	guardRoom.addEnemyEncounter(secondRoomEncounter1);
 
 	// Third Room Init
-	thirdRoom.addItem(make_shared<Potion>(sPotion));
+	controlRoom.addItem(make_shared<Potion>(sPotion));
 
 	// Fourth Room Init
-	fourthRoom.addItem(make_shared<Potion>(lPotion));
+	bryansParrot.addItem(make_shared<Potion>(lPotion));
 
 	// Mini Boss West Room Init
-	miniBossWestRoom.addEnemyEncounter(miniBossWestEncounter1);
+	cassoCareRoom.addEnemyEncounter(miniBossWestEncounter1);
 
 	// Mini Boss East Room Init
-	miniBossEastRoom.addEnemyEncounter(miniBossEastEncounter1);
+	cavernousChasm.addEnemyEncounter(miniBossEastEncounter1);
 
 	// Mini Boss North Room Init
-	miniBossNorthRoom.addEnemyEncounter(miniBossNorthEncounter1);
+	controlRoom.addEnemyEncounter(miniBossNorthEncounter1);
 
 	// Main Boss Room Init
-	mainBossRoom.addEnemyEncounter(mainBossEcounter1);
+	bryansParrot.addEnemyEncounter(mainBossEcounter1);
 
 	return allRooms;
 }
