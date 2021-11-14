@@ -162,7 +162,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, goblinFists);
 	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, goblinFists);
 	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, goblinFists);
-	Enemy boss("Bryan's Parrot", 100, 15, 3, 0.65f, goblinFists);
+	Enemy boss("Parrot", 100, 15, 3, 0.65f, goblinFists);
 
 	//-----------------------------------------------------------------------
 	// Create Keys
