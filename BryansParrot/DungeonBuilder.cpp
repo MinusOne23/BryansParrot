@@ -143,14 +143,14 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Weapon chickenFists("Goblin Fists", 0.1f, 1.5f);
 	chickenFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
 
-	Weapon trollFists("Troll Firsts", 0.1f, 1.5f);
-	trollFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+	Weapon turkeyFists("Turkey Firsts", 0.1f, 1.5f);
+	turkeyFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
 
-	Weapon sword("Sword", 0.25f, 1.65f);
-	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
-	sword.setSpeedBoost(2);
-	sword.setStaminaBoost(2);
+	Weapon knife("knife", 0.25f, 1.65f);
+	knife.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	knife.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	knife.setSpeedBoost(2);
+	knife.setStaminaBoost(2);
 
 	//-----------------------------------------------------------------------
 	// Create Enemies
@@ -158,7 +158,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// Enemy [EnemyName]("[Name]", [MaxHealth], [Speed], [Stamina], [DodgeChance], [DefaultWeapon])
 	//-----------------------------------------------------------------------
 	Enemy chicken("Chicken", 100, 5, 2, 0.5f, chickenFists);
-	Enemy troll("Troll", 100, 5, 2, 0.5f, trollFists);
+	Enemy turkey("Turkey", 100, 5, 2, 0.5f, turkeyFists);
 	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, chickenFists);
 	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, chickenFists);
 	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, chickenFists);
@@ -207,7 +207,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//Guard Room Encounter: Initialization
 	EnemyEncounter secondRoomEncounter1;
 	secondRoomEncounter1.addEnemy(chicken);
-	secondRoomEncounter1.addEnemy(troll);
+	secondRoomEncounter1.addEnemy(turkey);
 	secondRoomEncounter1.addDrop(make_shared<Key>(guardRoomKey));
 
 	//MiniWest Room Encounter: INitialization
@@ -242,7 +242,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 
 	// JailCell Init
-	jailCell.addItem(make_shared<Weapon>(sword));
+	jailCell.addItem(make_shared<Weapon>(knife));
 	jailCell.addItem(make_shared<Key>(jailKey));
 
 	// GuardRoom Init
