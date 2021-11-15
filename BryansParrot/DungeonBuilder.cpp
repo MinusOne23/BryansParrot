@@ -179,6 +179,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Enemy crane("Crane", 100, 5, 2, 0.5f, turkeyFists);
 	Enemy condor("Andian Condor", 100, 5, 2, 0.5f, turkeyFists);
 	Enemy vulture("Vulture", 100, 5, 2, 0.5f, turkeyFists);
+	Enemy kingVulture("King Vulture", 100, 5, 2, 0.5f, turkeyFists);
 	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, chickenFists);
 	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, chickenFists);
 	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, chickenFists);
@@ -230,49 +231,51 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//East Corridor Encounter: Initialization
 	EnemyEncounter eastCorridorEncounter;
 	eastCorridorEncounter.addEnemy(turkey);
+	eastCorridorEncounter.addEnemy(chicken);
 
 	//Wearable Treasure Encounter: Initialization
 	EnemyEncounter wearableTreasureEncounter1;
 	wearableTreasureEncounter1.addEnemy(turkey);
-	wearableTreasureEncounter1.addEnemy(turkey);
-	wearableTreasureEncounter1.addEnemy(turkey);
+	wearableTreasureEncounter1.addEnemy(chicken);
+	wearableTreasureEncounter1.addEnemy(flamingo);
 	EnemyEncounter wearableTreasureEncounter2;
 	wearableTreasureEncounter2.addEnemy(flamingo);
-	wearableTreasureEncounter2.addEnemy(flamingo);
-	wearableTreasureEncounter2.addEnemy(flamingo);
+	wearableTreasureEncounter2.addEnemy(condor);
+	wearableTreasureEncounter2.addEnemy(vulture);
 	EnemyEncounter wearableTreasureEncounter3;
-	wearableTreasureEncounter3.addEnemy(crane);
+	wearableTreasureEncounter3.addEnemy(condor);
 	wearableTreasureEncounter3.addEnemy(crane);
 
 	//Condor Lair: Initialization
 	EnemyEncounter condorLairEncounter;
 	condorLairEncounter.addEnemy(condor);
+	condorLairEncounter.addEnemy(turkey);
 	condorLairEncounter.addDrop(make_shared<Key>(condorRoomKey));
 
 	//West Corridor Encounter: Initialization
 	EnemyEncounter westCorridorRoomEncounter;
 	westCorridorRoomEncounter.addEnemy(flamingo);
-	westCorridorRoomEncounter.addEnemy(flamingo);
-	westCorridorRoomEncounter.addEnemy(flamingo);
+	westCorridorRoomEncounter.addEnemy(turkey);
+	westCorridorRoomEncounter.addEnemy(chicken);
 
 	//Usable Treasure Encounter: Initialization
 	EnemyEncounter usableTreasureRoomEncounter1;
 	usableTreasureRoomEncounter1.addEnemy(turkey);
-	usableTreasureRoomEncounter1.addEnemy(turkey);
-	usableTreasureRoomEncounter1.addEnemy(turkey);
+	usableTreasureRoomEncounter1.addEnemy(chicken);
+	usableTreasureRoomEncounter1.addEnemy(flamingo);
 	EnemyEncounter usableTreasureRoomEncounter2;
 	usableTreasureRoomEncounter2.addEnemy(flamingo);
-	usableTreasureRoomEncounter2.addEnemy(flamingo);
-	usableTreasureRoomEncounter2.addEnemy(flamingo);
+	usableTreasureRoomEncounter2.addEnemy(vulture);
+	usableTreasureRoomEncounter2.addEnemy(condor);
 	EnemyEncounter usableTreasureRoomEncounter3;
-	usableTreasureRoomEncounter3.addEnemy(crane);
+	usableTreasureRoomEncounter3.addEnemy(condor);
 	usableTreasureRoomEncounter3.addEnemy(crane);
 
 	//Vulture Surprise Encounter: Initialization
 	EnemyEncounter vultureSurpriseRoomEncounter;
 	vultureSurpriseRoomEncounter.addEnemy(vulture);
-	vultureSurpriseRoomEncounter.addEnemy(vulture);
-	vultureSurpriseRoomEncounter.addEnemy(vulture);
+	vultureSurpriseRoomEncounter.addEnemy(condor);
+	vultureSurpriseRoomEncounter.addEnemy(kingVulture);
 
 	//Pickled Crane Room Encounter: Initialization
 	EnemyEncounter pickledCraneRoomEncounter;
@@ -282,10 +285,9 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	//Guessing Room Encounter: Initialization
 	EnemyEncounter guessingRoomEncounter;
-	guessingRoomEncounter.addEnemy(chicken);
-	guessingRoomEncounter.addEnemy(chicken);
-	guessingRoomEncounter.addEnemy(chicken);
-
+	guessingRoomEncounter.addEnemy(turkey);
+	guessingRoomEncounter.addEnemy(kingVulture);
+	
 	//MiniWest Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter1;
 	miniBossWestEncounter1.addEnemy(miniWest);
