@@ -140,8 +140,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// ...
 	// 
 	//-----------------------------------------------------------------------
-	Weapon goblinFists("Goblin Fists", 0.1f, 1.5f);
-	goblinFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+	Weapon chickenFists("Goblin Fists", 0.1f, 1.5f);
+	chickenFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
 
 	Weapon trollFists("Troll Firsts", 0.1f, 1.5f);
 	trollFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
@@ -157,12 +157,12 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// Enemy [EnemyName]("[Name]", [MaxHealth], [Speed], [Stamina], [DodgeChance], [DefaultWeapon])
 	//-----------------------------------------------------------------------
-	Enemy goblin("Goblin", 100, 5, 2, 0.5f, goblinFists);
+	Enemy chicken("Chicken", 100, 5, 2, 0.5f, chickenFists);
 	Enemy troll("Troll", 100, 5, 2, 0.5f, trollFists);
-	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, goblinFists);
-	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, goblinFists);
-	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, goblinFists);
-	Enemy boss("Parrot", 100, 15, 3, 0.65f, goblinFists);
+	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, chickenFists);
+	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, chickenFists);
+	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, chickenFists);
+	Enemy boss("Parrot", 100, 15, 3, 0.65f, chickenFists);
 
 	//-----------------------------------------------------------------------
 	// Create Keys
@@ -206,7 +206,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	
 	//Guard Room Encounter: Initialization
 	EnemyEncounter secondRoomEncounter1;
-	secondRoomEncounter1.addEnemy(goblin);
+	secondRoomEncounter1.addEnemy(chicken);
 	secondRoomEncounter1.addEnemy(troll);
 	secondRoomEncounter1.addDrop(make_shared<Key>(guardRoomKey));
 
