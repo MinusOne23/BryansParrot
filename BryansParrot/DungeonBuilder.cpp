@@ -156,11 +156,34 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// ...
 	// 
 	//-----------------------------------------------------------------------
-	Weapon chickenFists("Goblin Fists", 0.1f, 1.5f);
-	chickenFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+	
+	//Enemy Weapons
+	Weapon chickenHead("Chicken Head", 0.1f, 1.5f);
+	chickenHead.addAttackMove(AttackMove("Headbutt", 5, 10, 1, 0.9f));
 
-	Weapon turkeyFists("Turkey Firsts", 0.1f, 1.5f);
-	turkeyFists.addAttackMove(AttackMove("Punch", 5, 10, 1, 0.9f));
+	Weapon birdLegs("Bird Legs", 0.1f, 1.5f);
+	birdLegs.addAttackMove(AttackMove("Bicycle Kick", 5, 10, 1, 0.9f));
+
+	Weapon birdBeak("Turkey Beak", 0.1f, 1.5f);
+	birdBeak.addAttackMove(AttackMove("Peck", 5, 10, 1, 0.9f));
+
+	Weapon birdWings("Vulture Wings", 0.1f, 1.5f);
+	birdWings.addAttackMove(AttackMove("Fly", 5, 10, 1, 0.9f));
+
+	Weapon birdCharge("Hatred", 0.1f, 1.5f);
+	birdCharge.addAttackMove(AttackMove("Charge", 5, 10, 1, 0.9f));
+
+	Weapon birdScreach("Microphone", 0.1f, 1.5f);
+	birdScreach.addAttackMove(AttackMove("Song", 5, 10, 1, 0.9f));
+
+	Weapon birdModel("Beauty", 0.1f, 1.5f);
+	birdModel.addAttackMove(AttackMove("Attract", 5, 10, 1, 0.9f));
+
+	Weapon birdDive("Crane Wings", 0.1f, 1.5f);
+	birdDive.addAttackMove(AttackMove("Dive", 5, 10, 1, 0.9f));
+
+	Weapon birdScratch("Talons", 0.1f, 1.5f);
+	birdWings.addAttackMove(AttackMove("Rampage", 5, 10, 1, 0.9f));
 
 	Weapon knife("knife", 0.25f, 1.65f);
 	knife.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
@@ -173,17 +196,17 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// Enemy [EnemyName]("[Name]", [MaxHealth], [Speed], [Stamina], [DodgeChance], [DefaultWeapon])
 	//-----------------------------------------------------------------------
-	Enemy chicken("Chicken", 100, 5, 2, 0.5f, chickenFists);
-	Enemy turkey("Turkey", 100, 5, 2, 0.5f, turkeyFists);
-	Enemy flamingo("Flamingo", 100, 5, 2, 0.5f, turkeyFists);
-	Enemy crane("Crane", 100, 5, 2, 0.5f, turkeyFists);
-	Enemy condor("Andian Condor", 100, 5, 2, 0.5f, turkeyFists);
-	Enemy vulture("Vulture", 100, 5, 2, 0.5f, turkeyFists);
-	Enemy kingVulture("King Vulture", 100, 5, 2, 0.5f, turkeyFists);
-	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, chickenFists);
-	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, chickenFists);
-	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, chickenFists);
-	Enemy boss("Parrot", 100, 15, 3, 0.65f, chickenFists);
+	Enemy chicken("Chicken", 100, 5, 2, 0.5f, chickenHead);
+	Enemy turkey("Turkey", 100, 5, 2, 0.5f, birdBeak);
+	Enemy flamingo("Flamingo", 100, 5, 2, 0.5f, birdModel);
+	Enemy crane("Crane", 100, 5, 2, 0.5f, birdDive);
+	Enemy condor("Andian Condor", 100, 5, 2, 0.5f, birdWings);
+	Enemy vulture("Vulture", 100, 5, 2, 0.5f, birdWings);
+	Enemy kingVulture("King Vulture", 100, 5, 2, 0.5f, birdWings);
+	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, birdLegs);
+	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, birdCharge);
+	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, birdScreach);
+	Enemy boss("Parrot", 100, 15, 3, 0.65f, birdScratch);
 
 	//-----------------------------------------------------------------------
 	// Create Keys
