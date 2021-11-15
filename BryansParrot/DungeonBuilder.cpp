@@ -175,6 +175,10 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 	Enemy chicken("Chicken", 100, 5, 2, 0.5f, chickenFists);
 	Enemy turkey("Turkey", 100, 5, 2, 0.5f, turkeyFists);
+	Enemy flamingo("Flamingo", 100, 5, 2, 0.5f, turkeyFists);
+	Enemy crane("Crane", 100, 5, 2, 0.5f, turkeyFists);
+	Enemy condor("Andian Condor", 100, 5, 2, 0.5f, turkeyFists);
+	Enemy vulture("Vulture", 100, 5, 2, 0.5f, turkeyFists);
 	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, chickenFists);
 	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, chickenFists);
 	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, chickenFists);
@@ -221,8 +225,28 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//Guard Room Encounter: Initialization
 	EnemyEncounter guardRoomEncounter;
 	guardRoomEncounter.addEnemy(chicken);
-	guardRoomEncounter.addEnemy(turkey);
 	guardRoomEncounter.addDrop(make_shared<Key>(guardRoomKey));
+
+	//East Corridor Encounter: Initialization
+	EnemyEncounter eastCorridorEncounter;
+	eastCorridorEncounter.addEnemy(turkey);
+
+	//Wearable Treasure Encounter: Initialization
+	EnemyEncounter wearableTreasureEncounter1;
+	EnemyEncounter wearableTreasureEncounter2;
+	EnemyEncounter wearableTreasureEncounter3;
+
+	//Guard Room Encounter: Initialization
+
+	//Guard Room Encounter: Initialization
+
+	//Guard Room Encounter: Initialization
+
+	//Guard Room Encounter: Initialization
+
+	//Guard Room Encounter: Initialization
+
+	//Guard Room Encounter: Initialization
 
 	//MiniWest Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter1;
@@ -270,26 +294,46 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// East Corridor Init
 	eastCorridor.addEnemyEncounter(eastCorridorEncounter);
 
+	// Safe Room East Init
+	eastSafeRoom.addItem(make_shared<Potion>(lPotion));
+
 	// Wearable Treasure Init
-	wearableTreasure.addEnemyEncounter(wearableTreasureEcounter1);
-	wearableTreasure.addEnemyEncounter(wearableTreasureEcounter2);
-	wearableTreasure.addEnemyEncounter(wearableTreasureEcounter3);
+	wearableTreasure.addEnemyEncounter(wearableTreasureEncounter1);
+	wearableTreasure.addEnemyEncounter(wearableTreasureEncounter2);
+	wearableTreasure.addEnemyEncounter(wearableTreasureEncounter3);
 	
 	// CondorLair Init
 	condorLair.addEnemyEncounter(CondorLairEncounter);
 	condorLair.addItem(make_shared<Key>(condorRoomKey));
 
-	//West Corridor
+	// Cavernous Chasm Init
+	// Mini Boss East Room Init
+	cavernousChasm.addEnemyEncounter(miniBossEastEncounter1);
 
-	//PickledCraneRoom
+	// West Corridor Init
+	westCorridorRoom.addEnemyEncounter(westCorridorRoomEcounter);
+
+	// Safe Room West Init
+	safeRoomWest.addItem(make_shared<Potion>(lPotion));
+
+	// Usable Treasure Room Init
+	usableTreasureRoom.addEnemyEncounter(usableTreasureRoomEncounter1);
+	usableTreasureRoom.addEnemyEncounter(usableTreasureRoomEncounter2);
+	usableTreasureRoom.addEnemyEncounter(usableTreasureRoomEncounter3);
+
+	// Vulture Surprise Room Init
+	vultureSurpriseRoom.addEnemyEncounter(usableTreasureRoomEncounter);
+
+	//Pickled Crane Room Init
 	pickledCraneRoom.addItem(make_shared<Key>(secretRoomKey));
+	pickledCraneRoom.addEnemyEncounter(pickledCraneRoomEncounter);
+
+	// Guessing Room Init
+	guessingRoom.addEnemyEncounter(guessingRoomEncounter);
 
 	// CassoCare Room Init
 	// Mini Boss West Room Init
 	cassoCareRoom.addEnemyEncounter(miniBossWestEncounter1);
-	// Cavernous Chasm Init
-	// Mini Boss East Room Init
-	cavernousChasm.addEnemyEncounter(miniBossEastEncounter1);
 
 	// Bryans Parrot Init
 	// Main Boss Room Init
