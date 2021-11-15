@@ -242,6 +242,11 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	bbGun.setSpeedBoost(2);
 	bbGun.setStaminaBoost(2);
 
+	Weapon elephantGun("Elephent Gun", 0.25f, 1.65f);
+	elephantGun.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	elephantGun.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	elephantGun.setSpeedBoost(2);
+	elephantGun.setStaminaBoost(2);
 
 
 	//-----------------------------------------------------------------------
@@ -398,7 +403,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 
 	// JailCell Init
-	jailCell.addItem(make_shared<Weapon>(knife));
+	jailCell.addItem(make_shared<Weapon>(pipe));
 	jailCell.addItem(make_shared<Key>(jailKey));
 
 	// GuardRoom Init
