@@ -205,10 +205,10 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 	
 	//Guard Room Encounter: Initialization
-	EnemyEncounter secondRoomEncounter1;
-	secondRoomEncounter1.addEnemy(chicken);
-	secondRoomEncounter1.addEnemy(turkey);
-	secondRoomEncounter1.addDrop(make_shared<Key>(guardRoomKey));
+	EnemyEncounter guardRoomEncounter;
+	guardRoomEncounter.addEnemy(chicken);
+	guardRoomEncounter.addEnemy(turkey);
+	guardRoomEncounter.addDrop(make_shared<Key>(guardRoomKey));
 
 	//MiniWest Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter1;
@@ -246,29 +246,40 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	jailCell.addItem(make_shared<Key>(jailKey));
 
 	// GuardRoom Init
-	guardRoom.addEnemyEncounter(secondRoomEncounter1);
+	guardRoom.addEnemyEncounter(guardRoomEncounter);
 
-	// ControlRoom Init
-	controlRoom.addItem(make_shared<Potion>(sPotion));
+	// ControlRoom Init	
+	// Mini Boss North Room Init
+	controlRoom.addEnemyEncounter(miniBossNorthEncounter1);
+	bryansParrot.addItem(make_shared<Potion>(lPotion));
 
+	// East Corridor Init
+	eastCorridor.addEnemyEncounter(eastCorridorEncounter);
+
+	// Wearable Treasure Init
+	wearableTreasure.addEnemyEncounter(wearableTreasureEcounter1);
+	wearableTreasure.addEnemyEncounter(wearableTreasureEcounter2);
+	wearableTreasure.addEnemyEncounter(wearableTreasureEcounter3);
+	
 	// CondorLair Init
+	condorLair.addEnemyEncounter(CondorLairEncounter);
 	condorLair.addItem(make_shared<Key>(condorRoomKey));
+
+	//West Corridor
 
 	//PickledCraneRoom
 	pickledCraneRoom.addItem(make_shared<Key>(secretRoomKey));
 
+	// CassoCare Room Init
 	// Mini Boss West Room Init
 	cassoCareRoom.addEnemyEncounter(miniBossWestEncounter1);
-
+	// Cavernous Chasm Init
 	// Mini Boss East Room Init
 	cavernousChasm.addEnemyEncounter(miniBossEastEncounter1);
 
-	// Mini Boss North Room Init
-	controlRoom.addEnemyEncounter(miniBossNorthEncounter1);
-
+	// Bryans Parrot Init
 	// Main Boss Room Init
 	bryansParrot.addEnemyEncounter(mainBossEcounter1);
-	bryansParrot.addItem(make_shared<Potion>(lPotion));
 
 	return allRooms;
 }
