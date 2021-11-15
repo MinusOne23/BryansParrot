@@ -158,38 +158,91 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 	
 	//Enemy Weapons
-	Weapon chickenHead("Chicken Head", 0.1f, 1.5f);
-	chickenHead.addAttackMove(AttackMove("Headbutt", 5, 10, 1, 0.9f));
+	Weapon chickenHead("Chicken Head", 0.2f, 1.5f);
+	chickenHead.addAttackMove(AttackMove("Headbutt", 5, 10, 1, 0.8f));
 
-	Weapon birdLegs("Bird Legs", 0.1f, 1.5f);
-	birdLegs.addAttackMove(AttackMove("Bicycle Kick", 5, 10, 1, 0.9f));
+	Weapon birdLegs("Bird Legs", 0.3f, 2.0f);
+	birdLegs.addAttackMove(AttackMove("Bicycle Kick", 4, 12, 1, 0.9f));
 
 	Weapon birdBeak("Turkey Beak", 0.1f, 1.5f);
-	birdBeak.addAttackMove(AttackMove("Peck", 5, 10, 1, 0.9f));
+	birdBeak.addAttackMove(AttackMove("Peck", 10, 15, 2, 0.85f));
 
-	Weapon birdWings("Vulture Wings", 0.1f, 1.5f);
-	birdWings.addAttackMove(AttackMove("Fly", 5, 10, 1, 0.9f));
+	Weapon birdWings("Vulture Wings", 0.3f, 1.75f);
+	birdWings.addAttackMove(AttackMove("Fly", 10, 20, 2, 0.9f));
 
-	Weapon birdCharge("Hatred", 0.1f, 1.5f);
-	birdCharge.addAttackMove(AttackMove("Charge", 5, 10, 1, 0.9f));
+	Weapon birdCharge("Hatred", 0.8f, 2.0f);
+	birdCharge.addAttackMove(AttackMove("Charge", 25, 40, 4, 0.8f));
 
-	Weapon birdScreach("Microphone", 0.1f, 1.5f);
-	birdScreach.addAttackMove(AttackMove("Song", 5, 10, 1, 0.9f));
+	Weapon birdScreach("Microphone", 0.2f, 1.5f);
+	birdScreach.addAttackMove(AttackMove("Song", 15, 30, 2, 1.0f));
 
-	Weapon birdModel("Beauty", 0.1f, 1.5f);
-	birdModel.addAttackMove(AttackMove("Attract", 5, 10, 1, 0.9f));
+	Weapon birdModel("Beauty", 0.2f, 1.5f);
+	birdModel.addAttackMove(AttackMove("Attract", 5, 10, 2, 0.9f));
 
-	Weapon birdDive("Crane Wings", 0.1f, 1.5f);
-	birdDive.addAttackMove(AttackMove("Dive", 5, 10, 1, 0.9f));
+	Weapon birdDive("Crane Wings", 0.3f, 1.75f);
+	birdDive.addAttackMove(AttackMove("Dive", 15, 25, 2, 0.9f));
 
-	Weapon birdScratch("Talons", 0.1f, 1.5f);
-	birdWings.addAttackMove(AttackMove("Rampage", 5, 10, 1, 0.9f));
+	Weapon birdScratch("Talons", 0.5f, 1.5f);
+	birdScratch.addAttackMove(AttackMove("Rampage", 8, 12, 1, 0.9f));
+	//-----------------------------------------------------------------------
+// Create Weapons
+// 
+// Weapon [WeaponName]("[Name]", [CritChance], [CritMultiplier]
+// [WeaponName].addAttackMove(AttackMove("[Name]", [MinDmg], [MaxDmg], [Stamina], [Accuracy])
+// ...
+// 
+//-----------------------------------------------------------------------
 
+	//Player Weapons
 	Weapon knife("knife", 0.25f, 1.65f);
-	knife.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	knife.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	knife.addAttackMove(AttackMove("Puncture", 20, 30, 1, 0.20f));
+	knife.addAttackMove(AttackMove("Slash", 35, 50, 3, .90f));
 	knife.setSpeedBoost(2);
 	knife.setStaminaBoost(2);
+
+	Weapon pipe("Pipe", 0.25f, 1.65f);
+	pipe.addAttackMove(AttackMove("Swing", 20, 30, 1, 0.95f));
+	pipe.addAttackMove(AttackMove("Bash", 35, 50, 3, 0.75f));
+	pipe.setSpeedBoost(2);
+	pipe.setStaminaBoost(2);
+
+	Weapon sword("Sword", 0.25f, 1.65f);
+	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	sword.setSpeedBoost(2);
+	sword.setStaminaBoost(2);
+
+	Weapon bat("Bat", 0.25f, 1.65f);
+	bat.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	bat.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	bat.setSpeedBoost(2);
+	bat.setStaminaBoost(2);
+
+	Weapon shovel("shovel", 0.25f, 1.65f);
+	shovel.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	shovel.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	shovel.setSpeedBoost(2);
+	shovel.setStaminaBoost(2);
+
+	Weapon wrench("Wrench", 0.25f, 1.65f);
+	wrench.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	wrench.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	wrench.setSpeedBoost(2);
+	wrench.setStaminaBoost(2);
+
+	Weapon slingShot("Slingshot", 0.25f, 1.65f);
+	slingShot.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	slingShot.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	slingShot.setSpeedBoost(2);
+	slingShot.setStaminaBoost(2);
+
+	Weapon bbGun("BB Gunn", 0.25f, 1.65f);
+	bbGun.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	bbGun.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	bbGun.setSpeedBoost(2);
+	bbGun.setStaminaBoost(2);
+
+
 
 	//-----------------------------------------------------------------------
 	// Create Enemies
@@ -197,15 +250,15 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// Enemy [EnemyName]("[Name]", [MaxHealth], [Speed], [Stamina], [DodgeChance], [DefaultWeapon])
 	//-----------------------------------------------------------------------
 	Enemy chicken("Chicken", 100, 5, 2, 0.5f, chickenHead);
-	Enemy turkey("Turkey", 100, 5, 2, 0.5f, birdBeak);
-	Enemy flamingo("Flamingo", 100, 5, 2, 0.5f, birdModel);
-	Enemy crane("Crane", 100, 5, 2, 0.5f, birdDive);
-	Enemy condor("Andian Condor", 100, 5, 2, 0.5f, birdWings);
-	Enemy vulture("Vulture", 100, 5, 2, 0.5f, birdWings);
-	Enemy kingVulture("King Vulture", 100, 5, 2, 0.5f, birdWings);
+	Enemy turkey("Turkey", 100, 8, 2, 0.5f, birdBeak);
+	Enemy flamingo("Flamingo", 100, 10, 2, 0.5f, birdModel);
+	Enemy crane("Crane", 100, 8, 4, 0.5f, birdDive);
+	Enemy condor("Andian Condor", 100, 15, 2, 0.5f, birdWings);
+	Enemy vulture("Vulture", 100, 10, 2, 0.5f, birdWings);
+	Enemy kingVulture("King Vulture", 100, 12, 2, 0.5f, birdWings);
 	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, birdLegs);
-	Enemy miniEast("Ostrich", 100, 5, 4, 0.25f, birdCharge);
-	Enemy miniNorth("ShoeBill", 100, 10, 2, 0.5f, birdScreach);
+	Enemy miniEast("Ostrich", 100, 4, 4, 0.25f, birdCharge);
+	Enemy miniNorth("ShoeBill", 100, 10, 4, 0.5f, birdScreach);
 	Enemy boss("Parrot", 100, 15, 3, 0.65f, birdScratch);
 
 	//-----------------------------------------------------------------------
@@ -315,16 +368,18 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	EnemyEncounter miniBossWestEncounter1;
 	miniBossWestEncounter1.addEnemy(miniWest);
 	miniBossWestEncounter1.addDrop(make_shared<Key>(mainBossKey));
+	miniBossWestEncounter1.addDrop(make_shared<Potion>(lPotion));
 
 	//MiniEast Room Encounter: INitialization
 	EnemyEncounter miniBossEastEncounter1;
 	miniBossEastEncounter1.addEnemy(miniEast);
 	miniBossEastEncounter1.addDrop(make_shared<Key>(mainBossKey1));
-
+	miniBossEastEncounter1.addDrop(make_shared<Potion>(lPotion));
 	//MiniNorth Room Encounter: INitialization
 	EnemyEncounter miniBossNorthEncounter1;
 	miniBossNorthEncounter1.addEnemy(miniNorth);
 	miniBossNorthEncounter1.addDrop(make_shared<Key>(mainBossKey2));
+	miniBossNorthEncounter1.addDrop(make_shared<Potion>(lPotion));
 
 	//Main Boss Room Encounter: Initialization
 	EnemyEncounter mainBossEcounter1;
@@ -352,7 +407,6 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// ControlRoom Init	
 	// Mini Boss North Room Init
 	controlRoom.addEnemyEncounter(miniBossNorthEncounter1);
-	bryansParrot.addItem(make_shared<Potion>(lPotion));
 
 	// East Corridor Init
 	eastCorridor.addEnemyEncounter(eastCorridorEncounter);
