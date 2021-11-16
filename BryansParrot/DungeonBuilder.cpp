@@ -212,9 +212,9 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.setSpeedBoost(2);
 	sword.setStaminaBoost(2);
 
-	Weapon bat("Bat", 0.65f, 2.0f);
-	bat.addAttackMove(AttackMove("Swing", 30, 40, 1, 0.80f));
-	bat.addAttackMove(AttackMove("Bash", 40, 60, 3, 0.65f));
+	Weapon bat("Bat", 0.65f, 1.75f);
+	bat.addAttackMove(AttackMove("Swing", 30, 40, 3, 0.80f));
+	bat.addAttackMove(AttackMove("Bash", 40, 60, 3, 0.60f));
 	bat.setSpeedBoost(1);
 	bat.setStaminaBoost(2);
 
@@ -231,8 +231,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	wrench.setStaminaBoost(3);
 
 	Weapon slingShot("Slingshot", 0.50f, 1.40f);
-	slingShot.addAttackMove(AttackMove("Shoot", 30, 40, 2, 0.85f));
-	slingShot.addAttackMove(AttackMove("Trickshot", 45, 65, 3, 0.50f));
+	slingShot.addAttackMove(AttackMove("Shoot", 20, 30, 2, 0.85f));
+	slingShot.addAttackMove(AttackMove("Trickshot", 35, 45, 3, 0.50f));
 	slingShot.setSpeedBoost(2);
 	slingShot.setStaminaBoost(4);
 
@@ -308,11 +308,13 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	EnemyEncounter guardRoomEncounter;
 	guardRoomEncounter.addEnemy(chicken);
 	guardRoomEncounter.addDrop(make_shared<Key>(guardRoomKey));
+	guardRoomEncounter.addDrop(make_shared<Weapon>(wrench));
 
 	//East Corridor Encounter: Initialization
 	EnemyEncounter eastCorridorEncounter;
 	eastCorridorEncounter.addEnemy(turkey);
 	eastCorridorEncounter.addEnemy(chicken);
+	eastCorridorEncounter.addDrop(make_shared<Weapon>(knife));
 
 	//Wearable Treasure Encounter: Initialization
 	EnemyEncounter wearableTreasureEncounter1;
@@ -332,12 +334,15 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	condorLairEncounter.addEnemy(condor);
 	condorLairEncounter.addEnemy(turkey);
 	condorLairEncounter.addDrop(make_shared<Key>(condorRoomKey));
+	condorLairEncounter.addDrop(make_shared<Weapon>(slingShot));
 
 	//West Corridor Encounter: Initialization
 	EnemyEncounter westCorridorRoomEncounter;
 	westCorridorRoomEncounter.addEnemy(flamingo);
 	westCorridorRoomEncounter.addEnemy(turkey);
 	westCorridorRoomEncounter.addEnemy(chicken);
+	westCorridorRoomEncounter.addDrop(make_shared<Weapon>(sword));
+	westCorridorRoomEncounter.addDrop(make_shared<Weapon>(shovel));
 
 	//Usable Treasure Encounter: Initialization
 	EnemyEncounter usableTreasureRoomEncounter1;
@@ -351,12 +356,14 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	EnemyEncounter usableTreasureRoomEncounter3;
 	usableTreasureRoomEncounter3.addEnemy(condor);
 	usableTreasureRoomEncounter3.addEnemy(crane);
+	usableTreasureRoomEncounter3.addDrop(make_shared<Weapon>(bbGun));
 
 	//Vulture Surprise Encounter: Initialization
 	EnemyEncounter vultureSurpriseRoomEncounter;
 	vultureSurpriseRoomEncounter.addEnemy(vulture);
 	vultureSurpriseRoomEncounter.addEnemy(condor);
 	vultureSurpriseRoomEncounter.addEnemy(kingVulture);
+	vultureSurpriseRoomEncounter.addDrop(make_shared<Weapon>(bat));
 
 	//Pickled Crane Room Encounter: Initialization
 	EnemyEncounter pickledCraneRoomEncounter;
