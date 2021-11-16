@@ -1,5 +1,6 @@
 #include "DungeonBuilder.h"
 #include "EnemyEncounter.h"
+#include "Shield.h"
 
 vector<string> DungeonBuilder::roomNames;
 
@@ -103,6 +104,11 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.setSpeedBoost(2);
 	sword.setStaminaBoost(2);
 
+	Shield shield("Shield");
+	shield.setBlockMove(Shield::BlockType::SINGLE, { 25, 35 });
+	shield.setBlockMove(Shield::BlockType::GROUP, { 10, 15 });
+	shield.setStaminaBoost(2);
+
 	//-----------------------------------------------------------------------
 	// Create Enemies
 	// 
@@ -189,6 +195,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// First Room Init
 	firstRoom.addItem(make_shared<Weapon>(sword));
 	firstRoom.addItem(make_shared<Key>(secondNorthKey));
+	firstRoom.addItem(make_shared<Shield>(shield));
 
 	// Second Room Init
 	secondRoom.addEnemyEncounter(secondRoomEncounter1);

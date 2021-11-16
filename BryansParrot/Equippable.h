@@ -14,6 +14,7 @@ public:
 	bool isEquipped = false;
 
 	virtual string getDisplay() const;
+	virtual string equipmentDisplay(string title, string linePrefix = "") const;
 
 	void setStaminaBoost(int boost);
 	void setSpeedBoost(int boost);

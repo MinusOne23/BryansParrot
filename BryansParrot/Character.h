@@ -8,6 +8,7 @@
 #include "Health.h"
 #include "Weapon.h"
 #include "Potion.h"
+#include "Shield.h"
 
 using namespace std;
 
@@ -49,6 +50,7 @@ protected:
 		Weapon baseWeapon;
 
 		shared_ptr<Weapon> mainWeapon;
+		shared_ptr<Shield> shield;
 	};
 
 	Health health;

@@ -66,8 +66,8 @@ public:
 	float getCritChance() const;
 	float getCritMult() const;
 
-	virtual string getDisplay() const;
-	void displayAttacks(string linePrefix = "") const;
+	virtual string equipmentDisplay(string title, string linePrefix = "");
+	string attacksDisplay(string linePrefix = "") const;
 
 private:
 

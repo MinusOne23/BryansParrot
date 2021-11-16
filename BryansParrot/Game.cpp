@@ -295,4 +295,6 @@ void Game::gameInteract()
 		}
 	}
 	}
+
+	cout << endl;
 };

@@ -37,7 +37,7 @@ AttackMove::DamageResult AttackMove::getDamage(float critChance, float critMult)
 	if (!result.isHit)
 		return result;
 
-	result.damage = rand() % (maxDamage - minDamage + 1) + minDamage;
+	result.damage = Utils::randInt(minDamage, maxDamage);
 
 	result.isCritical = Utils::chanceTest(critChance);
 

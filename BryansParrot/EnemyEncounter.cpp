@@ -435,7 +435,7 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 			cout << "\t\tAttack Types:" << endl;
 			cout << "\t------------------------------------------\n";
 
-			activeWeapon.displayAttacks("\t - ");
+			activeWeapon.attacksDisplay("\t - ");
 
 			cout << "\t===========================================\n";
 
@@ -507,7 +507,7 @@ void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 			cout << "\t\tAttack Types:" << endl;
 			cout << "\t------------------------------------------\n";
 
-			activeWeapon.displayAttacks("\t - ");
+			activeWeapon.attacksDisplay("\t - ");
 
 			cout << "\t - Cancel" << endl;
 			cout << "\t===========================================\n";

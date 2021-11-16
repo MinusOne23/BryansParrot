@@ -219,8 +219,6 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 	if (inputResult.actionType != ActionType::ERROR)
 		addActionUsed(inputResult.actionStr);
 
-	cout << endl;
-
 	return inputResult;
 }
 
