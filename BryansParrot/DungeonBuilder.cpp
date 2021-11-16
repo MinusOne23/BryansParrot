@@ -194,59 +194,59 @@ map<string, Room> DungeonBuilder::buildDungeon()
 //-----------------------------------------------------------------------
 
 	//Player Weapons
-	Weapon knife("knife", 0.25f, 1.65f);
-	knife.addAttackMove(AttackMove("Puncture", 20, 30, 1, 0.20f));
-	knife.addAttackMove(AttackMove("Slash", 35, 50, 3, .90f));
-	knife.setSpeedBoost(2);
-	knife.setStaminaBoost(2);
+	Weapon knife("knife", 0.55f, 1.80f);
+	knife.addAttackMove(AttackMove("Puncture", 35, 50, 2, 0.30f));
+	knife.addAttackMove(AttackMove("Slash", 35, 50, 1, 0.60f));
+	knife.setSpeedBoost(5);
+	knife.setStaminaBoost(4);
 
-	Weapon pipe("Pipe", 0.25f, 1.65f);
-	pipe.addAttackMove(AttackMove("Swing", 20, 30, 1, 0.95f));
-	pipe.addAttackMove(AttackMove("Bash", 35, 50, 3, 0.75f));
+	Weapon pipe("Pipe", 0.30f, 1.40f);
+	pipe.addAttackMove(AttackMove("Swing", 10, 20, 1, 0.80f));
+	pipe.addAttackMove(AttackMove("Bash", 35, 50, 3, 0.70f));
 	pipe.setSpeedBoost(2);
 	pipe.setStaminaBoost(2);
 
-	Weapon sword("Sword", 0.25f, 1.65f);
+	Weapon sword("Sword", 0.70f, 1.65f);
 	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
 	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
 	sword.setSpeedBoost(2);
 	sword.setStaminaBoost(2);
 
-	Weapon bat("Bat", 0.25f, 1.65f);
-	bat.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	bat.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
-	bat.setSpeedBoost(2);
+	Weapon bat("Bat", 0.65f, 2.0f);
+	bat.addAttackMove(AttackMove("Swing", 30, 40, 1, 0.80f));
+	bat.addAttackMove(AttackMove("Bash", 40, 60, 3, 0.65f));
+	bat.setSpeedBoost(1);
 	bat.setStaminaBoost(2);
 
-	Weapon shovel("shovel", 0.25f, 1.65f);
-	shovel.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	shovel.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
-	shovel.setSpeedBoost(2);
+	Weapon shovel("Shovel", 0.70f, 1.5f);
+	shovel.addAttackMove(AttackMove("Swing", 30, 40, 3, 0.75f));
+	shovel.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.60f));
+	shovel.setSpeedBoost(1);
 	shovel.setStaminaBoost(2);
 
 	Weapon wrench("Wrench", 0.25f, 1.65f);
-	wrench.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	wrench.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
-	wrench.setSpeedBoost(2);
-	wrench.setStaminaBoost(2);
+	wrench.addAttackMove(AttackMove("Smash", 15, 25, 2, 0.80f));
+	wrench.addAttackMove(AttackMove("Swing", 35, 50, 2, 0.60f));
+	wrench.setSpeedBoost(3);
+	wrench.setStaminaBoost(3);
 
-	Weapon slingShot("Slingshot", 0.25f, 1.65f);
-	slingShot.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	slingShot.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	Weapon slingShot("Slingshot", 0.50f, 1.40f);
+	slingShot.addAttackMove(AttackMove("Shoot", 30, 40, 2, 0.85f));
+	slingShot.addAttackMove(AttackMove("Trickshot", 45, 65, 3, 0.50f));
 	slingShot.setSpeedBoost(2);
-	slingShot.setStaminaBoost(2);
+	slingShot.setStaminaBoost(4);
 
-	Weapon bbGun("BB Gunn", 0.25f, 1.65f);
-	bbGun.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	bbGun.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
-	bbGun.setSpeedBoost(2);
-	bbGun.setStaminaBoost(2);
+	Weapon bbGun("BB Gunn", 0.50f, 1.80f);
+	bbGun.addAttackMove(AttackMove("Shoot", 35, 45, 2, 0.95f));
+	bbGun.addAttackMove(AttackMove("Pellet", 60, 80, 4, 0.75f));
+	bbGun.setSpeedBoost(1);
+	bbGun.setStaminaBoost(3);
 
-	Weapon elephantGun("Elephent Gun", 0.25f, 1.65f);
-	elephantGun.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
-	elephantGun.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
-	elephantGun.setSpeedBoost(2);
-	elephantGun.setStaminaBoost(2);
+	Weapon elephantGun("Elephent Gun", 0.70f, 2.0f);
+	elephantGun.addAttackMove(AttackMove("Shoot", 60, 75, 2, 0.95f));
+	elephantGun.addAttackMove(AttackMove("Shotgun", 80, 110, 4, 0.80f));
+	elephantGun.setSpeedBoost(1);
+	elephantGun.setStaminaBoost(3);
 
 
 	//-----------------------------------------------------------------------
