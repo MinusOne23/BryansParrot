@@ -309,6 +309,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	guardRoomEncounter.addEnemy(chicken);
 	guardRoomEncounter.addDrop(make_shared<Key>(guardRoomKey));
 	guardRoomEncounter.addDrop(make_shared<Weapon>(wrench));
+	guardRoomEncounter.addDrop(make_shared<Potion>(sPotion));
 
 	//East Corridor Encounter: Initialization
 	EnemyEncounter eastCorridorEncounter;
