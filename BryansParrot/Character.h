@@ -53,6 +53,8 @@ protected:
 		shared_ptr<Shield> shield;
 	};
 
+	Character(Health _health, string _name, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon);
+
 	Health health;
 	string name;
 	int baseSpeed;
@@ -62,9 +64,8 @@ protected:
 
 	int staminaUsed = 0;
 
-public:
 
-	Character(Health _health, string _name, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon);
+public:
 
 	int getCurrentHealth() const;
 	int getMaxHealth() const;
@@ -78,8 +79,8 @@ public:
 
 	bool isDead() const;
 	string getName() const;
-	Equipment getEquipment()const;
 	Weapon getActiveWeapon() const;
+	const shared_ptr<Shield> getShield() const;
 
 	virtual void damage(int amt);
 	virtual void heal(int amt);

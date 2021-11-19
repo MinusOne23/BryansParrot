@@ -105,8 +105,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.setStaminaBoost(2);
 
 	Shield shield("Shield");
-	shield.setBlockMove(Shield::BlockType::SINGLE, { 25, 35 });
-	shield.setBlockMove(Shield::BlockType::GROUP, { 10, 15 });
+	shield.setBlockMove(Shield::BlockType::SINGLE, { 25, 35, 1 });
+	shield.setBlockMove(Shield::BlockType::GROUP, { 20, 30, 1 });
 	shield.setStaminaBoost(2);
 
 	//-----------------------------------------------------------------------

@@ -66,7 +66,7 @@ public:
 	float getCritChance() const;
 	float getCritMult() const;
 
-	virtual string equipmentDisplay(string title, string linePrefix = "");
+	virtual string equipmentDisplay(string title = "", string linePrefix = "") const override;
 	string attacksDisplay(string linePrefix = "") const;
 
 private:

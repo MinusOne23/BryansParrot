@@ -27,14 +27,14 @@ string Character::getName() const
 	return name;
 }
 
-Character::Equipment Character::getEquipment() const
-{
-	return equipment;
-}
-
 Weapon Character::getActiveWeapon() const
 {
 	return equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
+}
+
+const shared_ptr<Shield> Character::getShield() const
+{
+	return equipment.shield;
 }
 
 void Character::damage(int amt)

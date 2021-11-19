@@ -178,6 +178,24 @@ bool Player::findAndUnequip(const string& itemName)
 	return false;
 }
 
+bool Player::findAndInspect(const string& itemName)
+{
+	int index = inventory.find(itemName);
+
+	if (index == -1)
+	{
+		cout << "That item is not in your inventory." << endl;
+		return false;
+	}
+
+	cout << endl;
+	cout << "===========================================" << endl;
+	cout << inventory[index]->inspectDisplay();
+	cout << "===========================================" << endl;
+
+	return true;
+}
+
 bool Player::isDev()
 {
 	return m_isDev;

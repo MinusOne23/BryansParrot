@@ -11,13 +11,22 @@ string Equippable::equipmentDisplay(string title, string linePrefix) const
 {
 	stringstream ss;
 
-	ss << linePrefix << title << ": " << getName() << endl;
+	if(title == "")
+		ss << linePrefix << getName() << endl;
+	else
+		ss << linePrefix << title << ": " << getName() << endl;
+
 	if (speedBoost)
 		ss << linePrefix << "   Speed +" << speedBoost << endl;
 	if (staminaBoost)
 		ss << linePrefix << "   Stamina +" << staminaBoost << endl;
 
 	return ss.str();
+}
+
+string Equippable::inspectDisplay() const
+{
+	return equipmentDisplay();
 }
 
 void Equippable::setStaminaBoost(int boost)

@@ -128,10 +128,10 @@ private:
 
 	int getEnemyIndex(const string& enemyName) const;
 	int getDodgeIndex(const string& enemyName) const;
-	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult, bool dodgeAttempted = false, bool dodgeSuccess = false) const;
+	void displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult, int blockAmt, bool dodgeAttempted, bool dodgeSuccess) const;
 	void displayTurnStart(const Character& curChar) const;
 	void displayDodgeAttempts() const;
-	void enemyTurn(Enemy& enemy, Player& player);
+	void enemyTurn(Enemy& enemy, Player& player, bool shouldBlock);
 	void playerTurn(Player& player, EncounterResult& result);
 
 	void tick(Player& player, EncounterResult& result);
@@ -148,6 +148,10 @@ private:
 	vector<int> enemyTimes;
 
 	vector<string> playerDodges;
+	
+	bool isBlocking = false;	// whether or not player is currently blocking
+	int blockTargetIndex = -1;	// -1 for group block, otherwise enemy index
+	int blockLeft = 0;			// amount of block left in turn
 };
 
 #endif // ENEMY_ENCOUNTER_H

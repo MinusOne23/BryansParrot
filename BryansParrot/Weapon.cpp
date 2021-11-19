@@ -51,7 +51,7 @@ float Weapon::getCritMult() const
 	return critMult;
 }
 
-string Weapon::equipmentDisplay(string title, string linePrefix)
+string Weapon::equipmentDisplay(string title, string linePrefix) const
 {
 	stringstream ss;
 	ss << Equippable::equipmentDisplay(title, linePrefix);

@@ -34,6 +34,7 @@ public:
 	inline string getName() const { return name; }
 
 	virtual string getDisplay() const = 0;
+	virtual string inspectDisplay() const { return getDisplay() + "\n"; }
 
 protected:
 	Item(string _name) : name(_name) {};
