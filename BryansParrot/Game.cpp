@@ -260,10 +260,10 @@ void Game::gameInteract()
 		if (item != nullptr)
 		{
 			currentRoom->addItem(item);
+			inputResult.succeeded = true;
 		}
 		else
 		{
-			cout << "Invalid item to drop" << endl;
 			inputResult.succeeded = false;
 		}
 		break;
