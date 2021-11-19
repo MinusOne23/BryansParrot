@@ -83,6 +83,7 @@ public:
 		UNEQUIP,
 		HELP,
 		ENABLE_DEV_MODE,
+		READ,
 
 		//EncounterSpecific
 		ATTACK,

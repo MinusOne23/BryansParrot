@@ -8,6 +8,7 @@
 #include "Health.h"
 #include "Weapon.h"
 #include "Potion.h"
+#include "Story.h"
 
 using namespace std;
 

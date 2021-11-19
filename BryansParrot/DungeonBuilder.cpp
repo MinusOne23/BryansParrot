@@ -294,6 +294,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
 
+	Story note1("Jail note", "What do i see");
+
 	//-----------------------------------------------------------------------
 	// Create Enemy Encounters
 	// 
@@ -413,6 +415,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// JailCell Init
 	jailCell.addItem(make_shared<Weapon>(pipe));
 	jailCell.addItem(make_shared<Key>(jailKey));
+	jailCell.addItem(make_shared<Story>(note1));
 
 	// GuardRoom Init
 	guardRoom.addEnemyEncounter(guardRoomEncounter);
