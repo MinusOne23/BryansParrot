@@ -8,19 +8,19 @@
 * --------------------------------------------------------------------------------------
 * Class Scope
 * --------------------------------------------------------------------------------------
-* Potion class for the player to find and be able to use to restore health
+* Story class for the player to find and be able to read notes
 *
 * --------------------------------------------------------------------------------------
 * Methods
 * --------------------------------------------------------------------------------------
 * getDisplay()
-*	returns the potion's name as its display
+*	returns the stories name as its display
 *
 * --------------------------------------------------------------------------------------
 * Variables
 * --------------------------------------------------------------------------------------
-* potionSize
-*	the amount of health the potion restores
+* StoryValue
+*	string that story will contain value
 *
 * --------------------------------------------------------------------------------------
 */
