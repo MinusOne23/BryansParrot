@@ -46,23 +46,39 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// Room& [RoomName] = allRooms.at("[CapsSensitiveRoomName]")
 	//-----------------------------------------------------------------------
 	Room& jailCell = allRooms.at("Jail Cell");
-	jailCell.setDescription("This is the jail room");
+	jailCell.setDescription("Jail Cell");
 	Room& guardRoom = allRooms.at("Guard Room"); 
+	guardRoom.setDescription("Guard Room");
 	Room& controlRoom = allRooms.at("Control Room");
+	controlRoom.setDescription("Control Room");
 	Room& eastCorridor = allRooms.at("East Corridor");
+	eastCorridor.setDescription("East Corridor");
 	Room& cavernousChasm = allRooms.at("Cavernous Chasm");
+	cavernousChasm.setDescription("Cavernous Chasm");
 	Room& bryansParrot = allRooms.at("Bryan's Parrot");
+	bryansParrot.setDescription("Bryan's Parrot");
 	Room& eastSafeRoom = allRooms.at("East Safe Room");
+	eastSafeRoom.setDescription("East Safe Room");
 	Room& wearableTreasure = allRooms.at("Wearable Treasure");
+	wearableTreasure.setDescription("Wearable Treasure");
 	Room& condorLair = allRooms.at("Condor Lair");
+	condorLair.setDescription("Condor Lair");
 	Room& emergence = allRooms.at("Emergence");
+	emergence.setDescription("Emergence");
 	Room& cassoCareRoom = allRooms.at("CassoCare Room");
+	cassoCareRoom.setDescription("CassoCare");
 	Room& guessingRoom = allRooms.at("Guessing Room");
+	guessingRoom.setDescription("Guessing Game");
 	Room& pickledCraneRoom = allRooms.at("Pickled Crane Room");
+	pickledCraneRoom.setDescription("Pickled Crane");
 	Room& vultureSurpriseRoom = allRooms.at("Vulture Surprise Room");
+	vultureSurpriseRoom.setDescription("Vulture Surprise");
 	Room& safeRoomWest = allRooms.at("Safe Room West");
+	safeRoomWest.setDescription("West Safe Room");
 	Room& westCorridorRoom = allRooms.at("West Corridor Room");
+	westCorridorRoom.setDescription("West Corridor");
 	Room& usableTreasureRoom = allRooms.at("Usable Treasure Room");
+	usableTreasureRoom.setDescription("Usable Treasure");
 
 	/*
 	*	Pickled Crane Room   <->   Guessing Room   <->   Casso Care Room
@@ -209,15 +225,15 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	Weapon sword("Sword", 0.70f, 1.65f);
 	sword.addAttackMove(AttackMove("Stab", 20, 30, 2, 0.95f));
-	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
+	sword.addAttackMove(AttackMove("Slash", 35, 50, 2, 0.75f));
 	sword.setSpeedBoost(2);
-	sword.setStaminaBoost(2);
+	sword.setStaminaBoost(3);
 
 	Weapon bat("Bat", 0.65f, 1.75f);
-	bat.addAttackMove(AttackMove("Swing", 30, 40, 3, 0.80f));
-	bat.addAttackMove(AttackMove("Bash", 40, 60, 3, 0.60f));
+	bat.addAttackMove(AttackMove("Swing", 30, 40, 2, 0.80f));
+	bat.addAttackMove(AttackMove("Bash", 40, 60, 2, 0.60f));
 	bat.setSpeedBoost(1);
-	bat.setStaminaBoost(2);
+	bat.setStaminaBoost(3);
 
 	Weapon shovel("Shovel", 0.70f, 1.5f);
 	shovel.addAttackMove(AttackMove("Swing", 30, 40, 3, 0.75f));
@@ -295,6 +311,11 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Potion mPotion("Medium Potion", 50);
 	Potion lPotion("Large Potion", 100);
 
+	//-----------------------------------------------------------------------
+	// Create Notes for rooms
+	// 
+	// Story [NoteName]("[Name]", "[message]")
+	//-----------------------------------------------------------------------
 	Story note1("Jail note", "What do i see");
 
 	//-----------------------------------------------------------------------
@@ -346,7 +367,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	westCorridorRoomEncounter.addEnemy(turkey);
 	westCorridorRoomEncounter.addEnemy(chicken);
 	westCorridorRoomEncounter.addDrop(make_shared<Weapon>(sword));
-	westCorridorRoomEncounter.addDrop(make_shared<Weapon>(shovel));
+	westCorridorRoomEncounter.addDrop(make_shared<Potion>(mPotion));
+	
 
 	//Usable Treasure Encounter: Initialization
 	EnemyEncounter usableTreasureRoomEncounter1;
@@ -361,6 +383,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	usableTreasureRoomEncounter3.addEnemy(condor);
 	usableTreasureRoomEncounter3.addEnemy(crane);
 	usableTreasureRoomEncounter3.addDrop(make_shared<Weapon>(bbGun));
+	usableTreasureRoomEncounter3.addDrop(make_shared<Potion>(lPotion));
 
 	//Vulture Surprise Encounter: Initialization
 	EnemyEncounter vultureSurpriseRoomEncounter;
@@ -368,12 +391,14 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	vultureSurpriseRoomEncounter.addEnemy(condor);
 	vultureSurpriseRoomEncounter.addEnemy(kingVulture);
 	vultureSurpriseRoomEncounter.addDrop(make_shared<Weapon>(bat));
+	vultureSurpriseRoomEncounter.addDrop(make_shared<Potion>(mPotion));
 
 	//Pickled Crane Room Encounter: Initialization
 	EnemyEncounter pickledCraneRoomEncounter;
 	pickledCraneRoomEncounter.addEnemy(crane);
 	pickledCraneRoomEncounter.addEnemy(flamingo);
 	pickledCraneRoomEncounter.addEnemy(chicken);
+	pickledCraneRoomEncounter.addDrop(make_shared<Potion>(lPotion));
 
 	//Guessing Room Encounter: Initialization
 	EnemyEncounter guessingRoomEncounter;
@@ -391,11 +416,13 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	miniBossEastEncounter1.addEnemy(miniEast);
 	miniBossEastEncounter1.addDrop(make_shared<Key>(mainBossKey1));
 	miniBossEastEncounter1.addDrop(make_shared<Potion>(lPotion));
+
 	//MiniNorth Room Encounter: INitialization
 	EnemyEncounter miniBossNorthEncounter1;
 	miniBossNorthEncounter1.addEnemy(miniNorth);
 	miniBossNorthEncounter1.addDrop(make_shared<Key>(mainBossKey2));
 	miniBossNorthEncounter1.addDrop(make_shared<Potion>(lPotion));
+	miniBossNorthEncounter1.addDrop(make_shared<Weapon>(shovel));
 
 	//Main Boss Room Encounter: Initialization
 	EnemyEncounter mainBossEcounter1;
