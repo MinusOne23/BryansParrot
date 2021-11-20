@@ -194,9 +194,9 @@ map<string, Room> DungeonBuilder::buildDungeon()
 //-----------------------------------------------------------------------
 
 	//Player Weapons
-	Weapon knife("knife", 0.55f, 1.80f);
+	Weapon knife("knife", 0.50f, 1.70f);
 	knife.addAttackMove(AttackMove("Puncture", 35, 50, 2, 0.30f));
-	knife.addAttackMove(AttackMove("Slash", 35, 50, 1, 0.60f));
+	knife.addAttackMove(AttackMove("Slash", 18, 30, 1, 0.50f));
 	knife.setSpeedBoost(5);
 	knife.setStaminaBoost(4);
 
@@ -207,7 +207,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	pipe.setStaminaBoost(2);
 
 	Weapon sword("Sword", 0.70f, 1.65f);
-	sword.addAttackMove(AttackMove("Stab", 20, 30, 1, 0.95f));
+	sword.addAttackMove(AttackMove("Stab", 20, 30, 2, 0.95f));
 	sword.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.75f));
 	sword.setSpeedBoost(2);
 	sword.setStaminaBoost(2);
@@ -254,17 +254,17 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// Enemy [EnemyName]("[Name]", [MaxHealth], [Speed], [Stamina], [DodgeChance], [DefaultWeapon])
 	//-----------------------------------------------------------------------
-	Enemy chicken("Chicken", 100, 5, 2, 0.5f, chickenHead);
-	Enemy turkey("Turkey", 100, 8, 2, 0.5f, birdBeak);
-	Enemy flamingo("Flamingo", 100, 10, 2, 0.5f, birdModel);
-	Enemy crane("Crane", 100, 8, 4, 0.5f, birdDive);
-	Enemy condor("Andian Condor", 100, 15, 2, 0.5f, birdWings);
+	Enemy chicken("Chicken", 70, 5, 2, 0.5f, chickenHead);
+	Enemy turkey("Turkey", 85, 8, 2, 0.5f, birdBeak);
+	Enemy flamingo("Flamingo", 115, 10, 2, 0.5f, birdModel);
+	Enemy crane("Crane", 160, 8, 4, 0.5f, birdDive);
+	Enemy condor("Andian Condor", 160, 15, 2, 0.5f, birdWings);
 	Enemy vulture("Vulture", 100, 10, 2, 0.5f, birdWings);
-	Enemy kingVulture("King Vulture", 100, 12, 2, 0.5f, birdWings);
-	Enemy miniWest("Cassowary", 100, 20, 2, 0.75f, birdLegs);
-	Enemy miniEast("Ostrich", 100, 4, 4, 0.25f, birdCharge);
+	Enemy kingVulture("King Vulture", 130, 12, 2, 0.5f, birdWings);
+	Enemy miniWest("Cassowary", 200, 20, 2, 0.75f, birdLegs);
+	Enemy miniEast("Ostrich", 150, 8, 4, 0.25f, birdCharge);
 	Enemy miniNorth("ShoeBill", 100, 10, 4, 0.5f, birdScreach);
-	Enemy boss("Parrot", 100, 15, 3, 0.65f, birdScratch);
+	Enemy boss("Parrot", 250, 15, 3, 0.65f, birdScratch);
 
 	//-----------------------------------------------------------------------
 	// Create Keys
