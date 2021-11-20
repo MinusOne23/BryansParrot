@@ -29,16 +29,16 @@ const string VERSION = "1.3.7";
 void Game::start()
 {
 	cout << "Bryan's Parrot v" << VERSION << endl << endl;
-	int inputGameStart = 0;
-	while (inputGameStart != 1) {
+	char inputGameStart = '0';
+	while (inputGameStart != '1') {
 		//Main Menu
 		cout << "\t===================================\n";
 		cout << "\t - Start Game Press: 1" << "\n";
 		cout << "\t - Instructions Press: 2" << "\n";
-		cout << "\t - To Quit Press Any Other Input" << "\n";
+		cout << "\t - To Quit Press: 0" << "\n";
 		cout << "\t===================================\n";
 		cin >> inputGameStart;
-		if (inputGameStart == 2) {
+		if (inputGameStart == '2') {
 			//Help Instructions
 			cout << "\tHey there and welcome to our game called Bryan's Parrot! We're very thankful that you can\n"
 					"\tspend some time trying our game out and letting us know how it went. Our Game is a Text \n"
@@ -50,8 +50,11 @@ void Game::start()
 					"\tthere are words that you believe would be better implemented in the game. Thank you and we hope you \n"
 					"\tenjoy our game! \n\n";
 		}
-		else if (inputGameStart == 0) {
+		else if (inputGameStart == '0') {
 			exit(0);
+		}
+		else {
+			cout << "\nSorry, that input is not recognized.\n\n";
 		}
 		
 	}
