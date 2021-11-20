@@ -14,6 +14,7 @@
 #include "Interaction.h"
 #include "Weapon.h"
 #include "DungeonBuilder.h"
+#include "Story.h"
 
 using namespace std;
 

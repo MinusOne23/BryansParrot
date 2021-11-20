@@ -30,6 +30,7 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"help",		ActionType::HELP},
 	{"use",			ActionType::USE},
 	{"drink",		ActionType::DRINK},
+	{"read",		ActionType::READ},
 	{"drop",		ActionType::DROP},
 	{"c",			ActionType::CHARACTER},
 	{"character",	ActionType::CHARACTER},
@@ -54,11 +55,13 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 	{Interaction::ActionType::EQUIP,			{true,	true,		false,		"Equips the specified piece of equipment from the inventory"}},
 	{Interaction::ActionType::UNEQUIP,			{true,	true,		false,		"Unequips the specified piece of equipment and places into inventory"}},
 	{Interaction::ActionType::DRINK,			{true,	true,		false,		"Drink the specified item from the player's inventory"}},
+	{Interaction::ActionType::READ,				{true,	true,		false,		"Read items from players inventory"}},
 	{Interaction::ActionType::ERROR,			{true,	true,		false,		""}},
 	{Interaction::ActionType::QUIT,				{true,	true,		false,		""}},
 	{Interaction::ActionType::HELP,				{true,	true,		false,		""}},
 	{Interaction::ActionType::ENABLE_DEV_MODE,	{true,	true,		false,		""}},
 	{Interaction::ActionType::TP,				{true,	true,		true,		""}},
+
 
 	//Room Specific	
 	{Interaction::ActionType::TAKE,				{true,	false,		false,		"Takes the specified item in the room"}},
@@ -179,6 +182,11 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 	case ActionType::DRINK:
 	{
 		inputResult.succeeded = player.findAndDrink(inputResult.target);
+		break;
+	}
+	case ActionType::READ:
+	{
+		inputResult.succeeded = player.findAndRead(inputResult.target);
 		break;
 	}
 	case ActionType::HELP:
