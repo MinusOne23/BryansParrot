@@ -81,10 +81,10 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	usableTreasureRoom.setDescription("Usable Treasure");
 
 	/*
-	*	Pickled Crane Room   <->   Guessing Room   <->   Casso Care Room
+	*	Vulture Surprise  <->  Guessing Room   <->   Casso Care Room
 	*		^
 	*		v
-	*	Vulture Surprise							  Bryans Parrot
+	*	Pickled Crane Room							  Bryans Parrot
 	*		^												^
 	*		v												v
 	*	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
@@ -116,7 +116,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	guardRoom.setRoom(Room::Direction::NORTH, &controlRoom,1);
 
 	//ControlRoom: Initialization
-	controlRoom.setRoom(Room::Direction::NORTH, &bryansParrot, 3);
+	controlRoom.setRoom(Room::Direction::NORTH, &bryansParrot,3);
 	controlRoom.setRoom(Room::Direction::EAST, &eastCorridor);
 	controlRoom.setRoom(Room::Direction::WEST, &westCorridorRoom);
 
@@ -142,16 +142,16 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	cassoCareRoom.setRoom(Room::Direction::EAST, &jailCell,0,false);
 
 	//Guessing Room: Initialization
-	guessingRoom.setRoom(Room::Direction::WEST, &pickledCraneRoom);
+	guessingRoom.setRoom(Room::Direction::WEST, &vultureSurpriseRoom);
 	guessingRoom.setRoom(Room::Direction::EAST, &cassoCareRoom,1);
 
 	//Pickled Crane Room: Initialization
-	pickledCraneRoom.setRoom(Room::Direction::SOUTH, &vultureSurpriseRoom);
+	pickledCraneRoom.setRoom(Room::Direction::SOUTH, &safeRoomWest);
 
 	//Vulture Room: Initialization
-	vultureSurpriseRoom.setRoom(Room::Direction::SOUTH, &safeRoomWest);
+	vultureSurpriseRoom.setRoom(Room::Direction::SOUTH, &pickledCraneRoom);
 
-	//Safe Room: Initialization
+	//Safe Room West: Initialization
 	safeRoomWest.setRoom(Room::Direction::EAST, &westCorridorRoom);
 	safeRoomWest.setRoom(Room::Direction::SOUTH, &usableTreasureRoom);
 
@@ -212,7 +212,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	//Player Weapons
 	Weapon knife("knife", 0.50f, 1.70f);
-	knife.addAttackMove(AttackMove("Puncture", 35, 50, 2, 0.30f));
+	knife.addAttackMove(AttackMove("Puncture", 35, 60, 2, 0.30f));
 	knife.addAttackMove(AttackMove("Slash", 18, 30, 1, 0.50f));
 	knife.setSpeedBoost(5);
 	knife.setStaminaBoost(4);
@@ -226,16 +226,16 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Weapon sword("Sword", 0.70f, 1.65f);
 	sword.addAttackMove(AttackMove("Stab", 20, 30, 2, 0.95f));
 	sword.addAttackMove(AttackMove("Slash", 35, 50, 2, 0.75f));
-	sword.setSpeedBoost(2);
+	sword.setSpeedBoost(3);
 	sword.setStaminaBoost(3);
 
 	Weapon bat("Bat", 0.65f, 1.75f);
-	bat.addAttackMove(AttackMove("Swing", 30, 40, 2, 0.80f));
-	bat.addAttackMove(AttackMove("Bash", 40, 60, 2, 0.60f));
-	bat.setSpeedBoost(1);
+	bat.addAttackMove(AttackMove("Swing", 30, 40, 2, 0.85f));
+	bat.addAttackMove(AttackMove("Bash", 40, 60, 2, 0.70f));
+	bat.setSpeedBoost(2);
 	bat.setStaminaBoost(3);
 
-	Weapon shovel("Shovel", 0.70f, 1.5f);
+	Weapon shovel("Shovel", 0.95f, 2.0f);
 	shovel.addAttackMove(AttackMove("Swing", 30, 40, 3, 0.75f));
 	shovel.addAttackMove(AttackMove("Slash", 35, 50, 3, 0.60f));
 	shovel.setSpeedBoost(1);
@@ -250,10 +250,10 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Weapon slingShot("Slingshot", 0.50f, 1.40f);
 	slingShot.addAttackMove(AttackMove("Shoot", 20, 30, 2, 0.85f));
 	slingShot.addAttackMove(AttackMove("Trickshot", 35, 45, 3, 0.50f));
-	slingShot.setSpeedBoost(2);
+	slingShot.setSpeedBoost(4);
 	slingShot.setStaminaBoost(4);
 
-	Weapon bbGun("BB Gunn", 0.50f, 1.80f);
+	Weapon bbGun("BB Gun", 0.50f, 1.80f);
 	bbGun.addAttackMove(AttackMove("Shoot", 35, 45, 2, 0.95f));
 	bbGun.addAttackMove(AttackMove("Pellet", 60, 80, 4, 0.75f));
 	bbGun.setSpeedBoost(1);
@@ -276,11 +276,11 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Enemy flamingo("Flamingo", 115, 10, 2, 0.5f, birdModel);
 	Enemy crane("Crane", 160, 8, 4, 0.5f, birdDive);
 	Enemy condor("Andian Condor", 160, 15, 2, 0.5f, birdWings);
-	Enemy vulture("Vulture", 100, 10, 2, 0.5f, birdWings);
-	Enemy kingVulture("King Vulture", 130, 12, 2, 0.5f, birdWings);
-	Enemy miniWest("Cassowary", 200, 20, 2, 0.75f, birdLegs);
-	Enemy miniEast("Ostrich", 150, 8, 4, 0.25f, birdCharge);
-	Enemy miniNorth("ShoeBill", 100, 10, 4, 0.5f, birdScreach);
+	Enemy vulture("Vulture", 100, 10, 2, 0.6f, birdWings);
+	Enemy kingVulture("King Vulture", 130, 10, 2, 0.3f, birdWings);
+	Enemy miniWest("Cassowary", 200, 20, 4, 0.25f, birdLegs);
+	Enemy miniEast("Ostrich", 150, 8, 4, 0.75f, birdCharge);
+	Enemy miniNorth("ShoeBill", 100, 10, 4, 0.20f, birdScreach);
 	Enemy boss("Parrot", 250, 15, 3, 0.65f, birdScratch);
 
 	//-----------------------------------------------------------------------
@@ -348,7 +348,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	wearableTreasureEncounter1.addEnemy(flamingo);
 	EnemyEncounter wearableTreasureEncounter2;
 	wearableTreasureEncounter2.addEnemy(flamingo);
-	wearableTreasureEncounter2.addEnemy(condor);
+	wearableTreasureEncounter2.addEnemy(kingVulture);
 	wearableTreasureEncounter2.addEnemy(vulture);
 	EnemyEncounter wearableTreasureEncounter3;
 	wearableTreasureEncounter3.addEnemy(condor);
@@ -369,6 +369,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	westCorridorRoomEncounter.addEnemy(chicken);
 	westCorridorRoomEncounter.addDrop(make_shared<Weapon>(sword));
 	westCorridorRoomEncounter.addDrop(make_shared<Potion>(mPotion));
+	westCorridorRoomEncounter.addDrop(make_shared<Potion>(mPotion));
 	
 
 	//Usable Treasure Encounter: Initialization
@@ -379,7 +380,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	EnemyEncounter usableTreasureRoomEncounter2;
 	usableTreasureRoomEncounter2.addEnemy(flamingo);
 	usableTreasureRoomEncounter2.addEnemy(vulture);
-	usableTreasureRoomEncounter2.addEnemy(condor);
+	usableTreasureRoomEncounter2.addEnemy(kingVulture);
 	EnemyEncounter usableTreasureRoomEncounter3;
 	usableTreasureRoomEncounter3.addEnemy(condor);
 	usableTreasureRoomEncounter3.addEnemy(crane);
@@ -391,8 +392,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	vultureSurpriseRoomEncounter.addEnemy(vulture);
 	vultureSurpriseRoomEncounter.addEnemy(condor);
 	vultureSurpriseRoomEncounter.addEnemy(kingVulture);
-	vultureSurpriseRoomEncounter.addDrop(make_shared<Weapon>(bat));
 	vultureSurpriseRoomEncounter.addDrop(make_shared<Potion>(lPotion));
+	
 
 	//Pickled Crane Room Encounter: Initialization
 	EnemyEncounter pickledCraneRoomEncounter;
@@ -400,6 +401,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	pickledCraneRoomEncounter.addEnemy(flamingo);
 	pickledCraneRoomEncounter.addEnemy(chicken);
 	pickledCraneRoomEncounter.addDrop(make_shared<Potion>(lPotion));
+	pickledCraneRoomEncounter.addDrop(make_shared<Potion>(lPotion));
+	pickledCraneRoomEncounter.addDrop(make_shared<Weapon>(bat));
 
 	//Guessing Room Encounter: Initialization
 	EnemyEncounter guessingRoomEncounter;
