@@ -360,6 +360,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	condorLairEncounter.addEnemy(turkey);
 	condorLairEncounter.addDrop(make_shared<Key>(condorRoomKey));
 	condorLairEncounter.addDrop(make_shared<Weapon>(slingShot));
+	condorLairEncounter.addDrop(make_shared<Potion>(mPotion));
 
 	//West Corridor Encounter: Initialization
 	EnemyEncounter westCorridorRoomEncounter;
@@ -391,7 +392,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	vultureSurpriseRoomEncounter.addEnemy(condor);
 	vultureSurpriseRoomEncounter.addEnemy(kingVulture);
 	vultureSurpriseRoomEncounter.addDrop(make_shared<Weapon>(bat));
-	vultureSurpriseRoomEncounter.addDrop(make_shared<Potion>(mPotion));
+	vultureSurpriseRoomEncounter.addDrop(make_shared<Potion>(lPotion));
 
 	//Pickled Crane Room Encounter: Initialization
 	EnemyEncounter pickledCraneRoomEncounter;
