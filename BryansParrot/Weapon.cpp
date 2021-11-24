@@ -5,8 +5,6 @@
 #include "Weapon.h"
 #include "Utils.h"
 
-
-
 Weapon::Weapon(string _name, float _critChance, float _critMult)
 	: Equippable{ _name }, critChance(_critChance), critMult(_critMult) {}
 
