@@ -66,3 +66,14 @@ bool Utils::chanceTest(float chance)
 	int testNum = rand() % 1000;
 	return testNum <= chance * 1000;
 }
+
+int Utils::vecIndexOf(vector<string> vec, string val)
+{
+	for (int i = 0; i < vec.size(); i++)
+	{
+		if (equalsCI(vec[i], val))
+			return i;
+	}
+
+	return -1;
+}

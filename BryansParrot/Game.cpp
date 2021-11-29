@@ -193,9 +193,19 @@ Room::Direction Game::getDoorIndex(string doorName)
 	return Room::Direction::NONE;
 }
 
+Room* Game::findRoom(string roomName)
+{
+	for (map<string, Room>::iterator it = allRooms.begin(); it != allRooms.end(); it++)
+	{
+		if (Utils::equalsCI(it->first, roomName))
+			return &it->second;
+	}
+
+	return nullptr;
+}
+
 void Game::enterNewRoom(Room* nextRoom)
 {
-
 	while (nextRoom->encounterCount() > 0)
 	{
 		EnemyEncounter& encounter = nextRoom->currentEncounter();
@@ -209,7 +219,7 @@ void Game::enterNewRoom(Room* nextRoom)
 			{
 				if (encResult.tpRoomName != "")
 				{
-					nextRoom = &allRooms.at(encResult.tpRoomName);
+					nextRoom = findRoom(encResult.tpRoomName);
 				}
 				else
 				{
@@ -332,7 +342,7 @@ void Game::gameInteract()
 	{
 		if (inputResult.succeeded)
 		{
-			enterNewRoom(&allRooms.at(inputResult.tpRoomName));
+			enterNewRoom(findRoom(inputResult.tpRoomName));
 		}
 	}
 	}

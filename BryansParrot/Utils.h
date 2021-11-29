@@ -44,6 +44,7 @@ public:
 
 	template<class T>
 	static int vecIndexOf(vector<T> vec, T val);
+	static int vecIndexOf(vector<string> vec, string val);
 
 private:
 	Utils();
