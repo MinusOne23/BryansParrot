@@ -41,6 +41,7 @@ namespace BryansParrotAutoTest
 			const int TROLL_HEALTH = 100;
 			const int TROLL_SPEED = 5;
 			const int TROLL_STAMINA = 2;
+			const float TROLL_DODGE = 0;
 
 			Weapon trollFists(TROLL_WEAPON, 0.1f, 1.5f);
 			trollFists.addAttackMove(AttackMove("Troll Punch", 5, 10, 1, 0.9f));
