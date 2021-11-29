@@ -147,5 +147,54 @@ namespace BryansParrotAutoTest
 
 			Logger::WriteMessage(equipment.display("").c_str());
 		}
+
+		TEST_METHOD(VerifyInventoryManagement)
+		{
+			Inventory inventory;
+
+			Key key;
+
+			shared_ptr<Key> item1 = make_shared<Key>(key);
+			shared_ptr<Key> item2 = make_shared<Key>(key);
+			shared_ptr<Key> item3 = make_shared<Key>(key);
+
+			Assert::AreEqual(0, inventory.numItems());
+
+			inventory.addItem(item1);
+			inventory.addItem(item2);
+			inventory.addItem(item3);
+
+			Assert::AreEqual(3, inventory.numItems());
+
+			Assert::IsTrue(item1 == inventory[0], L"First item is not correct");
+
+			inventory.remove(0);
+			Assert::AreEqual(2, inventory.numItems());
+
+			Assert::IsTrue(item2 == inventory[0], L"After index removal, first item is not correct");
+
+			inventory.remove(item2);
+			Assert::AreEqual(1, inventory.numItems());
+
+			Assert::IsTrue(item3 == inventory[0], L"After ptr removal, first item is not correct");
+
+			inventory.remove(0);
+			Assert::AreEqual(0, inventory.numItems());
+
+			shared_ptr<Weapon> sword(new Weapon("Sword", 0.25f, 1.5f));
+			shared_ptr<Shield> shield(new Shield("Shield"));
+
+			inventory.addItem(sword);
+			inventory.addItem(shield);
+
+			Assert::AreNotEqual(-1, inventory.find("Sword"));
+			Assert::AreNotEqual(-1, inventory.find("sword"));
+			Assert::AreNotEqual(-1, inventory.find("Shield"));
+			Assert::AreNotEqual(-1, inventory.find("shield"));
+
+			int swordIndex = inventory.find("Sword");
+
+			Assert::IsTrue(inventory[swordIndex] == sword, L"Index returned for sword was incorrect");
+		}
 	};
 }
