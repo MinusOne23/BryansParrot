@@ -100,5 +100,52 @@ namespace BryansParrotAutoTest
 			// Net using -1 starting, -50 damage, -50 healing
 			// Can end up with negative health - healing only checks if > max health - initial health setting not bounds checked
 		}
+
+		TEST_METHOD(VerifyEquipmentManagement)
+		{
+			const std::string BASE_WEAPON_NAME = "Fists";
+
+			Weapon baseWeapon(BASE_WEAPON_NAME, 0.1f, 1.5f);
+			Equipment equipment(baseWeapon);
+
+			Assert::AreEqual(BASE_WEAPON_NAME, equipment.getActiveWeapon().getName());
+
+			shared_ptr<Shield> shield(new Shield("Shield"));
+			equipment.equip(shield);
+			Assert::IsTrue(shield == equipment.getShield());
+
+			shared_ptr<Weapon> sword(new Weapon("Sword", 0.2f, 1.75f));
+			equipment.equip(sword);
+			Assert::AreEqual(sword->getName(), equipment.getActiveWeapon().getName());
+
+			equipment.unequip("Sword");
+			Assert::AreEqual(BASE_WEAPON_NAME, equipment.getActiveWeapon().getName());
+
+			shared_ptr<Armor> head	(new Armor("Helmet", Armor::ArmorType::HEAD, 1));
+			shared_ptr<Armor> chest	(new Armor("Breastplate", Armor::ArmorType::CHEST, 1));
+			shared_ptr<Armor> legs	(new Armor("Greaves", Armor::ArmorType::LEGS, 1));
+			shared_ptr<Armor> hands	(new Armor("Gauntlets", Armor::ArmorType::HANDS, 1));
+			shared_ptr<Armor> feet	(new Armor("Boots", Armor::ArmorType::FEET, 1));
+
+			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::HEAD) == nullptr, L"Head piece should be null");
+			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::CHEST) == nullptr, L"Chest piece should be null");
+			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::HANDS) == nullptr, L"Hands piece should be null");
+			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::LEGS) == nullptr, L"Legs piece should be null");
+			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::FEET) == nullptr, L"Feet piece should be null");
+
+			equipment.equip(head);
+			equipment.equip(chest);
+			equipment.equip(hands);
+			equipment.equip(legs);
+			equipment.equip(feet);
+
+			Assert::IsTrue(head == equipment.getArmor(Armor::ArmorType::HEAD), L"Head piece is incorrect");
+			Assert::IsTrue(chest == equipment.getArmor(Armor::ArmorType::CHEST), L"Chest piece is incorrect");
+			Assert::IsTrue(hands == equipment.getArmor(Armor::ArmorType::HANDS), L"Hands piece is incorrect");
+			Assert::IsTrue(legs == equipment.getArmor(Armor::ArmorType::LEGS), L"Legs piece is incorrect");
+			Assert::IsTrue(feet == equipment.getArmor(Armor::ArmorType::FEET), L"Feet piece is incorrect");
+
+			Logger::WriteMessage(equipment.display("").c_str());
+		}
 	};
 }
