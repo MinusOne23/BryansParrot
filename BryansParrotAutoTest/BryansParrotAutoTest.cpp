@@ -108,17 +108,24 @@ namespace BryansParrotAutoTest
 			Weapon baseWeapon(BASE_WEAPON_NAME, 0.1f, 1.5f);
 			Equipment equipment(baseWeapon);
 
+			// Verify active weapon defaults as base weapon
 			Assert::AreEqual(BASE_WEAPON_NAME, equipment.getActiveWeapon().getName());
 
 			shared_ptr<Shield> shield(new Shield("Shield"));
 			equipment.equip(shield);
+
+			// Verify can retrieve equipped shield
 			Assert::IsTrue(shield == equipment.getShield());
 
 			shared_ptr<Weapon> sword(new Weapon("Sword", 0.2f, 1.75f));
 			equipment.equip(sword);
+
+			// Verify can retrieve equipped weapon
 			Assert::AreEqual(sword->getName(), equipment.getActiveWeapon().getName());
 
 			equipment.unequip("Sword");
+			
+			// Verify when weapon is equipped the active weapon is again base weapon
 			Assert::AreEqual(BASE_WEAPON_NAME, equipment.getActiveWeapon().getName());
 
 			shared_ptr<Armor> head	(new Armor("Helmet", Armor::ArmorType::HEAD, 1));
@@ -127,6 +134,7 @@ namespace BryansParrotAutoTest
 			shared_ptr<Armor> hands	(new Armor("Gauntlets", Armor::ArmorType::HANDS, 1));
 			shared_ptr<Armor> feet	(new Armor("Boots", Armor::ArmorType::FEET, 1));
 
+			// Verify all pieces of armor default to nullptr
 			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::HEAD) == nullptr, L"Head piece should be null");
 			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::CHEST) == nullptr, L"Chest piece should be null");
 			Assert::IsTrue(equipment.getArmor(Armor::ArmorType::HANDS) == nullptr, L"Hands piece should be null");
@@ -139,6 +147,7 @@ namespace BryansParrotAutoTest
 			equipment.equip(legs);
 			equipment.equip(feet);
 
+			// Verify can retrieve all pieces of equipped armor
 			Assert::IsTrue(head == equipment.getArmor(Armor::ArmorType::HEAD), L"Head piece is incorrect");
 			Assert::IsTrue(chest == equipment.getArmor(Armor::ArmorType::CHEST), L"Chest piece is incorrect");
 			Assert::IsTrue(hands == equipment.getArmor(Armor::ArmorType::HANDS), L"Hands piece is incorrect");
@@ -158,27 +167,34 @@ namespace BryansParrotAutoTest
 			shared_ptr<Key> item2 = make_shared<Key>(key);
 			shared_ptr<Key> item3 = make_shared<Key>(key);
 
+			// Verify inventory defaults to empty
 			Assert::AreEqual(0, inventory.numItems());
 
 			inventory.addItem(item1);
 			inventory.addItem(item2);
 			inventory.addItem(item3);
 
+			// Verify inventory has correct count
 			Assert::AreEqual(3, inventory.numItems());
 
+			// Verify first item is correct
 			Assert::IsTrue(item1 == inventory[0], L"First item is not correct");
 
 			inventory.remove(0);
-			Assert::AreEqual(2, inventory.numItems());
 
+			// Verify correct removal by index
+			Assert::AreEqual(2, inventory.numItems());
 			Assert::IsTrue(item2 == inventory[0], L"After index removal, first item is not correct");
 
 			inventory.remove(item2);
-			Assert::AreEqual(1, inventory.numItems());
 
+			// Verify correct removal by pointer
+			Assert::AreEqual(1, inventory.numItems());
 			Assert::IsTrue(item3 == inventory[0], L"After ptr removal, first item is not correct");
 
 			inventory.remove(0);
+
+			// Verify inventory can be emptied
 			Assert::AreEqual(0, inventory.numItems());
 
 			shared_ptr<Weapon> sword(new Weapon("Sword", 0.25f, 1.5f));
@@ -187,6 +203,7 @@ namespace BryansParrotAutoTest
 			inventory.addItem(sword);
 			inventory.addItem(shield);
 
+			// Verify find function works and is case insensitive
 			Assert::AreNotEqual(-1, inventory.find("Sword"));
 			Assert::AreNotEqual(-1, inventory.find("sword"));
 			Assert::AreNotEqual(-1, inventory.find("Shield"));
