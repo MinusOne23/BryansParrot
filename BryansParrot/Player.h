@@ -74,13 +74,14 @@ public:
 	bool findAndDrink(const string& itemName);
 	bool findAndEquip(const string& itemName);
 	bool findAndUnequip(const string& itemName);
+	bool findAndInspect(const string& itemName);
 	bool isDev();
 	void setIsDev(bool _isDev);
 
-	virtual void drinkPotion(shared_ptr<Potion> potion);
+	virtual void drinkPotion(shared_ptr<Potion> potion) override;
 
 private:
-	virtual void equip(shared_ptr<Equippable> equippable);
+	virtual void equip(shared_ptr<Equippable> equippable) override;
 	bool m_isDev = false;
 	Inventory inventory;
 };

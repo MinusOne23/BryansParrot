@@ -66,3 +66,8 @@ bool Utils::chanceTest(float chance)
 	int testNum = rand() % 1000;
 	return testNum <= chance * 1000;
 }
+
+int Utils::randInt(int min, int max)
+{
+	return rand() % (max - min + 1) + min;
+}

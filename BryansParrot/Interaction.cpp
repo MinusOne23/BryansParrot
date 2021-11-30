@@ -16,9 +16,23 @@ const int Interaction::MAX_ACTION_WORDS = 2;
 const string Interaction::DEV_MODE = "bryan";
 
 const map<string, Interaction::ActionType> Interaction::actions = {
+	// Universal
 	{"q",			ActionType::QUIT},
+	{"quit",		ActionType::QUIT},
 	{"i",			ActionType::INVENTORY},
 	{"inventory",	ActionType::INVENTORY},
+	{"h",			ActionType::HELP},
+	{"help",		ActionType::HELP},
+	{"use",			ActionType::USE},
+	{"drink",		ActionType::DRINK},
+	{"c",			ActionType::CHARACTER},
+	{"character",	ActionType::CHARACTER},
+	{"equip",		ActionType::EQUIP},
+	{"unequip",		ActionType::UNEQUIP},
+	{"inspect",		ActionType::INSPECT},
+	{DEV_MODE,		ActionType::ENABLE_DEV_MODE},
+
+	// Room Specific
 	{"take",		ActionType::TAKE},
 	{"grab",		ActionType::TAKE},
 	{"pick up",		ActionType::TAKE},
@@ -26,21 +40,15 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"unlock",		ActionType::UNLOCK},
 	{"l",			ActionType::LOOK},
 	{"look",		ActionType::LOOK},
-	{"h",			ActionType::HELP},
-	{"help",		ActionType::HELP},
-	{"use",			ActionType::USE},
-	{"drink",		ActionType::DRINK},
 	{"drop",		ActionType::DROP},
-	{"c",			ActionType::CHARACTER},
-	{"character",	ActionType::CHARACTER},
-	{"equip",		ActionType::EQUIP},
-	{"unequip",		ActionType::UNEQUIP},
+
+	// Enemy Encounter
 	{"attack",		ActionType::ATTACK},
 	{"retreat",		ActionType::RETREAT},
 	{"end turn",	ActionType::END_TURN},
 	{"study",		ActionType::STUDY},
-	{"dodge",   ActionType::DODGE},
-	{DEV_MODE,		ActionType::ENABLE_DEV_MODE},
+	{"dodge",		ActionType::DODGE},
+	{"block",		ActionType::BLOCK},
 	{"kill",		ActionType::KILL},
 	{"tp",			ActionType::TP}
 };
@@ -54,8 +62,9 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 	{Interaction::ActionType::EQUIP,			{true,	true,		false,		"Equips the specified piece of equipment from the inventory"}},
 	{Interaction::ActionType::UNEQUIP,			{true,	true,		false,		"Unequips the specified piece of equipment and places into inventory"}},
 	{Interaction::ActionType::DRINK,			{true,	true,		false,		"Drink the specified item from the player's inventory"}},
+	{Interaction::ActionType::INSPECT,			{true,	true,		false,		"Displays the stats of the specified item in the player's inventory"}},
+	{Interaction::ActionType::QUIT,				{true,	true,		false,		"Quits the game"}},
 	{Interaction::ActionType::ERROR,			{true,	true,		false,		""}},
-	{Interaction::ActionType::QUIT,				{true,	true,		false,		""}},
 	{Interaction::ActionType::HELP,				{true,	true,		false,		""}},
 	{Interaction::ActionType::ENABLE_DEV_MODE,	{true,	true,		false,		""}},
 	{Interaction::ActionType::TP,				{true,	true,		true,		""}},
@@ -69,6 +78,7 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 
 	//Encounter Specific
 	{Interaction::ActionType::ATTACK,			{false,	true,		false,		"Attack the specified enemy in the room"}},
+	{Interaction::ActionType::BLOCK,			{false,	true,		false,		"Blocks the specified enemy in the room"}},
 	{Interaction::ActionType::RETREAT,			{false,	true,		false,		"Retreat from the current encounter"}},
 	{Interaction::ActionType::STUDY,			{false,	true,		false,		"Display the enemy stats"}},
 	{Interaction::ActionType::DODGE,			{false,	true,		false,		"Attempt to dodge enemy attack awarding you with free turn"}},
@@ -76,7 +86,13 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 	{Interaction::ActionType::KILL,				{false,	true,		true,		""}},
 };
 
-set<string> Interaction::actionsUsed;
+set<string> Interaction::actionsUsed = {
+	"character",
+	"inventory",
+	"inspect",
+	"look",
+	"quit"
+};
 
 bool Interaction::canUseInRoom(ActionType type)
 {
@@ -171,6 +187,11 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 		player.displayStats();
 		break;
 	}
+	case ActionType::INSPECT:
+	{
+		inputResult.succeeded = player.findAndInspect(inputResult.target);
+		break;
+	}
 	case ActionType::USE:
 	{
 		inputResult.succeeded = player.useItem(inputResult.target);
@@ -218,8 +239,6 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 
 	if (inputResult.actionType != ActionType::ERROR)
 		addActionUsed(inputResult.actionStr);
-
-	cout << endl;
 
 	return inputResult;
 }

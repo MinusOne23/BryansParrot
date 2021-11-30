@@ -51,19 +51,28 @@ float Weapon::getCritMult() const
 	return critMult;
 }
 
-string Weapon::getDisplay() const
+string Weapon::equipmentDisplay(string title, string linePrefix) const
 {
-	return Equippable::getDisplay();
+	stringstream ss;
+	ss << Equippable::equipmentDisplay(title, linePrefix);
+	ss << attacksDisplay(linePrefix + "   ");
+	ss << linePrefix << "   Crit Chance: " << fixed << setprecision(2) << critChance * 100 << "%" << endl;
+	ss << linePrefix << "   Crit Multiplier: " << fixed << setprecision(2) << critMult << "x" << endl;
+
+	return ss.str();
 }
 
-void Weapon::displayAttacks(string linePrefix) const
+string Weapon::attacksDisplay(string linePrefix) const
 {
+	stringstream ss;
 	map<string, AttackMove>::const_iterator it = attackMoves.begin();
 
 
 	for (int i = 0; i < attackMoves.size(); i++)
 	{
-		cout << linePrefix << it->second.display() << endl;
+		ss << linePrefix << it->second.display() << endl;
 		it++;
 	}
+
+	return ss.str();
 }

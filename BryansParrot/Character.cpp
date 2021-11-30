@@ -27,14 +27,14 @@ string Character::getName() const
 	return name;
 }
 
-Character::Equipment Character::getEquipment() const
-{
-	return equipment;
-}
-
 Weapon Character::getActiveWeapon() const
 {
 	return equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
+}
+
+const shared_ptr<Shield> Character::getShield() const
+{
+	return equipment.shield;
 }
 
 void Character::damage(int amt)
@@ -49,7 +49,7 @@ void Character::heal(int amt)
 
 void Character::equip(shared_ptr<Equippable> equippable)
 {
-	shared_ptr<Weapon> weapon =  dynamic_pointer_cast<Weapon>(equippable);
+	shared_ptr<Weapon> weapon = dynamic_pointer_cast<Weapon>(equippable);
 
 	if (weapon != nullptr)
 	{
@@ -57,6 +57,18 @@ void Character::equip(shared_ptr<Equippable> equippable)
 			equipment.mainWeapon->isEquipped = false;
 
 		equipment.mainWeapon = weapon;
+		return;
+	}
+
+	shared_ptr<Shield> shield = dynamic_pointer_cast<Shield>(equippable);
+
+	if (shield != nullptr)
+	{
+		if (equipment.shield != nullptr)
+			equipment.shield->isEquipped = false;
+
+		equipment.shield = shield;
+		return;
 	}
 }
 
@@ -96,7 +108,13 @@ float Character::getDodgeChance() const
 
 int Character::getMaxStamina() const
 {
-	return getActiveWeapon().getStaminaBoost() + baseStamina;
+	int stamBoost = baseStamina;
+	stamBoost += getActiveWeapon().getStaminaBoost();
+
+	if (equipment.shield != nullptr)
+		stamBoost += equipment.shield->getStaminaBoost();
+
+	return stamBoost;
 }
 
 int Character::getSpeed() const
@@ -137,13 +155,8 @@ void Character::displayStats() const
 	cout << "\t Speed: " << getSpeed() << endl;
 	cout << "\t Dodge Chance: " << fixed << setprecision(2) << dodge * 100 << "%" << endl;
 	cout << "\t Equipment: " << endl;
-	cout << "\t    MainWeapon: " << activeWeapon.getName() << endl;
-	activeWeapon.displayAttacks("\t       ");
-	cout << "\t       Crit Chance: " << fixed << setprecision(2) << activeWeapon.getCritChance() * 100 << "%" << endl;
-	cout << "\t       Crit Multiplier: " << fixed << setprecision(2) << activeWeapon.getCritMult() << "x" << endl;
-	if(activeWeapon.getSpeedBoost())
-		cout << "\t       Speed +" << activeWeapon.getSpeedBoost() << endl;
-	if (activeWeapon.getStaminaBoost())
-		cout << "\t       Stamina +" << activeWeapon.getStaminaBoost() << endl;
+	cout << getActiveWeapon().equipmentDisplay("Main Weapon", "\t    ");
+	if (equipment.shield != nullptr)
+		cout << equipment.shield->equipmentDisplay("Shield", "\t    ");
 	cout << "\t===========================================\n";
 }
