@@ -7,6 +7,7 @@
 #include <set>
 
 #include "Player.h"
+#include "MiniMap.h"
 
 using namespace std;
 
@@ -84,6 +85,7 @@ public:
 		HELP,
 		INSPECT,
 		ENABLE_DEV_MODE,
+		MINI_MAP,
 
 		//EncounterSpecific
 		ATTACK,
@@ -110,7 +112,7 @@ public:
 	};
 
 	static string getHelpText(string action);
-	static InteractionResult universalInput(Player& player);
+	static InteractionResult universalInput(Player& player, MiniMap& miniMap);
 	static bool canUseInRoom(ActionType type);
 	static bool canUseInEncounter(ActionType type);
 	static bool isDevAction(ActionType type);

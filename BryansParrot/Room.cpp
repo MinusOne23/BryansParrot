@@ -17,6 +17,9 @@ const Room::Direction Room::oppDirection[] = {
 	Room::Direction::EAST
 };
 
+Room::Room(int row, int col)
+	: pos{ row, col } {}
+
 //Displays Items / doors / and enemies in curent room
 void Room::displayContents() const
 {
@@ -220,7 +223,27 @@ void Room::completeEncounter()
 	encounters.erase(encounters.begin());
 }
 
-int Room::encounterCount()
+Room::Position Room::getPosition() const
+{
+	return pos;
+}
+
+bool Room::isCleared() const
+{
+	return encounters.size() == 0 && items.size() == 0;
+}
+
+void Room::setHasPlayer(bool val)
+{
+	hasPlayer = val;
+}
+
+bool Room::getHasPlayer() const
+{
+	return hasPlayer;
+}
+
+int Room::encounterCount() const
 {
 	return encounters.size();
 }

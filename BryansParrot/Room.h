@@ -105,6 +105,14 @@ public:
 		WEST = 3
 	};
 
+	struct Position
+	{
+		int row;
+		int col;
+	};
+
+	Room(int row, int col);
+
 	void displayContents() const;
 	void addItem(shared_ptr<Item> newItem);
 	void addItems(vector<shared_ptr<Item>> newItems);
@@ -120,12 +128,19 @@ public:
 	EnemyEncounter& currentEncounter();
 	void completeEncounter();
 
-	int encounterCount();
+	Position getPosition() const;
+	int encounterCount() const;
+	bool isCleared() const;
+
+	void setHasPlayer(bool val);
+	bool getHasPlayer() const;
 
 private:
 
-	shared_ptr<Door> doors[4];
-	Room* rooms[4];
+	shared_ptr<Door> doors[4] = { 0 };
+	Room* rooms[4] = { 0 };
+	Position pos;
+	bool hasPlayer = false;
 
 	const static Direction oppDirection[4];
 

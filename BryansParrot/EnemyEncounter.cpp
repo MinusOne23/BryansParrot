@@ -5,6 +5,7 @@
 #include "AttackMove.h"
 #include "Utils.h"
 #include "Interaction.h"
+#include "MiniMap.h"
 
 const int EnemyEncounter::TURN_TIME = 100;
 
@@ -20,7 +21,7 @@ const vector<string> EnemyEncounter::playerOptions = {
 EnemyEncounter::EnemyEncounter()
 	: currentState(EncounterState::NONE), lastRoom(nullptr) {}
 
-EnemyEncounter::EncounterResult EnemyEncounter::startEncounter(Player& player)
+EnemyEncounter::EncounterResult EnemyEncounter::startEncounter(Player& player, MiniMap& miniMap)
 {
 	//cout << flush;
 	system("CLS");
@@ -58,7 +59,7 @@ EnemyEncounter::EncounterResult EnemyEncounter::startEncounter(Player& player)
 
 	while (currentState == EncounterState::ACTIVE)
 	{
-		tick(player, result);
+		tick(player, miniMap, result);
 
 		if (player.isDead())
 		{
@@ -502,7 +503,7 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player, bool shouldBlock)
 	system("CLS");
 }
 
-void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
+void EnemyEncounter::playerTurn(Player& player, MiniMap& miniMap, EncounterResult& result)
 {
 	bool endTurn = false;
 	isBlocking = false;
@@ -517,7 +518,7 @@ void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 
 		displaySummary(player);
 
-		Interaction::InteractionResult inputResult = Interaction::universalInput(player);
+		Interaction::InteractionResult inputResult = Interaction::universalInput(player, miniMap);
 
 		if (!Interaction::canUseInEncounter(inputResult.actionType))
 		{
@@ -709,7 +710,7 @@ void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 	}
 }
 
-void EnemyEncounter::tick(Player& player, EncounterResult& result)
+void EnemyEncounter::tick(Player& player, MiniMap& miniMap, EncounterResult& result)
 {
 	playerTime += player.getSpeed();
 
@@ -717,7 +718,7 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 	{
 		currentTurn = -1;
 		player.refreshStamina();
-		playerTurn(player, result);
+		playerTurn(player, miniMap, result);
 		playerTime -= TURN_TIME;
 	}
 
