@@ -174,13 +174,12 @@ bool Player::findAndEquip(const string& itemName)
 
 bool Player::findAndUnequip(const string& itemName)
 {
-	if (equipment.mainWeapon != nullptr && Utils::equalsCI(equipment.mainWeapon->getName(), itemName))
-	{
-		shared_ptr<Weapon> weapon = equipment.mainWeapon;
-		weapon->isEquipped = false;
+	shared_ptr<Equippable> unequipped = equipment.unequip(itemName);
 
-		cout << "You unequipped " << weapon->getName() << endl;
-		equipment.mainWeapon = nullptr;
+	if (unequipped != nullptr)
+	{
+		cout << "You unequipped " << unequipped->getName() << endl;
+		calcNewHealth();
 
 		return true;
 	}

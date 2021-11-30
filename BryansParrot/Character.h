@@ -9,6 +9,7 @@
 #include "Weapon.h"
 #include "Potion.h"
 #include "Shield.h"
+#include "Equipment.h"
 
 using namespace std;
 
@@ -45,18 +46,12 @@ using namespace std;
 class Character
 {
 protected:
-	struct Equipment
-	{
-		Weapon baseWeapon;
-
-		shared_ptr<Weapon> mainWeapon;
-		shared_ptr<Shield> shield;
-	};
 
 	Character(Health _health, string _name, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon);
 
 	Health health;
 	string name;
+	int baseHealth;
 	int baseSpeed;
 	int baseStamina;
 	Equipment equipment;
@@ -64,6 +59,7 @@ protected:
 
 	int staminaUsed = 0;
 
+	void calcNewHealth();
 
 public:
 
@@ -72,6 +68,7 @@ public:
 	int getMaxStamina() const;
 	int getSpeed() const;
 	float getDodgeChance() const;
+	int getDefense() const;
 
 	int getCurrentStamina() const;
 	virtual void refreshStamina();

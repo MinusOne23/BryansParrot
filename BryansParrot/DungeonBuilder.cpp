@@ -1,6 +1,7 @@
 #include "DungeonBuilder.h"
 #include "EnemyEncounter.h"
 #include "Shield.h"
+#include "Armor.h"
 
 vector<string> DungeonBuilder::roomNames;
 
@@ -87,7 +88,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 	// Create Weapons
 	// 
-	// Weapon [WeaponName]("[Name]", [CritChance], [CritMultiplier]
+	// Weapon [WeaponName]("[Name]", [CritChance], [CritMultiplier])
 	// [WeaponName].addAttackMove(AttackMove("[Name]", [MinDmg], [MaxDmg], [Stamina], [Accuracy])
 	// ...
 	// 
@@ -104,10 +105,34 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	sword.setSpeedBoost(2);
 	sword.setStaminaBoost(2);
 
+	//-----------------------------------------------------------------------
+	// Create Shields
+	// 
+	// Shield [ShieldName]("[Name]")
+	// [ShieldName].setBlockMove(Shield::BlockType::[Type], { minBlock, maxBlock, stamina })
+	// ...
+	// 
+	//-----------------------------------------------------------------------
 	Shield shield("Shield");
 	shield.setBlockMove(Shield::BlockType::SINGLE, { 25, 35, 1 });
 	shield.setBlockMove(Shield::BlockType::GROUP, { 20, 30, 1 });
 	shield.setStaminaBoost(2);
+
+	//-----------------------------------------------------------------------
+	// Create Armor
+	// 
+	// Armor [ArmorName]("[Name]", Armor::ArmorType::[Type], [Defense])
+	// (Optional) [ArmorName].setHealthBoost([Amt])
+	// ...
+	// 
+	//-----------------------------------------------------------------------
+	Armor ironHelmet("Iron Helmet", Armor::ArmorType::HEAD, 3);
+	Armor ironBreastplate("Iron Breastplate", Armor::ArmorType::CHEST, 5);
+	ironBreastplate.setHealthBoost(50);
+	Armor ironGreaves("Iron Greaves", Armor::ArmorType::LEGS, 2);
+	ironGreaves.setHealthBoost(25);
+	Armor ironBoots("Iron Boots", Armor::ArmorType::FEET, 1);
+	Armor ironGauntlets("Iron Gauntlets", Armor::ArmorType::HANDS, 1);
 
 	//-----------------------------------------------------------------------
 	// Create Enemies
@@ -160,21 +185,25 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	secondRoomEncounter1.addEnemy(goblin);
 	secondRoomEncounter1.addEnemy(troll);
 	secondRoomEncounter1.addDrop(make_shared<Key>(secondNorthKey));
+	secondRoomEncounter1.addDrop(make_shared<Armor>(ironBreastplate));
 
 	//Mini 1 Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter1;
 	miniBossWestEncounter1.addEnemy(mini1);
 	miniBossWestEncounter1.addDrop(make_shared<Key>(mainBossKey));
+	miniBossWestEncounter1.addDrop(make_shared<Armor>(ironGauntlets));
 
 	//Mini 2 Room Encounter: INitialization
 	EnemyEncounter miniBossEastEncounter1;
 	miniBossEastEncounter1.addEnemy(mini2);
 	miniBossEastEncounter1.addDrop(make_shared<Key>(mainBossKey));
+	miniBossEastEncounter1.addDrop(make_shared<Armor>(ironBoots));
 
 	//Mini 3 Room Encounter: INitialization
 	EnemyEncounter miniBossNorthEncounter1;
 	miniBossNorthEncounter1.addEnemy(mini3);
 	miniBossNorthEncounter1.addDrop(make_shared<Key>(mainBossKey));
+	miniBossNorthEncounter1.addDrop(make_shared<Armor>(ironHelmet));
 
 	//Main Boss Room Encounter: Initialization
 	EnemyEncounter mainBossEcounter1;
@@ -196,6 +225,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	firstRoom.addItem(make_shared<Weapon>(sword));
 	firstRoom.addItem(make_shared<Key>(secondNorthKey));
 	firstRoom.addItem(make_shared<Shield>(shield));
+	firstRoom.addItem(make_shared<Armor>(ironGreaves));
 
 	// Second Room Init
 	secondRoom.addEnemyEncounter(secondRoomEncounter1);
