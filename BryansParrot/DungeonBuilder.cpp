@@ -7,6 +7,22 @@ vector<string> DungeonBuilder::roomNames;
 
 map<string, Room> DungeonBuilder::buildDungeon()
 {
+	/*
+	*	Vulture Surprise  <->  Guessing Room   <->   Casso Care Room
+	*		^
+	*		v
+	*	Pickled Crane Room							  Bryans Parrot
+	*		^												^
+	*		v												v
+	*	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
+	*		^												^											^					 ^
+	*		v												v										    v					 v
+	*	usable Treasure									Guard Room								 Wearable Teasure	Cernous Chasm
+	*														^
+	*														v
+	*													Jail Cell
+	*/
+
 	//-----------------------------------------------------------------------
 	// Create Room
 	// 
@@ -49,7 +65,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 	Room& jailCell = allRooms.at("Jail Cell");
 	jailCell.setDescription("Jail Cell");
-	Room& guardRoom = allRooms.at("Guard Room"); 
+	Room& guardRoom = allRooms.at("Guard Room");
 	guardRoom.setDescription("Guard Room");
 	Room& controlRoom = allRooms.at("Control Room");
 	controlRoom.setDescription("Control Room");
@@ -82,22 +98,6 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	Room& usableTreasureRoom = allRooms.at("Usable Treasure Room");
 	usableTreasureRoom.setDescription("Usable Treasure");
 
-	/*
-	*	Vulture Surprise  <->  Guessing Room   <->   Casso Care Room
-	*		^
-	*		v
-	*	Pickled Crane Room							  Bryans Parrot
-	*		^												^
-	*		v												v
-	*	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
-	*		^												^											^					 ^
-	*		v												v										    v					 v
-	*	usable Treasure									Guard Room								 Wearable Teasure	Cernous Chasm
-	*														^
-	*														v
-	*													Jail Cell
-	*/
-
 	//-----------------------------------------------------------------------
 	// Set up Room Connections
 	// 
@@ -110,42 +110,42 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// i.e. if roomA.setRoom(Room::Direction::NORTH, &roomB), roomB
 	// will automatically set its south room to roomA
 	//-----------------------------------------------------------------------
-	
+
 	//JailCell: Initialization
 	jailCell.setRoom(Room::Direction::NORTH, &guardRoom, 1);
 
 	//GuardRoom: Initialization
-	guardRoom.setRoom(Room::Direction::NORTH, &controlRoom,1);
+	guardRoom.setRoom(Room::Direction::NORTH, &controlRoom, 1);
 
 	//ControlRoom: Initialization
-	controlRoom.setRoom(Room::Direction::NORTH, &bryansParrot,3);
+	controlRoom.setRoom(Room::Direction::NORTH, &bryansParrot, 3);
 	controlRoom.setRoom(Room::Direction::EAST, &eastCorridor);
 	controlRoom.setRoom(Room::Direction::WEST, &westCorridorRoom);
 
 	//BryansParrot: Initialization
-	bryansParrot.setRoom(Room::Direction::NORTH, &emergence,1);
-	
+	bryansParrot.setRoom(Room::Direction::NORTH, &emergence, 1);
+
 	//EastCorridor: Initialization
 	eastCorridor.setRoom(Room::Direction::EAST, &eastSafeRoom);
-	
+
 	//EastSafeRoom: Initialization
 	eastSafeRoom.setRoom(Room::Direction::WEST, &eastCorridor);
 	eastSafeRoom.setRoom(Room::Direction::SOUTH, &wearableTreasure);
 	eastSafeRoom.setRoom(Room::Direction::EAST, &condorLair);
 
 	//CondorLair: Initialization
-	condorLair.setRoom(Room::Direction:: SOUTH, &cavernousChasm,1);
+	condorLair.setRoom(Room::Direction::SOUTH, &cavernousChasm, 1);
 
 	//CavernousChasm: Initialization
-	cavernousChasm.setRoom(Room::Direction::EAST, &jailCell,0, false);
+	cavernousChasm.setRoom(Room::Direction::EAST, &jailCell, 0, false);
 
 	//CassoCare Room: Initialization
 	cassoCareRoom.setRoom(Room::Direction::WEST, &guessingRoom);
-	cassoCareRoom.setRoom(Room::Direction::EAST, &jailCell,0,false);
+	cassoCareRoom.setRoom(Room::Direction::EAST, &jailCell, 0, false);
 
 	//Guessing Room: Initialization
 	guessingRoom.setRoom(Room::Direction::WEST, &vultureSurpriseRoom);
-	guessingRoom.setRoom(Room::Direction::EAST, &cassoCareRoom,1);
+	guessingRoom.setRoom(Room::Direction::EAST, &cassoCareRoom, 1);
 
 	//Pickled Crane Room: Initialization
 	pickledCraneRoom.setRoom(Room::Direction::SOUTH, &safeRoomWest);
@@ -175,7 +175,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// ...
 	// 
 	//-----------------------------------------------------------------------
-	
+
 	//Enemy Weapons
 	Weapon chickenHead("Chicken Head", 0.2f, 1.5f);
 	chickenHead.addAttackMove(AttackMove("Headbutt", 5, 10, 1, 0.8f));
@@ -203,14 +203,6 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	Weapon birdScratch("Talons", 0.5f, 1.5f);
 	birdScratch.addAttackMove(AttackMove("Rampage", 8, 12, 1, 0.9f));
-	//-----------------------------------------------------------------------
-// Create Weapons
-// 
-// Weapon [WeaponName]("[Name]", [CritChance], [CritMultiplier]
-// [WeaponName].addAttackMove(AttackMove("[Name]", [MinDmg], [MaxDmg], [Stamina], [Accuracy])
-// ...
-// 
-//-----------------------------------------------------------------------
 
 	//Player Weapons
 	Weapon knife("knife", 0.50f, 1.70f);
@@ -323,7 +315,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//	OR
 	// Key [KeyName]()
 	//-----------------------------------------------------------------------
-	
+
 	Key jailKey("Jail Cell Key", jailCell.getDoor(Room::Direction::NORTH));
 	Key guardRoomKey("Guard Room Key", guardRoom.getDoor(Room::Direction::NORTH));
 	Key mainBossKey("Parrot Skull Key", controlRoom.getDoor(Room::Direction::NORTH));
@@ -358,7 +350,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// [EncounterName].addDrop(make_shared<[ItemSubclass]>([ItemName]);
 	// ...
 	//-----------------------------------------------------------------------
-	
+
 	//Guard Room Encounter: Initialization
 	EnemyEncounter guardRoomEncounter;
 	guardRoomEncounter.addEnemy(chicken);
@@ -401,7 +393,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	westCorridorRoomEncounter.addDrop(make_shared<Weapon>(sword));
 	westCorridorRoomEncounter.addDrop(make_shared<Potion>(mPotion));
 	westCorridorRoomEncounter.addDrop(make_shared<Potion>(mPotion));
-	
+
 
 	//Usable Treasure Encounter: Initialization
 	EnemyEncounter usableTreasureRoomEncounter1;
@@ -438,7 +430,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	EnemyEncounter guessingRoomEncounter;
 	guessingRoomEncounter.addEnemy(turkey);
 	guessingRoomEncounter.addEnemy(kingVulture);
-	
+
 	//MiniWest Room Encounter: INitialization
 	EnemyEncounter miniBossWestEncounter1;
 	miniBossWestEncounter1.addEnemy(miniWest);
@@ -496,7 +488,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	wearableTreasure.addEnemyEncounter(wearableTreasureEncounter1);
 	wearableTreasure.addEnemyEncounter(wearableTreasureEncounter2);
 	wearableTreasure.addEnemyEncounter(wearableTreasureEncounter3);
-	
+
 	// CondorLair Init
 	condorLair.addEnemyEncounter(condorLairEncounter);
 
