@@ -14,6 +14,7 @@
 #include "Interaction.h"
 #include "Weapon.h"
 #include "DungeonBuilder.h"
+#include "Story.h"
 
 using namespace std;
 
@@ -28,21 +29,61 @@ const string VERSION = "1.4.1";
 void Game::start()
 {
 	cout << "Bryan's Parrot v" << VERSION << endl << endl;
-
-	initializeGame();
-
-	currentRoom->displayContents();
-
-	while (gameState == GameState::PLAY)
-	{
-		gameInteract();
-
-		if (player.isDead())
-			playerDied();
-		else if (currentRoom == winRoom)
-			playerWin();
+	char inputGameStart = '0';
+	while (inputGameStart != '1') {
+		//Main Menu
+		cout << "\t===================================\n";
+		cout << "\t - Start Game Press: 1" << "\n";
+		cout << "\t - Instructions Press: 2" << "\n";
+		cout << "\t - To Quit Press: 0" << "\n";
+		cout << "\t===================================\n";
+		cin >> inputGameStart;
+		if (inputGameStart == '2') {
+			//Help Instructions
+			cout << "\tHey there and welcome to our game called Bryan's Parrot! We're very thankful that you can\n"
+					"\tspend some time trying our game out and letting us know how it went. Our Game is a Text \n"
+					"\tbased RPG run through console and built using C++. This game uses commands in the format of \n"
+					"\t(Action) space (Object), an example would be (take) space (drink) if you wanted to pick \n"
+					"\tup a drink that was seen in the room. Also, (i) is inventory, (c) is for character stats, and if\n"
+					"\tyou forget a word used you can always press (h) for a refresher.I think I've given you enough \n"
+					"\tinformation to start the game, but be on the lookout for more action words and also let us know if \n"
+					"\tthere are words that you believe would be better implemented in the game. Thank you and we hope you \n"
+					"\tenjoy our game! \n\n";
+		}
+		else if (inputGameStart == '0') {
+			exit(0);
+		}
+		else {
+			cout << "\nSorry, that input is not recognized.\n\n";
+		}
+		
 	}
+	//Start of Game Dialogue
+	cout << "\tIn the middle of the night, Bryan the poacher comes home one night to find that his one-of-a-kind\n"
+		"\tgreen/blue feather parrot was missing, but a note was left behind in his cage. The note instructed\n"
+		"\tyou to head to a building near the docks that have been abandoned for years. When you got to the\n"
+		"\tdocks it was eerily quiet and baron of life, but you had to press on to find your prized parrot. \n"
+		"\tAfter finding and entering the building it became pitch black with only the smell of bird poo to \n"
+		"\tguide you. You find a closed door and begin to open it only for the floor to disappear beneath you.\n"
+		"\tAs you fall into a lower chamber you see a blue and green feather before you blackout from the impact.\n"
+		"\tYou wake up in a jail cell, with a faint squawk of your parrot in the distance. You don’t recognize \n"
+		"\tthe room you are trapped in and all you see is a jail cell door with a chicken outside of it clad in\n"
+		"\tarmor and a dead body beside yours with a key in his hand. What will Bryan do? \n\n\n";
 
+		initializeGame();
+
+		currentRoom->displayContents();
+
+		while (gameState == GameState::PLAY)
+		{
+			gameInteract();
+
+			if (player.isDead())
+				playerDied();
+			else if (currentRoom == winRoom)
+				playerWin();
+		}
+		
 }
 
 void Game::initializeGameTest() {
@@ -65,10 +106,10 @@ void Game::initializeGame()
 	allRooms = DungeonBuilder::buildDungeon();
 
 	//Current Room player is in. Will change when player enters new room
-	currentRoom = &allRooms.at("first_room");
+	currentRoom = &allRooms.at("Jail Cell");
 
 	//When player enters winRoom, game is over
-	winRoom = &allRooms.at("fifthRoom");
+	winRoom = &allRooms.at("Emergence");
 }
 
 /// PlayerDied(): Health reaches 0
@@ -152,9 +193,19 @@ Room::Direction Game::getDoorIndex(string doorName)
 	return Room::Direction::NONE;
 }
 
+Room* Game::findRoom(string roomName)
+{
+	for (map<string, Room>::iterator it = allRooms.begin(); it != allRooms.end(); it++)
+	{
+		if (Utils::equalsCI(it->first, roomName))
+			return &it->second;
+	}
+
+	return nullptr;
+}
+
 void Game::enterNewRoom(Room* nextRoom)
 {
-
 	while (nextRoom->encounterCount() > 0)
 	{
 		EnemyEncounter& encounter = nextRoom->currentEncounter();
@@ -168,7 +219,7 @@ void Game::enterNewRoom(Room* nextRoom)
 			{
 				if (encResult.tpRoomName != "")
 				{
-					nextRoom = &allRooms.at(encResult.tpRoomName);
+					nextRoom = findRoom(encResult.tpRoomName);
 				}
 				else
 				{
@@ -291,7 +342,7 @@ void Game::gameInteract()
 	{
 		if (inputResult.succeeded)
 		{
-			enterNewRoom(&allRooms.at(inputResult.tpRoomName));
+			enterNewRoom(findRoom(inputResult.tpRoomName));
 		}
 	}
 	}

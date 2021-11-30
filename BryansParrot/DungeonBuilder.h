@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Room.h"
+#include "Story.h"
 
 using namespace std;
 

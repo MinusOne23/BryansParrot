@@ -84,6 +84,7 @@ public:
 		HELP,
 		INSPECT,
 		ENABLE_DEV_MODE,
+		READ,
 
 		//EncounterSpecific
 		ATTACK,

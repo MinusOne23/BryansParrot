@@ -10,6 +10,7 @@
 #include "Key.h"
 #include "Character.h"
 
+
 using namespace std;
 
 /*
@@ -72,6 +73,7 @@ public:
 	void displayInventory() const;
 
 	bool findAndDrink(const string& itemName);
+	bool findAndRead(const string& itemName);
 	bool findAndEquip(const string& itemName);
 	bool findAndUnequip(const string& itemName);
 	bool findAndInspect(const string& itemName);
@@ -79,6 +81,7 @@ public:
 	void setIsDev(bool _isDev);
 
 	virtual void drinkPotion(shared_ptr<Potion> potion) override;
+	virtual void readStory(shared_ptr<Story> story);
 
 private:
 	virtual void equip(shared_ptr<Equippable> equippable) override;
