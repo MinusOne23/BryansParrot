@@ -18,7 +18,7 @@
 
 using namespace std;
 
-const string VERSION = "1.3.7";
+const string VERSION = "1.4.1";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -311,10 +311,10 @@ void Game::gameInteract()
 		if (item != nullptr)
 		{
 			currentRoom->addItem(item);
+			inputResult.succeeded = true;
 		}
 		else
 		{
-			cout << "Invalid item to drop" << endl;
 			inputResult.succeeded = false;
 		}
 		break;
@@ -346,4 +346,6 @@ void Game::gameInteract()
 		}
 	}
 	}
+
+	cout << endl;
 };

@@ -12,6 +12,7 @@ const vector<string> EnemyEncounter::playerOptions = {
 	"Attack [Enemy Name]",
 	"Study [Enemy Name]",
 	"Dodge [Enemy Name] - 1 stamina",
+	"Block",
 	"End Turn",
 	"Retreat"
 };
@@ -97,10 +98,15 @@ bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const
 
 	player.useStamina(damageResult.staminaUsed);
 
+	damageResult.damage -= enemy.getDefense();
+
+	if (damageResult.damage < 0)
+		damageResult.damage = 0;
+
 	enemy.damage(damageResult.damage);
 
 	displayTurnStart(player);
-	displayAttack(player, enemy, damageResult);
+	displayAttack(player, enemy, damageResult, 0, false, false);
 
 	if (enemy.isDead())
 	{
@@ -382,7 +388,7 @@ void EnemyEncounter::displayDodgeAttempts() const
 	cout << "\t==============================================" << endl;
 }
 
-void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
+void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player, bool shouldBlock)
 {
 	if (currentState != EncounterState::ACTIVE)
 	{
@@ -397,23 +403,50 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 
 	while (attack != "")
 	{
-		int dodgeIndex = getDodgeIndex(enemy.getName());
 		bool dodge = false;
+		int dodgeIndex = -1;
 
-		if (dodgeIndex != -1)
+		if (!shouldBlock)
 		{
-			dodge = dodgeEnemy(player, enemy);
-			playerDodges.erase(playerDodges.begin() + dodgeIndex);
+			dodgeIndex = getDodgeIndex(enemy.getName());
+
+			if (dodgeIndex != -1)
+			{
+				dodge = dodgeEnemy(player, enemy);
+				playerDodges.erase(playerDodges.begin() + dodgeIndex);
+			}
 		}
 
 		AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
+		cout << "Original Damage: " << damageResult.damage << endl;
 		enemy.useStamina(damageResult.staminaUsed);
-
 
 		if (!dodge)
 		{
+			int blockAmt = 0;
+
+			if (shouldBlock)
+			{
+				if (blockLeft >= damageResult.damage)
+				{
+					blockAmt = damageResult.damage;
+				}
+				else
+				{
+					blockAmt = blockLeft;
+				}
+
+				blockLeft -= blockAmt;
+				damageResult.damage -= blockAmt;
+			}
+
+			damageResult.damage -= player.getDefense();
+
+			if (damageResult.damage < 0)
+				damageResult.damage = 0;
+
 			player.damage(damageResult.damage);
-			displayAttack(enemy, player, damageResult, dodgeIndex != -1, dodge);
+			displayAttack(enemy, player, damageResult, blockAmt, dodgeIndex != -1, dodge);
 
 			if (player.isDead())
 			{
@@ -425,7 +458,7 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 		}
 		else
 		{
-			displayAttack(enemy, player, damageResult, dodgeIndex != -1, dodge);
+			displayAttack(enemy, player, damageResult, 0, dodgeIndex != -1, dodge);
 			
 			cout << "\n\tYou can now counter the attack!" << endl;
 
@@ -435,7 +468,7 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 			cout << "\t\tAttack Types:" << endl;
 			cout << "\t------------------------------------------\n";
 
-			activeWeapon.displayAttacks("\t - ");
+			cout << activeWeapon.attacksDisplay("\t - ");
 
 			cout << "\t===========================================\n";
 
@@ -472,6 +505,8 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player)
 void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 {
 	bool endTurn = false;
+	isBlocking = false;
+	blockLeft = 0;
 
 	while (!endTurn)
 	{
@@ -507,7 +542,7 @@ void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 			cout << "\t\tAttack Types:" << endl;
 			cout << "\t------------------------------------------\n";
 
-			activeWeapon.displayAttacks("\t - ");
+			cout << activeWeapon.attacksDisplay("\t - ");
 
 			cout << "\t - Cancel" << endl;
 			cout << "\t===========================================\n";
@@ -541,6 +576,84 @@ void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 		case Interaction::ActionType::STUDY:
 		{
 			inputResult.succeeded = studyEnemy(inputResult.target);
+			break;
+		}
+		case Interaction::ActionType::BLOCK:
+		{
+			shared_ptr<Shield> shieldPtr = player.getShield();
+
+			if (shieldPtr == nullptr)
+			{
+				cout << "You must have a shield equipped to block" << endl;
+				inputResult.succeeded = false;
+				break;
+			}
+
+			Shield shield = *shieldPtr;
+
+			cout << "\t===========================================\n";
+			cout << "\t\Block Types:" << endl;
+			cout << "\t------------------------------------------\n";
+
+			cout << shield.blocksDisplay("\t - ");
+
+			cout << "\t - Cancel" << endl;
+			cout << "\t===========================================\n";
+
+			string input = Utils::inputValidator();
+
+			Shield::BlockType blockType = shield.blockTypeFromStr(input);
+
+			while (!Utils::equalsCI(input, "cancel") && blockType == Shield::BlockType::ERROR)
+			{
+				cout << "That move does not exist" << endl;
+				input = Utils::inputValidator();
+				blockType = shield.blockTypeFromStr(input);
+			}
+
+			if (Utils::equalsCI(input, "cancel"))
+			{
+				cout << "You've canceled your Block" << endl;
+				inputResult.succeeded = false;
+				break;
+			}
+
+			if (player.getCurrentStamina() < shield.getStaminaRequied(blockType))
+			{
+				cout << "You do not have enough stamina" << endl;
+				inputResult.succeeded = false;
+				break;
+			}
+
+			isBlocking = true;
+			blockLeft = shield.calcBlockAmt(blockType);
+
+			switch (blockType)
+			{
+			case Shield::BlockType::SINGLE:
+			{
+				cout << "Which enemy would you like to block?" << endl;
+				int enemyIndex = getEnemyIndex(Utils::inputValidator());
+
+				while (enemyIndex == -1)
+				{
+					cout << "That enemy does not exist, please try again" << endl;
+					enemyIndex = getEnemyIndex(Utils::inputValidator());
+				}
+
+				blockTargetIndex = enemyIndex;
+				break;
+			}
+			case Shield::BlockType::GROUP:
+			{
+				blockTargetIndex = -1;
+				break;
+			}
+			}
+
+			cout << "You are now blocking for " << blockLeft << " damage" << endl;
+
+			endTurn = true;
 			break;
 		}
 		case Interaction::ActionType::DODGE:
@@ -614,10 +727,12 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 
 		if (enemyTimes[i] >= TURN_TIME)
 		{
+			bool shouldBlock = isBlocking && (blockTargetIndex == -1 || blockTargetIndex == i) && blockLeft > 0;
+
 			currentTurn = i;
 
 			int enemyCount = enemies.size();
-			enemyTurn(enemies[i], player);
+			enemyTurn(enemies[i], player, shouldBlock);
 
 			int diff = enemyCount - enemies.size();
 			i -= diff;
@@ -637,7 +752,7 @@ void EnemyEncounter::tick(Player& player, EncounterResult& result)
 	}
 }
 
-void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult, bool dodgeAttempted, bool dodgeSuccess) const
+void EnemyEncounter::displayAttack(const Character& attacker, const Character& target, const AttackMove::DamageResult& damageResult, int blockAmt, bool dodgeAttempted, bool dodgeSuccess) const
 {
 	cout << "\t\t" << attacker.getName() << " used " << damageResult.attackName << "!" << endl;
 
@@ -660,6 +775,11 @@ void EnemyEncounter::displayAttack(const Character& attacker, const Character& t
 			if (damageResult.isCritical)
 			{
 				cout << "\t\tCritical Hit!" << endl;
+			}
+
+			if (blockAmt > 0)
+			{
+				cout << "\t\t" << target.getName() << " blocked " << blockAmt << " damage!" << endl;
 			}
 
 			cout << "\t\t" << attacker.getName() << " dealt " << damageResult.damage << " damage to " << target.getName() << endl;

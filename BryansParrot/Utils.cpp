@@ -67,6 +67,11 @@ bool Utils::chanceTest(float chance)
 	return testNum <= chance * 1000;
 }
 
+int Utils::randInt(int min, int max)
+{
+	return rand() % (max - min + 1) + min;
+}
+
 int Utils::vecIndexOf(vector<string> vec, string val)
 {
 	for (int i = 0; i < vec.size(); i++)

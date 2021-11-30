@@ -82,12 +82,14 @@ public:
 		EQUIP,
 		UNEQUIP,
 		HELP,
+		INSPECT,
 		ENABLE_DEV_MODE,
 		READ,
 
 		//EncounterSpecific
 		ATTACK,
 		DODGE,
+		BLOCK,
 		STUDY,
 		RETREAT,
 		END_TURN,

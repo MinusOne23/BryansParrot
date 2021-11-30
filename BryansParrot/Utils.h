@@ -41,6 +41,7 @@ public:
 	static string strToLower(string str);
 	static bool isNumber(const string& str);
 	static bool chanceTest(float chance);
+	static int randInt(int min, int max); // Inclusive
 
 	template<class T>
 	static int vecIndexOf(vector<T> vec, T val);

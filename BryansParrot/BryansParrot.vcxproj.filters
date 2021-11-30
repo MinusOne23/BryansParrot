@@ -19,6 +19,9 @@
     <ClCompile Include="DungeonBuilder.cpp" />
     <ClCompile Include="AttackMove.cpp" />
     <ClCompile Include="Equippable.cpp" />
+    <ClCompile Include="Shield.cpp" />
+    <ClCompile Include="Equipment.cpp" />
+    <ClCompile Include="Armor.cpp" />
     <ClCompile Include="Story.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +43,9 @@
     <ClInclude Include="DungeonBuilder.h" />
     <ClInclude Include="AttackMove.h" />
     <ClInclude Include="Equippable.h" />
+    <ClInclude Include="Shield.h" />
+    <ClInclude Include="Equipment.h" />
+    <ClInclude Include="Armor.h" />
     <ClInclude Include="Story.h" />
   </ItemGroup>
 </Project>

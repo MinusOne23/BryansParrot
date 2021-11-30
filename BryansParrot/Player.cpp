@@ -83,7 +83,18 @@ shared_ptr<Item> Player::dropItem(string itemName)
 	int index = inventory.find(itemName);
 	
 	if (index == -1)
+	{
+		cout << "That item is not in your inventory" << endl;
 		return nullptr;
+	}
+
+	shared_ptr<Equippable> equippable = dynamic_pointer_cast<Equippable>(inventory[index]);
+
+	if (equippable->isEquipped)
+	{
+		cout << "You must unequip that item before it can be dropped" << endl;
+		return nullptr;
+	}
 
 	cout << "You dropped " << inventory[index]->getName() << endl;
 	shared_ptr<Item>item = inventory[index];
@@ -197,19 +208,36 @@ bool Player::findAndEquip(const string& itemName)
 
 bool Player::findAndUnequip(const string& itemName)
 {
-	if (equipment.mainWeapon != nullptr && Utils::equalsCI(equipment.mainWeapon->getName(), itemName))
-	{
-		shared_ptr<Weapon> weapon = equipment.mainWeapon;
-		weapon->isEquipped = false;
+	shared_ptr<Equippable> unequipped = equipment.unequip(itemName);
 
-		cout << "You unequipped " << weapon->getName() << endl;
-		equipment.mainWeapon = nullptr;
+	if (unequipped != nullptr)
+	{
+		cout << "You unequipped " << unequipped->getName() << endl;
+		calcNewHealth();
 
 		return true;
 	}
 
 	cout << "That item is not equipped." << endl;
 	return false;
+}
+
+bool Player::findAndInspect(const string& itemName)
+{
+	int index = inventory.find(itemName);
+
+	if (index == -1)
+	{
+		cout << "That item is not in your inventory." << endl;
+		return false;
+	}
+
+	cout << endl;
+	cout << "===========================================" << endl;
+	cout << inventory[index]->inspectDisplay();
+	cout << "===========================================" << endl;
+
+	return true;
 }
 
 bool Player::isDev()

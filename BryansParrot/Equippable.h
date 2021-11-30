@@ -13,7 +13,9 @@ class Equippable: public Item
 public:
 	bool isEquipped = false;
 
-	virtual string getDisplay() const;
+	virtual string getDisplay() const override;
+	virtual string equipmentDisplay(string title = "", string linePrefix = "") const;
+	virtual string inspectDisplay() const override;
 
 	void setStaminaBoost(int boost);
 	void setSpeedBoost(int boost);

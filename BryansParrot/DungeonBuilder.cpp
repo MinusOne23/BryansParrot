@@ -1,5 +1,7 @@
 #include "DungeonBuilder.h"
 #include "EnemyEncounter.h"
+#include "Shield.h"
+#include "Armor.h"
 
 vector<string> DungeonBuilder::roomNames;
 
@@ -168,7 +170,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	//-----------------------------------------------------------------------
 	// Create Weapons
 	// 
-	// Weapon [WeaponName]("[Name]", [CritChance], [CritMultiplier]
+	// Weapon [WeaponName]("[Name]", [CritChance], [CritMultiplier])
 	// [WeaponName].addAttackMove(AttackMove("[Name]", [MinDmg], [MaxDmg], [Stamina], [Accuracy])
 	// ...
 	// 
@@ -265,6 +267,35 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	elephantGun.setSpeedBoost(1);
 	elephantGun.setStaminaBoost(3);
 
+
+	//-----------------------------------------------------------------------
+	// Create Shields
+	// 
+	// Shield [ShieldName]("[Name]")
+	// [ShieldName].setBlockMove(Shield::BlockType::[Type], { minBlock, maxBlock, stamina })
+	// ...
+	// 
+	//-----------------------------------------------------------------------
+	Shield shield("Shield");
+	shield.setBlockMove(Shield::BlockType::SINGLE, { 25, 35, 1 });
+	shield.setBlockMove(Shield::BlockType::GROUP, { 20, 30, 1 });
+	shield.setStaminaBoost(2);
+
+	//-----------------------------------------------------------------------
+	// Create Armor
+	// 
+	// Armor [ArmorName]("[Name]", Armor::ArmorType::[Type], [Defense])
+	// (Optional) [ArmorName].setHealthBoost([Amt])
+	// ...
+	// 
+	//-----------------------------------------------------------------------
+	Armor ironHelmet("Iron Helmet", Armor::ArmorType::HEAD, 3);
+	Armor ironBreastplate("Iron Breastplate", Armor::ArmorType::CHEST, 5);
+	ironBreastplate.setHealthBoost(50);
+	Armor ironGreaves("Iron Greaves", Armor::ArmorType::LEGS, 2);
+	ironGreaves.setHealthBoost(25);
+	Armor ironBoots("Iron Boots", Armor::ArmorType::FEET, 1);
+	Armor ironGauntlets("Iron Gauntlets", Armor::ArmorType::HANDS, 1);
 
 	//-----------------------------------------------------------------------
 	// Create Enemies
@@ -393,7 +424,6 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	vultureSurpriseRoomEncounter.addEnemy(condor);
 	vultureSurpriseRoomEncounter.addEnemy(kingVulture);
 	vultureSurpriseRoomEncounter.addDrop(make_shared<Potion>(lPotion));
-	
 
 	//Pickled Crane Room Encounter: Initialization
 	EnemyEncounter pickledCraneRoomEncounter;

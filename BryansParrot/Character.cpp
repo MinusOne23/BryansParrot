@@ -20,21 +20,21 @@ using namespace std;
 /// DISPLAY_STATS: Displays Current/Max Health, min/max damage, and Crit chance percentage
 
 Character::Character(Health _health, string _name, int _baseSpeed, int _baseStamina, float _dodgeChance, Weapon _baseWeapon)
-	: health(_health), name(_name), baseSpeed(_baseSpeed), baseStamina(_baseStamina), dodge(_dodgeChance), equipment{_baseWeapon} {}
+	: health(_health), baseHealth(_health.getMaxHealth()), name(_name), baseSpeed(_baseSpeed), baseStamina(_baseStamina), dodge(_dodgeChance), equipment{_baseWeapon} {}
 
 string Character::getName() const
 {
 	return name;
 }
 
-Character::Equipment Character::getEquipment() const
-{
-	return equipment;
-}
-
 Weapon Character::getActiveWeapon() const
 {
-	return equipment.mainWeapon == nullptr ? equipment.baseWeapon : *equipment.mainWeapon;
+	return equipment.getActiveWeapon();
+}
+
+const shared_ptr<Shield> Character::getShield() const
+{
+	return equipment.getShield();
 }
 
 void Character::damage(int amt)
@@ -49,15 +49,8 @@ void Character::heal(int amt)
 
 void Character::equip(shared_ptr<Equippable> equippable)
 {
-	shared_ptr<Weapon> weapon =  dynamic_pointer_cast<Weapon>(equippable);
-
-	if (weapon != nullptr)
-	{
-		if (equipment.mainWeapon != nullptr)
-			equipment.mainWeapon->isEquipped = false;
-
-		equipment.mainWeapon = weapon;
-	}
+	equipment.equip(equippable);
+	calcNewHealth();
 }
 
 void Character::drinkPotion(shared_ptr<Potion> potion)
@@ -79,6 +72,12 @@ string Character::healthDisplay() const
 	return ss.str();
 }
 
+void Character::calcNewHealth()
+{
+	Equipment::EquipmentStats stats = equipment.getEquipmentStats();
+	health.setMaxHealth(baseHealth + stats.health);
+}
+
 int Character::getCurrentHealth() const
 {
 	return health.getCurrentHealth();
@@ -94,14 +93,23 @@ float Character::getDodgeChance() const
 	return dodge;
 }
 
+int Character::getDefense() const
+{
+	return equipment.getEquipmentStats().defense;
+}
+
 int Character::getMaxStamina() const
 {
-	return getActiveWeapon().getStaminaBoost() + baseStamina;
+	Equipment::EquipmentStats stats = equipment.getEquipmentStats();
+
+	return baseStamina + stats.stamina;
 }
 
 int Character::getSpeed() const
 {
-	return getActiveWeapon().getSpeedBoost() + baseSpeed;
+	Equipment::EquipmentStats stats = equipment.getEquipmentStats();
+
+	return baseSpeed + stats.speed;
 }
 
 int Character::getCurrentStamina() const
@@ -128,6 +136,7 @@ bool Character::isDead() const
 void Character::displayStats() const
 {
 	Weapon activeWeapon = getActiveWeapon();
+	Equipment::EquipmentStats stats = equipment.getEquipmentStats();
 
 	cout << "\t===========================================\n";
 	cout << "\t " << name << " Stats:" << endl;
@@ -135,15 +144,9 @@ void Character::displayStats() const
 	cout << "\t Health: " << healthDisplay() << endl;
 	cout << "\t Stamina: " << getMaxStamina() << endl;
 	cout << "\t Speed: " << getSpeed() << endl;
+	cout << "\t Defense: " << stats.defense << endl;
 	cout << "\t Dodge Chance: " << fixed << setprecision(2) << dodge * 100 << "%" << endl;
 	cout << "\t Equipment: " << endl;
-	cout << "\t    MainWeapon: " << activeWeapon.getName() << endl;
-	activeWeapon.displayAttacks("\t       ");
-	cout << "\t       Crit Chance: " << fixed << setprecision(2) << activeWeapon.getCritChance() * 100 << "%" << endl;
-	cout << "\t       Crit Multiplier: " << fixed << setprecision(2) << activeWeapon.getCritMult() << "x" << endl;
-	if(activeWeapon.getSpeedBoost())
-		cout << "\t       Speed +" << activeWeapon.getSpeedBoost() << endl;
-	if (activeWeapon.getStaminaBoost())
-		cout << "\t       Stamina +" << activeWeapon.getStaminaBoost() << endl;
+	cout << equipment.display("\t    ");
 	cout << "\t===========================================\n";
 }
