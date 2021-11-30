@@ -15,12 +15,6 @@ void MiniMap::discoverRoom(Room* currentRoom)
 	if (minFoundPos.col == -1 || position.col < minFoundPos.col)
 		minFoundPos.col = position.col;
 
-	if (maxFoundPos.row == -1 || position.row > maxFoundPos.row)
-		maxFoundPos.row = position.row;
-
-	if (maxFoundPos.col == -1 || position.col > maxFoundPos.col)
-		maxFoundPos.col = position.col;
-
 	int minRows = position.row + 1;
 
 	while (discoveredRooms.size() < minRows)

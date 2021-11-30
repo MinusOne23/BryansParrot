@@ -28,7 +28,7 @@ private:
 	};
 
 	vector<vector<Room*>> discoveredRooms;
-	Room::Position minFoundPos = { -1, -1 }, maxFoundPos = { -1, -1 };
+	Room::Position minFoundPos = { -1, -1 };
 
 	char getSymbol(Room* room) const;
 
