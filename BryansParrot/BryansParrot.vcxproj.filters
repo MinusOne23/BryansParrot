@@ -20,6 +20,8 @@
     <ClCompile Include="AttackMove.cpp" />
     <ClCompile Include="Equippable.cpp" />
     <ClCompile Include="Shield.cpp" />
+    <ClCompile Include="Equipment.cpp" />
+    <ClCompile Include="Armor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
@@ -41,5 +43,7 @@
     <ClInclude Include="AttackMove.h" />
     <ClInclude Include="Equippable.h" />
     <ClInclude Include="Shield.h" />
+    <ClInclude Include="Equipment.h" />
+    <ClInclude Include="Armor.h" />
   </ItemGroup>
 </Project>

@@ -10,9 +10,9 @@ const int EnemyEncounter::TURN_TIME = 100;
 
 const vector<string> EnemyEncounter::playerOptions = {
 	"Attack [Enemy Name]",
-	"Block [Enemy Name]",
 	"Study [Enemy Name]",
 	"Dodge [Enemy Name] - 1 stamina",
+	"Block",
 	"End Turn",
 	"Retreat"
 };
@@ -97,6 +97,11 @@ bool EnemyEncounter::attackEnemy(Player& player, const string& attackName, const
 	}
 
 	player.useStamina(damageResult.staminaUsed);
+
+	damageResult.damage -= enemy.getDefense();
+
+	if (damageResult.damage < 0)
+		damageResult.damage = 0;
 
 	enemy.damage(damageResult.damage);
 
@@ -413,6 +418,7 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player, bool shouldBlock)
 		}
 
 		AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
+		cout << "Original Damage: " << damageResult.damage << endl;
 		enemy.useStamina(damageResult.staminaUsed);
 
 		if (!dodge)
@@ -433,6 +439,11 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player, bool shouldBlock)
 				blockLeft -= blockAmt;
 				damageResult.damage -= blockAmt;
 			}
+
+			damageResult.damage -= player.getDefense();
+
+			if (damageResult.damage < 0)
+				damageResult.damage = 0;
 
 			player.damage(damageResult.damage);
 			displayAttack(enemy, player, damageResult, blockAmt, dodgeIndex != -1, dodge);
@@ -573,7 +584,7 @@ void EnemyEncounter::playerTurn(Player& player, EncounterResult& result)
 
 			if (shieldPtr == nullptr)
 			{
-				cout << "You do not have a shield equipped to block" << endl;
+				cout << "You must have a shield equipped to block" << endl;
 				inputResult.succeeded = false;
 				break;
 			}

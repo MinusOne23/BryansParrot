@@ -38,3 +38,16 @@ void Health::addHealth(int amt)
 		currentHealth = maxHealth;
 	}
 }
+
+void Health::setMaxHealth(int amt)
+{
+	if (amt <= 0)
+		amt = 1;
+
+	float frac = (float)currentHealth / maxHealth;
+	maxHealth = amt;
+	currentHealth = maxHealth * frac;
+
+	if (currentHealth <= 0)
+		currentHealth = 1;
+}

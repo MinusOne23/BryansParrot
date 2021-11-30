@@ -44,6 +44,8 @@ public:
 
 	void removeHealth(int amt);
 	void addHealth(int amt);
+
+	void setMaxHealth(int amt);
 };
 
 #endif // HEALTH_H
