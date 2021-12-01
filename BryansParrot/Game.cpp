@@ -17,7 +17,7 @@
 
 using namespace std;
 
-const string VERSION = "1.4.1";
+const string VERSION = "1.4.2";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
