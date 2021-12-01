@@ -12,16 +12,28 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// *** All room names MUST BE UNIQUE ***
 	//-----------------------------------------------------------------------
+
+	/*
+	*		0			1			2
+	* 0					fifth
+	* 1					mainBoss
+	* 2					miniNorth
+	* 3		miniWest	fourth		miniEast
+	* 4					third
+	* 5					second
+	* 6					first
+	*/
+
 	map<string, Room> allRooms = {
-		{"first_room",			Room()},
-		{"second_room",			Room()},
-		{"third_room",			Room()},
-		{"fourth_room",			Room()},
-		{"miniBossWestRoom",	Room()},
-		{"miniBossEastRoom",	Room()},
-		{"miniBossNorthRoom",	Room()},
-		{"mainBossRoom",		Room()},
-		{"fifthRoom",			Room()}
+		{"first_room",			Room(6, 1)},
+		{"second_room",			Room(5, 1)},
+		{"third_room",			Room(4, 1)},
+		{"fourth_room",			Room(3, 1)},
+		{"miniBossWestRoom",	Room(3, 0)},
+		{"miniBossEastRoom",	Room(3, 2)},
+		{"miniBossNorthRoom",	Room(2, 1)},
+		{"mainBossRoom",		Room(1, 1)},
+		{"fifthRoom",			Room(0, 1)}
 	};
 
 	//-----------------------------------------------------------------------

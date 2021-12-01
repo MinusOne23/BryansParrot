@@ -60,12 +60,16 @@ void Game::initializeGame()
 	player = Player(	100,	10,		1,			0.4f,		playerFists);
 	player.refreshStamina();
 
+	miniMap = MiniMap();
+
 	gameState = GameState::PLAY;
 
 	allRooms = DungeonBuilder::buildDungeon();
 
 	//Current Room player is in. Will change when player enters new room
 	currentRoom = &allRooms.at("first_room");
+	miniMap.discoverRoom(currentRoom);
+	currentRoom->setHasPlayer(true);
 
 	//When player enters winRoom, game is over
 	winRoom = &allRooms.at("fifthRoom");
@@ -154,13 +158,17 @@ Room::Direction Game::getDoorIndex(string doorName)
 
 void Game::enterNewRoom(Room* nextRoom)
 {
+	miniMap.discoverRoom(nextRoom);
+
+	currentRoom->setHasPlayer(false);
+	nextRoom->setHasPlayer(true);
 
 	while (nextRoom->encounterCount() > 0)
 	{
 		EnemyEncounter& encounter = nextRoom->currentEncounter();
 		encounter.setLastRoom(currentRoom);
 
-		EnemyEncounter::EncounterResult encResult = encounter.startEncounter(player);
+		EnemyEncounter::EncounterResult encResult = encounter.startEncounter(player, miniMap);
 
 		if (!encResult.encounterComplete)
 		{
@@ -168,16 +176,25 @@ void Game::enterNewRoom(Room* nextRoom)
 			{
 				if (encResult.tpRoomName != "")
 				{
+					nextRoom->setHasPlayer(false);
+
 					nextRoom = &allRooms.at(encResult.tpRoomName);
+					nextRoom->setHasPlayer(true);
 				}
 				else
 				{
+					nextRoom->setHasPlayer(false);
+					currentRoom->setHasPlayer(true);
+
 					currentRoom->displayContents();
 					return;
 				}
 			}
 			else if (!player.isDead())
 			{
+				nextRoom->setHasPlayer(false);
+				currentRoom->setHasPlayer(true);
+
 				currentRoom->displayContents();
 				return;
 			}
@@ -214,7 +231,7 @@ void Game::enterNewRoom(Room* nextRoom)
 ///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
-	Interaction::InteractionResult inputResult = Interaction::universalInput(player);
+	Interaction::InteractionResult inputResult = Interaction::universalInput(player, miniMap);
 
 	if (!Interaction::canUseInRoom(inputResult.actionType))
 	{
