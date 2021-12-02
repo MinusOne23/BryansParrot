@@ -118,6 +118,7 @@ public:
 	void addItems(vector<shared_ptr<Item>> newItems);
 	void setRoom(Direction index, Room* room, int locks = 0, bool bothWays = true);
 	void addEnemyEncounter(EnemyEncounter encounter);
+	void setDescription(string desc) { description = desc; }
 
 	shared_ptr<Item> takeItem(string objectName);
 	void unlockDoor(Direction index, Player& player);
@@ -141,6 +142,7 @@ private:
 	Room* rooms[4] = { 0 };
 	Position pos;
 	bool hasPlayer = false;
+	string description = "";
 
 	const static Direction oppDirection[4];
 

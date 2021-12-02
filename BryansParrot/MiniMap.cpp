@@ -9,6 +9,9 @@ void MiniMap::discoverRoom(Room* currentRoom)
 {
 	Room::Position position = currentRoom->getPosition();
 
+	if (position.col < 0 || position.row < 0)
+		return;
+
 	if (minFoundPos.row == -1 || position.row < minFoundPos.row)
 		minFoundPos.row = position.row;
 

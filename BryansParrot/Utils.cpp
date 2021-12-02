@@ -71,3 +71,14 @@ int Utils::randInt(int min, int max)
 {
 	return rand() % (max - min + 1) + min;
 }
+
+int Utils::vecIndexOf(vector<string> vec, string val)
+{
+	for (int i = 0; i < vec.size(); i++)
+	{
+		if (equalsCI(vec[i], val))
+			return i;
+	}
+
+	return -1;
+}
