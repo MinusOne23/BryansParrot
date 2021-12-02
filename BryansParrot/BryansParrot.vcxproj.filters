@@ -22,6 +22,7 @@
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="Equipment.cpp" />
     <ClCompile Include="Armor.cpp" />
+    <ClCompile Include="MiniMap.cpp" />
     <ClCompile Include="Story.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +47,7 @@
     <ClInclude Include="Shield.h" />
     <ClInclude Include="Equipment.h" />
     <ClInclude Include="Armor.h" />
+    <ClInclude Include="MiniMap.h" />
     <ClInclude Include="Story.h" />
   </ItemGroup>
 </Project>

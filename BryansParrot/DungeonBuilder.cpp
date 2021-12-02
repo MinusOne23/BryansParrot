@@ -8,19 +8,20 @@ vector<string> DungeonBuilder::roomNames;
 map<string, Room> DungeonBuilder::buildDungeon()
 {
 	/*
-	*	Vulture Surprise  <->  Guessing Room   <->   Casso Care Room
-	*		^
-	*		v
-	*	Pickled Crane Room							  Bryans Parrot
-	*		^												^
-	*		v												v
-	*	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
-	*		^												^											^					 ^
-	*		v												v										    v					 v
-	*	usable Treasure									Guard Room								 Wearable Teasure	Cernous Chasm
-	*														^
-	*														v
-	*													Jail Cell
+	*			0						1						2					3						4					5
+	*	0	Vulture Surprise  <->  Guessing Room   <->   Casso Care Room
+	*			^
+	*			v
+	*	1	Pickled Crane Room							  Bryans Parrot
+	*			^												^
+	*			v												v
+	*	2	safe Room West   <->   West Corridor   <->   Controll Room   <->   East Corridor   <->   Safe Room East   <->   Condor Lair
+	*			^												^											^					 ^
+	*			v												v										    v					 v
+	*	3	usable Treasure									Guard Room								 Wearable Teasure	Cernous Chasm
+	*															^
+	*															v
+	*	4													Jail Cell
 	*/
 
 	//-----------------------------------------------------------------------
@@ -28,24 +29,25 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// *** All room names MUST BE UNIQUE ***
 	//-----------------------------------------------------------------------
+
 	map<string, Room> allRooms = {
-		{"Jail Cell",				Room()},
-		{"Guard Room",				Room()},
-		{"Control Room",			Room()},
-		{"Bryan's Parrot",			Room()},
-		{"Emergence",				Room()},
-		{"East Corridor",			Room()},
-		{"East Safe Room",			Room()},
-		{"Wearable Treasure",		Room()},
-		{"Condor Lair",				Room()},
-		{"Cavernous Chasm",			Room()},
-		{"CassoCare Room",			Room()},
-		{"Guessing Room",			Room()},
-		{"Pickled Crane Room",		Room()},
-		{"Vulture Surprise Room",	Room()},
-		{"Safe Room West",			Room()},
-		{"West Corridor Room",		Room()},
-		{"Usable Treasure Room",	Room()},
+		{"Jail Cell",				Room(4,2)},
+		{"Guard Room",				Room(3,2)},
+		{"Control Room",			Room(2,2)},
+		{"Bryan's Parrot",			Room(1,2)},
+		{"Emergence",				Room(-1,-1)},
+		{"East Corridor",			Room(2,3)},
+		{"East Safe Room",			Room(2,4)},
+		{"Wearable Treasure",		Room(3,4)},
+		{"Condor Lair",				Room(2,5)},
+		{"Cavernous Chasm",			Room(3,5)},
+		{"CassoCare Room",			Room(0,2)},
+		{"Guessing Room",			Room(0,1)},
+		{"Pickled Crane Room",		Room(1,0)},
+		{"Vulture Surprise Room",	Room(0,0)},
+		{"Safe Room West",			Room(2,0)},
+		{"West Corridor Room",		Room(2,1)},
+		{"Usable Treasure Room",	Room(3,0)}
 	};
 
 	//-----------------------------------------------------------------------
@@ -367,7 +369,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 		"\tIn the background, I remember you could see two chicken pedestals with the enemy\n"
 		"\tbetween them. I don't know how but I found a Garbage Lid and Armor on the side of\n"
 		"\tthe room covered in chicken feed. Pretty useful to protect yourself from attacks, \n"
-		"\tdon’t you think? ");
+		"\tdonÂ’t you think? ");
 
 	Story controlRoomNote("Control Note", "\tIt was creepy, when I walked in, the whole place was surrounded by multiple\n"
 		"\tmonitors and the main monitor displayed a parrot flying. The room itself was pretty\n"

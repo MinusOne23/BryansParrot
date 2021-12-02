@@ -31,6 +31,8 @@ const map<string, Interaction::ActionType> Interaction::actions = {
 	{"equip",		ActionType::EQUIP},
 	{"unequip",		ActionType::UNEQUIP},
 	{"inspect",		ActionType::INSPECT},
+	{"map",			ActionType::MINI_MAP},
+	{"m",			ActionType::MINI_MAP},
 	{DEV_MODE,		ActionType::ENABLE_DEV_MODE},
 
 	// Room Specific
@@ -64,6 +66,7 @@ const map<Interaction::ActionType, ActionInfo> actionInfoMap = {
 	{Interaction::ActionType::UNEQUIP,			{true,	true,		false,		"Unequips the specified piece of equipment and places into inventory"}},
 	{Interaction::ActionType::DRINK,			{true,	true,		false,		"Drink the specified item from the player's inventory"}},
 	{Interaction::ActionType::INSPECT,			{true,	true,		false,		"Displays the stats of the specified item in the player's inventory"}},
+	{Interaction::ActionType::MINI_MAP,			{true,	true,		false,		"Displays map of rooms that player has already discovered"}},
 	{Interaction::ActionType::QUIT,				{true,	true,		false,		"Quits the game"}},
 	{Interaction::ActionType::READ,				{true,	true,		false,		"Read items from players inventory"}},
 	{Interaction::ActionType::ERROR,			{true,	true,		false,		""}},
@@ -94,6 +97,7 @@ set<string> Interaction::actionsUsed = {
 	"inventory",
 	"inspect",
 	"look",
+	"map",
 	"quit"
 };
 
@@ -145,7 +149,7 @@ string Interaction::getHelpText(string action)
 	return "";
 }
 
-Interaction::InteractionResult Interaction::universalInput(Player& player)
+Interaction::InteractionResult Interaction::universalInput(Player& player, MiniMap& miniMap)
 {
 	string inputStr = Utils::inputValidator();
 	Interaction::InteractionResult inputResult = Interaction::parseInput(inputStr);
@@ -193,6 +197,11 @@ Interaction::InteractionResult Interaction::universalInput(Player& player)
 	case ActionType::INSPECT:
 	{
 		inputResult.succeeded = player.findAndInspect(inputResult.target);
+		break;
+	}
+	case ActionType::MINI_MAP:
+	{
+		cout << miniMap.mapDisplay();
 		break;
 	}
 	case ActionType::USE:

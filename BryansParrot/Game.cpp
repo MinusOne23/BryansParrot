@@ -18,7 +18,7 @@
 
 using namespace std;
 
-const string VERSION = "1.4.1";
+const string VERSION = "1.4.2";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -69,7 +69,7 @@ void Game::start()
 		"\tAfter finding and entering the building it became pitch black with only the smell of bird poo to \n"
 		"\tguide you. You find a closed door and begin to open it only for the floor to disappear beneath you.\n"
 		"\tAs you fall into a lower chamber you see a blue and green feather before you blackout from the impact.\n"
-		"\tYou wake up in a jail cell, with a faint squawk of your parrot in the distance. You don’t recognize \n"
+		"\tYou wake up in a jail cell, with a faint squawk of your parrot in the distance. You donâ€™t recognize \n"
 		"\tthe room you are trapped in and all you see is a jail cell door with a chicken outside of it clad in\n"
 		"\tarmor and a dead body beside yours with a key in his hand. What will Bryan do? \n\n\n";
 
@@ -104,12 +104,16 @@ void Game::initializeGame()
 	player = Player(	100,	10,		1,			0.4f,		playerFists);
 	player.refreshStamina();
 
+	miniMap = MiniMap();
+
 	gameState = GameState::PLAY;
 
 	allRooms = DungeonBuilder::buildDungeon();
 
 	//Current Room player is in. Will change when player enters new room
 	currentRoom = &allRooms.at("Jail Cell");
+	miniMap.discoverRoom(currentRoom);
+	currentRoom->setHasPlayer(true);
 
 	//When player enters winRoom, game is over
 	winRoom = &allRooms.at("Emergence");
@@ -209,12 +213,17 @@ Room* Game::findRoom(string roomName)
 
 void Game::enterNewRoom(Room* nextRoom)
 {
+	miniMap.discoverRoom(nextRoom);
+
+	currentRoom->setHasPlayer(false);
+	nextRoom->setHasPlayer(true);
+  
 	while (nextRoom->encounterCount() > 0)
 	{
 		EnemyEncounter& encounter = nextRoom->currentEncounter();
 		encounter.setLastRoom(currentRoom);
 
-		EnemyEncounter::EncounterResult encResult = encounter.startEncounter(player);
+		EnemyEncounter::EncounterResult encResult = encounter.startEncounter(player, miniMap);
 
 		if (!encResult.encounterComplete)
 		{
@@ -222,16 +231,25 @@ void Game::enterNewRoom(Room* nextRoom)
 			{
 				if (encResult.tpRoomName != "")
 				{
+					nextRoom->setHasPlayer(false);
+
 					nextRoom = findRoom(encResult.tpRoomName);
+					nextRoom->setHasPlayer(true);
 				}
 				else
 				{
+					nextRoom->setHasPlayer(false);
+					currentRoom->setHasPlayer(true);
+
 					currentRoom->displayContents();
 					return;
 				}
 			}
 			else if (!player.isDead())
 			{
+				nextRoom->setHasPlayer(false);
+				currentRoom->setHasPlayer(true);
+
 				currentRoom->displayContents();
 				return;
 			}
@@ -268,7 +286,7 @@ void Game::enterNewRoom(Room* nextRoom)
 ///		HELP -- displays all commands the player has already discovered
 void Game::gameInteract()
 {
-	Interaction::InteractionResult inputResult = Interaction::universalInput(player);
+	Interaction::InteractionResult inputResult = Interaction::universalInput(player, miniMap);
 
 	if (!Interaction::canUseInRoom(inputResult.actionType))
 	{

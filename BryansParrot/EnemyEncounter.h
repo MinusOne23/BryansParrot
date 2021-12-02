@@ -11,6 +11,7 @@
 using namespace std;
 
 class Room;
+class MiniMap;
 
 /*
 * --------------------------------------------------------------------------------------
@@ -102,7 +103,7 @@ public:
 	EnemyEncounter();
 
 	//void enemyTurn(Player& player, bool dodge, int ExtraDodgeTurn);
-	EncounterResult startEncounter(Player& player);
+	EncounterResult startEncounter(Player& player, MiniMap& miniMap);
 	bool attackEnemy(Player& player, const string& attackName, const string& enemyName, bool useStamina = true);
 	bool killEnemy(const string& enemyName);
 	bool studyEnemy(const string& enemyName) const;
@@ -132,9 +133,9 @@ private:
 	void displayTurnStart(const Character& curChar) const;
 	void displayDodgeAttempts() const;
 	void enemyTurn(Enemy& enemy, Player& player, bool shouldBlock);
-	void playerTurn(Player& player, EncounterResult& result);
+	void playerTurn(Player& player, MiniMap& miniMap, EncounterResult& result);
 
-	void tick(Player& player, EncounterResult& result);
+	void tick(Player& player, MiniMap& miniMap, EncounterResult& result);
 
 	const static vector<string> playerOptions;
 

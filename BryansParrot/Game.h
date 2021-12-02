@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Room.h"
+#include "MiniMap.h"
 
 using namespace std;
 
@@ -99,6 +100,7 @@ private:
 
 	GameState gameState;
 	Player player;
+	MiniMap miniMap;
 
 	Room* currentRoom;
 	Room* winRoom;
