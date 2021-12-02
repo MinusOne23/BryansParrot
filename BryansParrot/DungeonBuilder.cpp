@@ -180,31 +180,31 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	//Enemy Weapons
 	Weapon chickenHead("Chicken Head", 0.2f, 1.5f);
-	chickenHead.addAttackMove(AttackMove("Headbutt", 5, 10, 1, 0.8f));
+	chickenHead.addAttackMove(AttackMove("Headbutt", 8, 15, 1, 0.8f));
 
 	Weapon birdLegs("Bird Legs", 0.3f, 2.0f);
-	birdLegs.addAttackMove(AttackMove("Bicycle Kick", 4, 12, 1, 0.9f));
+	birdLegs.addAttackMove(AttackMove("Bicycle Kick", 8, 18, 1, 0.9f));
 
 	Weapon birdBeak("Turkey Beak", 0.1f, 1.5f);
 	birdBeak.addAttackMove(AttackMove("Peck", 10, 15, 2, 0.85f));
 
-	Weapon birdWings("Vulture Wings", 0.3f, 1.75f);
-	birdWings.addAttackMove(AttackMove("Fly", 10, 20, 2, 0.9f));
+	Weapon birdWings("Vulture Wings", 0.6f, 1.4f);
+	birdWings.addAttackMove(AttackMove("Fly", 15, 30, 2, 0.9f));
 
 	Weapon birdCharge("Hatred", 0.8f, 2.0f);
-	birdCharge.addAttackMove(AttackMove("Charge", 25, 40, 4, 0.8f));
+	birdCharge.addAttackMove(AttackMove("Charge", 25, 40, 4, 0.7f));
 
 	Weapon birdScreach("Microphone", 0.2f, 1.5f);
 	birdScreach.addAttackMove(AttackMove("Song", 15, 30, 2, 1.0f));
 
-	Weapon birdModel("Beauty", 0.2f, 1.5f);
+	Weapon birdModel("Beauty", 0.7f, 1.5f);
 	birdModel.addAttackMove(AttackMove("Attract", 8, 18, 2, 0.9f));
 
-	Weapon birdDive("Crane Wings", 0.3f, 1.75f);
-	birdDive.addAttackMove(AttackMove("Dive", 15, 25, 2, 0.9f));
+	Weapon birdDive("Crane Wings", 0.7f, 1.75f);
+	birdDive.addAttackMove(AttackMove("Dive", 20, 35, 2, 0.9f));
 
-	Weapon birdScratch("Talons", 0.5f, 1.5f);
-	birdScratch.addAttackMove(AttackMove("Rampage", 8, 12, 1, 0.9f));
+	Weapon birdScratch("Talons", 0.6f, 1.8f);
+	birdScratch.addAttackMove(AttackMove("Rampage", 12, 20, 1, 0.9f));
 
 	//Player Weapons
 	Weapon knife("knife", 0.50f, 1.70f);
@@ -221,7 +221,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 
 	Weapon sword("Sword", 0.70f, 1.65f);
 	sword.addAttackMove(AttackMove("Stab", 20, 30, 2, 0.95f));
-	sword.addAttackMove(AttackMove("Slash", 35, 50, 2, 0.75f));
+	sword.addAttackMove(AttackMove("Slash", 35, 50, 2, 0.65f));
 	sword.setSpeedBoost(3);
 	sword.setStaminaBoost(3);
 
@@ -293,16 +293,16 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// ...
 	// 
 	//-----------------------------------------------------------------------
-	Armor motercycleHelmet("Motercycle Helmet", Armor::ArmorType::HEAD, 3);
-	Armor leatherJacket("Leather jacket", Armor::ArmorType::CHEST, 5);
+	Armor motercycleHelmet("Motercycle Helmet", Armor::ArmorType::HEAD, 2);
+	Armor leatherJacket("Leather jacket", Armor::ArmorType::CHEST, 3);
 	leatherJacket.setHealthBoost(50);
 	Armor leatherPants("Leather Pants", Armor::ArmorType::LEGS, 2);
 	leatherPants.setHealthBoost(25);
 	Armor constructionBoots("Construction Boots", Armor::ArmorType::FEET, 1);
 	Armor leatherGloves("leather Gloves", Armor::ArmorType::HANDS, 1);
 
-	Armor sonicHead("Sonic the Hedgehog Foam Head", Armor::ArmorType::HEAD, 6);
-	Armor sonicChest("Sonic the Hedgehog costume Torso", Armor::ArmorType::CHEST, 10);
+	Armor sonicHead("Sonic the Hedgehog Foam Head", Armor::ArmorType::HEAD, 4);
+	Armor sonicChest("Sonic the Hedgehog costume Torso", Armor::ArmorType::CHEST, 6);
 	sonicChest.setHealthBoost(100);
 	Armor sonicLegs("Sonic the Hedgehog blue Legs", Armor::ArmorType::LEGS, 4);
 	sonicLegs.setHealthBoost(50);
@@ -315,17 +315,17 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// Enemy [EnemyName]("[Name]", [MaxHealth], [Speed], [Stamina], [DodgeChance], [DefaultWeapon])
 	//-----------------------------------------------------------------------
-	Enemy chicken("Chicken", 80, 5, 2, 0.5f, chickenHead);
-	Enemy turkey("Turkey", 105, 8, 2, 0.5f, birdBeak);
-	Enemy flamingo("Flamingo", 125, 10, 2, 0.5f, birdModel);
-	Enemy crane("Crane", 160, 8, 4, 0.5f, birdDive);
-	Enemy condor("Andian Condor", 160, 15, 2, 0.5f, birdWings);
-	Enemy vulture("Vulture", 100, 10, 2, 0.6f, birdWings);
-	Enemy kingVulture("King Vulture", 130, 10, 2, 0.3f, birdWings);
-	Enemy miniWest("Cassowary", 200, 20, 4, 0.25f, birdLegs);
-	Enemy miniEast("Ostrich", 150, 8, 4, 0.75f, birdCharge);
+	Enemy chicken("Chicken", 120, 5, 4, 0.5f, chickenHead);
+	Enemy turkey("Turkey", 140, 8, 4, 0.5f, birdBeak);
+	Enemy flamingo("Flamingo", 150, 10, 6, 0.5f, birdModel);
+	Enemy crane("Crane", 200, 10, 4, 0.5f, birdDive);
+	Enemy condor("Andian Condor", 180, 15, 4, 0.5f, birdWings);
+	Enemy vulture("Vulture", 120, 10, 2, 0.6f, birdWings);
+	Enemy kingVulture("King Vulture", 180, 10, 4, 0.3f, birdWings);
+	Enemy miniWest("Cassowary", 250, 20, 4, 0.25f, birdLegs);
+	Enemy miniEast("Ostrich", 250, 12, 4, 0.75f, birdCharge);
 	Enemy miniNorth("ShoeBill", 100, 10, 4, 0.20f, birdScreach);
-	Enemy boss("Parrot", 250, 15, 3, 0.65f, birdScratch);
+	Enemy boss("Parrot", 300, 15, 3, 0.65f, birdScratch);
 
 	//-----------------------------------------------------------------------
 	// Create Keys
@@ -360,50 +360,50 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// 
 	// Story [NoteName]("[Name]", "[message]")
 	//-----------------------------------------------------------------------
-	Story jailCellNote("Jail Note", "\tHello to whoever is reading this, if you're wondering...My name is Kevin, yes, \n"
+	Story jailCellNote("Jail Note", "\n\tHello to whoever is reading this, if you're wondering...My name is Kevin, yes, \n"
 		"\tI'm the dead body next to you. This place is pretty freaky!! I'm trapped, and the\n"
 		"\tonly door that is locked is right in front of you. All I know is that I'm surrounded\n"
 		"\tby dark brick walls and bird poo. I wonder what will be out there for me... ");
 
-	Story guardRoomNote("Guard Note", "\tI was stunned to see the room was painted in bright white with torches all around.\n"
+	Story guardRoomNote("Guard Note", "\n\tI was stunned to see the room was painted in bright white with torches all around.\n"
 		"\tIn the background, I remember you could see two chicken pedestals with the enemy\n"
 		"\tbetween them. I don't know how but I found a Garbage Lid and Armor on the side of\n"
 		"\tthe room covered in chicken feed. Pretty useful to protect yourself from attacks, \n"
-		"\tdont you think? ");
+		"\tdon't you think? ");
 
-	Story controlRoomNote("Control Note", "\tIt was creepy, when I walked in, the whole place was surrounded by multiple\n"
+	Story controlRoomNote("Control Note", "\n\tIt was creepy, when I walked in, the whole place was surrounded by multiple\n"
 		"\tmonitors and the main monitor displayed a parrot flying. The room itself was pretty\n"
 		"\tdark with a few lights on the sealing. I remember the floor being wet, I did not\n"
 		"\trealize that when looked up, I saw the terrifying Shoebill! It was the ugliest bird\n"
 		"\tI have ever seen, covered in in thick silver grey feathers with a wide gape. ");
 
-	Story safeRoomWestNote("West Note", "\tI've escaped danger... for now. This room was different from the others, It\n"
+	Story safeRoomWestNote("West Note", "\n\tI've escaped danger... for now. This room was different from the others, It\n"
 		"\twas very comfortable. This room looks like an office, with elevator music tranquil\n"
 		"\tsongs and birds chirping. I also saw a bunch of snacks which was pretty lucky because I \n"
 		"\twas so hungry. I remember you could find some Armour on the other\n"
 		"\twall, there is a casket with a Large Health Potion as well. ");
 
-	Story pickledCraneNote("Crane Note", "\tThis room is rather calming, but I'm not. This haunts me I swear, the majestic\n"
+	Story pickledCraneNote("Crane Note", "\n\tThis room is rather calming, but I'm not. This haunts me I swear, the majestic\n"
 		"\tCrane was waiting for me in the back you know, it is one of the tallest birds in\n"
 		"\tthe world. And this majestic bird is not alone either!! The bird might be pretty,\n"
 		"\tbut its also vey feisty.  ");
 
-	Story cassocareRoomNote("CassoCare Note", "\tThis room is giving me vegetarian vibes, there are fruits, leaves and a\n"
+	Story cassocareRoomNote("CassoCare Note", "\n\tThis room is giving me vegetarian vibes, there are fruits, leaves and a\n"
 		"\tbunch of other natural resources, perfect habitat for the ferocious Cassowary, \n"
 		"\tthis feisty bird will make your life miserable if it's in your way!! Cassowaries\n"
 		"\tare very wary especially of humans, but if provoked, they are capable of inflicting\n"
 		"\tserious, even fatal, injuries towards you. ");
 
-	Story safeRoomEastNote("East Note", "\tHurray, I have escaped danger, I guess. This room is pretty comfortable if I\n"
+	Story safeRoomEastNote("East Note", "\n\tHurray, I have escaped danger, I guess. This room is pretty comfortable if I\n"
 		"\tsay so myself. This room looks like a living room, pretty organized I would say,\n"
 		"\twith music playing bird songs and snacks on the side of the door. On the walls,\n"
-		"\tI noticed a casket with a Large Health Potion, could help to get my helth back up. ");
+		"\tI noticed a casket with a Large Health Potion, could help to get my health back up. ");
 
-	Story cavernousChasmNote("Chasm Note", "\tAs far as I know the Ostrich is the largest bird in the animal kingdom.\n"
+	Story cavernousChasmNote("Chasm Note", "\n\tAs far as I know the Ostrich is the largest bird in the animal kingdom.\n"
 		"\tNot a bird that you want to take lightly, these birds will eat anything that's in\n"
 		"\tits path, and it might swallow you whole. They are pretty fast too with those long legs.  ");
 
-	Story bryansParrotNote("Kevins Note", "\tWhoever is reading this, it was that thing......the parrot, he did this!!\n"
+	Story bryansParrotNote("Kevins Note", "\n\tWhoever is reading this, it was that thing......the parrot, he did this!!\n"
 		"\tNo wonder everything was bird related. I do not understand why I had to end up\n"
 		"\there in this shallow of a prison. This bird is small, but he is the strongest\n"
 		"\tthing I have ever seen. And as you know, I'm dead, which means I didn't make it\n"
@@ -426,6 +426,8 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	guardRoomEncounter.addEnemy(chicken);
 	guardRoomEncounter.addDrop(make_shared<Key>(guardRoomKey));
 	guardRoomEncounter.addDrop(make_shared<Weapon>(wrench));
+	guardRoomEncounter.addDrop(make_shared<Potion>(lPotion));
+	guardRoomEncounter.addDrop(make_shared<Potion>(mPotion));
 	guardRoomEncounter.addDrop(make_shared<Potion>(sPotion));
 	guardRoomEncounter.addDrop(make_shared<Armor>(leatherPants));
 	guardRoomEncounter.addDrop(make_shared<Shield>(trashShield));
@@ -435,6 +437,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	eastCorridorEncounter.addEnemy(turkey);
 	eastCorridorEncounter.addEnemy(chicken);
 	eastCorridorEncounter.addDrop(make_shared<Weapon>(knife));
+	eastCorridorEncounter.addDrop(make_shared<Potion>(mPotion));
 	eastCorridorEncounter.addDrop(make_shared<Armor>(motercycleHelmet));
 
 	//Wearable Treasure Encounter: Initialization
@@ -454,14 +457,14 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	wearableTreasureEncounter3.addDrop(make_shared<Armor>(sonicLegs));
 	wearableTreasureEncounter3.addDrop(make_shared<Armor>(sonicGloves));
 	wearableTreasureEncounter3.addDrop(make_shared<Armor>(sonicShoes));
+	wearableTreasureEncounter3.addDrop(make_shared<Potion>(lPotion));
 
 	//Condor Lair: Initialization
 	EnemyEncounter condorLairEncounter;
 	condorLairEncounter.addEnemy(condor);
-	condorLairEncounter.addEnemy(turkey);
 	condorLairEncounter.addDrop(make_shared<Key>(condorRoomKey));
 	condorLairEncounter.addDrop(make_shared<Weapon>(slingShot));
-	condorLairEncounter.addDrop(make_shared<Potion>(mPotion));
+	condorLairEncounter.addDrop(make_shared<Potion>(lPotion));
 	condorLairEncounter.addDrop(make_shared<Armor>(leatherGloves));
 	condorLairEncounter.addDrop(make_shared<Shield>(wokShield));
 
@@ -472,7 +475,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	westCorridorRoomEncounter.addEnemy(chicken);
 	westCorridorRoomEncounter.addDrop(make_shared<Weapon>(sword));
 	westCorridorRoomEncounter.addDrop(make_shared<Potion>(mPotion));
-	westCorridorRoomEncounter.addDrop(make_shared<Potion>(mPotion));
+	
 
 
 	//Usable Treasure Encounter: Initialization
@@ -502,7 +505,6 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	pickledCraneRoomEncounter.addEnemy(crane);
 	pickledCraneRoomEncounter.addEnemy(flamingo);
 	pickledCraneRoomEncounter.addEnemy(chicken);
-	pickledCraneRoomEncounter.addDrop(make_shared<Potion>(lPotion));
 	pickledCraneRoomEncounter.addDrop(make_shared<Potion>(lPotion));
 	pickledCraneRoomEncounter.addDrop(make_shared<Weapon>(bat));
 	pickledCraneRoomEncounter.addDrop(make_shared<Shield>(riotshield));
@@ -580,7 +582,7 @@ map<string, Room> DungeonBuilder::buildDungeon()
 	// Cavernous Chasm Init
 	// Mini Boss East Room Init
 	cavernousChasm.addEnemyEncounter(miniBossEastEncounter1);
-	cavernousChasm.addItem(make_shared<Story>(cassocareRoomNote));
+	cavernousChasm.addItem(make_shared<Story>(cavernousChasmNote));
 
 	// West Corridor Init
 	westCorridorRoom.addEnemyEncounter(westCorridorRoomEncounter);

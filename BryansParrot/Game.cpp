@@ -62,7 +62,7 @@ void Game::start()
 	system("CLS");
 
 	//Start of Game Dialogue
-	cout << "\tIn the middle of the night, Bryan the poacher comes home one night to find that his one-of-a-kind\n"
+	cout << "\n\n\tIn the middle of the night, Bryan the poacher comes home one night to find that his one-of-a-kind\n"
 		"\tgreen/blue feather parrot was missing, but a note was left behind in his cage. The note instructed\n"
 		"\tyou to head to a building near the docks that have been abandoned for years. When you got to the\n"
 		"\tdocks it was eerily quiet and baron of life, but you had to press on to find your prized parrot. \n"
