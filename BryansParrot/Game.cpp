@@ -18,7 +18,18 @@
 
 using namespace std;
 
-const string VERSION = "1.4.2";
+const string VERSION = "1.4.3";
+
+const string START_MESSAGE = "\tIn the middle of the night, Bryan the poacher comes home one night to find that his one-of-a-kind\n"
+"\tgreen/blue feather parrot was missing, but a note was left behind in his cage. The note instructed\n"
+"\tyou to head to a building near the docks that have been abandoned for years. When you got to the\n"
+"\tdocks it was eerily quiet and baron of life, but you had to press on to find your prized parrot. \n"
+"\tAfter finding and entering the building it became pitch black with only the smell of bird poo to \n"
+"\tguide you. You find a closed door and begin to open it only for the floor to disappear beneath you.\n"
+"\tAs you fall into a lower chamber you see a blue and green feather before you blackout from the impact.\n"
+"\tYou wake up in a jail cell, with a faint squawk of your parrot in the distance. You don’t recognize \n"
+"\tthe room you are trapped in and all you see is a jail cell door with a chicken outside of it clad in\n"
+"\tarmor and a dead body beside yours with a key in his hand. What will Bryan do? \n\n\n";
 
 /// STARTS THE GAME:
 /// Game will continue untill:
@@ -37,56 +48,47 @@ void Game::start()
 		cout << "\t - Instructions Press: 2" << "\n";
 		cout << "\t - To Quit Press: 0" << "\n";
 		cout << "\t===================================\n";
-		
+
 		inputGameStart = Utils::inputValidator();
 
 		if (inputGameStart == "2") {
 			//Help Instructions
 			cout << "\tHey there and welcome to our game called Bryan's Parrot! We're very thankful that you can\n"
-					"\tspend some time trying our game out and letting us know how it went. Our Game is a Text \n"
-					"\tbased RPG run through console and built using C++. This game uses commands in the format of \n"
-					"\t(Action) space (Object), an example would be (take) space (drink) if you wanted to pick \n"
-					"\tup a drink that was seen in the room. Also, (i) is inventory, (c) is for character stats, and if\n"
-					"\tyou forget a word used you can always press (h) for a refresher.I think I've given you enough \n"
-					"\tinformation to start the game, but be on the lookout for more action words and also let us know if \n"
-					"\tthere are words that you believe would be better implemented in the game. Thank you and we hope you \n"
-					"\tenjoy our game! \n\n";
+				"\tspend some time trying our game out and letting us know how it went. Our Game is a Text \n"
+				"\tbased RPG run through console and built using C++. This game uses commands in the format of \n"
+				"\t(Action) space (Object), an example would be (take) space (drink) if you wanted to pick \n"
+				"\tup a drink that was seen in the room. Also, (i) is inventory, (c) is for character stats, and if\n"
+				"\tyou forget a word used you can always press (h) for a refresher.I think I've given you enough \n"
+				"\tinformation to start the game, but be on the lookout for more action words and also let us know if \n"
+				"\tthere are words that you believe would be better implemented in the game. Thank you and we hope you \n"
+				"\tenjoy our game! \n\n";
 		}
 		else if (inputGameStart == "0") {
 			exit(0);
 		}
-		
-		
+
+
 	}
 
 	system("CLS");
 
 	//Start of Game Dialogue
-	cout << "\n\n\tIn the middle of the night, Bryan the poacher comes home one night to find that his one-of-a-kind\n"
-		"\tgreen/blue feather parrot was missing, but a note was left behind in his cage. The note instructed\n"
-		"\tyou to head to a building near the docks that have been abandoned for years. When you got to the\n"
-		"\tdocks it was eerily quiet and baron of life, but you had to press on to find your prized parrot. \n"
-		"\tAfter finding and entering the building it became pitch black with only the smell of bird poo to \n"
-		"\tguide you. You find a closed door and begin to open it only for the floor to disappear beneath you.\n"
-		"\tAs you fall into a lower chamber you see a blue and green feather before you blackout from the impact.\n"
-		"\tYou wake up in a jail cell, with a faint squawk of your parrot in the distance. You don’t recognize \n"
-		"\tthe room you are trapped in and all you see is a jail cell door with a chicken outside of it clad in\n"
-		"\tarmor and a dead body beside yours with a key in his hand. What will Bryan do? \n\n\n";
+	cout << START_MESSAGE;
 
-		initializeGame();
+	initializeGame();
 
-		currentRoom->displayContents();
+	currentRoom->displayContents();
 
-		while (gameState == GameState::PLAY)
-		{
-			gameInteract();
+	while (gameState == GameState::PLAY)
+	{
+		gameInteract();
 
-			if (player.isDead())
-				playerDied();
-			else if (currentRoom == winRoom)
-				playerWin();
-		}
-		
+		if (player.isDead())
+			playerDied();
+		else if (currentRoom == winRoom)
+			playerWin();
+	}
+
 }
 
 void Game::initializeGameTest() {
@@ -100,8 +102,8 @@ void Game::initializeGame()
 	Weapon playerFists("Fists", 0.2f, 1.5f);
 	playerFists.addAttackMove(AttackMove("Punch", 10, 15, 1, 0.9f));
 
-	//					health	speed	baseStamina	dodgeChance	baseWeapon
-	player = Player(	100,	10,		1,			0.4f,		playerFists);
+	//				health	speed	baseStamina	dodgeChance	baseWeapon
+	player = Player(100,	10,		1,			0.4f,		playerFists);
 	player.refreshStamina();
 
 	miniMap = MiniMap();
@@ -154,7 +156,9 @@ void Game::promptReplay()
 	{
 		gameState = GameState::PLAY;
 		initializeGame();
-		cout << endl;
+		system("CLS");
+
+		cout << START_MESSAGE;
 		currentRoom->displayContents();
 	}
 }
@@ -217,7 +221,7 @@ void Game::enterNewRoom(Room* nextRoom)
 
 	currentRoom->setHasPlayer(false);
 	nextRoom->setHasPlayer(true);
-  
+
 	while (nextRoom->encounterCount() > 0)
 	{
 		EnemyEncounter& encounter = nextRoom->currentEncounter();
