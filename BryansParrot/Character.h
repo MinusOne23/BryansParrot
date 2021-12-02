@@ -10,6 +10,7 @@
 #include "Potion.h"
 #include "Shield.h"
 #include "Equipment.h"
+#include "Story.h"
 
 using namespace std;
 

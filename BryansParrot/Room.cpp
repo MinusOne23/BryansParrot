@@ -28,7 +28,7 @@ void Room::displayContents() const
 		encounters[0].displayEnemies();
 		return;
 	}
-
+	cout << "\t\t\t" <<description << "\n";
 	cout << "\t===========================================\n";
 	cout << "\t         Inside the room you see:          \n";
 	cout << "\t-------------------------------------------\n";

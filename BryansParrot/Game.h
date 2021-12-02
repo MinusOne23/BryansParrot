@@ -114,6 +114,7 @@ private:
 
 	void openDoor(Room::Direction index);
 	Room::Direction getDoorIndex(string doorName);
+	Room* findRoom(string roomName);
 	void enterNewRoom(Room* nextRoom);
 
 	void gameInteract();

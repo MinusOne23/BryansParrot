@@ -86,6 +86,7 @@ public:
 		INSPECT,
 		ENABLE_DEV_MODE,
 		MINI_MAP,
+		READ,
 
 		//EncounterSpecific
 		ATTACK,
