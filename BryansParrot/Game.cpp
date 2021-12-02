@@ -53,9 +53,7 @@ void Game::start()
 		else if (inputGameStart == '0') {
 			exit(0);
 		}
-		else {
-			cout << "\nSorry, that input is not recognized.\n\n";
-		}
+		
 		
 	}
 	//Start of Game Dialogue
