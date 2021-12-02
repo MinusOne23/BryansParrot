@@ -419,7 +419,6 @@ void EnemyEncounter::enemyTurn(Enemy& enemy, Player& player, bool shouldBlock)
 		}
 
 		AttackMove::DamageResult damageResult = enemy.calcDamage(attack);
-		cout << "Original Damage: " << damageResult.damage << endl;
 		enemy.useStamina(damageResult.staminaUsed);
 
 		if (!dodge)
