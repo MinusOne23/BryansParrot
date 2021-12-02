@@ -20,7 +20,7 @@ using namespace std;
 
 const string VERSION = "1.4.3";
 
-const string START_MESSAGE = "\tIn the middle of the night, Bryan the poacher comes home one night to find that his one-of-a-kind\n"
+const string START_MESSAGE = "\n\tIn the middle of the night, Bryan the poacher comes home one night to find that his one-of-a-kind\n"
 "\tgreen/blue feather parrot was missing, but a note was left behind in his cage. The note instructed\n"
 "\tyou to head to a building near the docks that have been abandoned for years. When you got to the\n"
 "\tdocks it was eerily quiet and baron of life, but you had to press on to find your prized parrot. \n"
